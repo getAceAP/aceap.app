@@ -5,7 +5,7 @@ import { units, Flashcard } from "@/data/content";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
-import { ArrowLeft, CheckCircle2, XCircle, RefreshCcw, Brain, Eye, Shuffle } from "lucide-react";
+import { ArrowLeft, CheckCircle2, XCircle, RefreshCcw, Brain, Eye, Shuffle, Lightbulb } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { motion, AnimatePresence } from "framer-motion";
@@ -23,6 +23,7 @@ const Flashcards = () => {
   const [isCorrect, setIsCorrect] = useState(false);
   const [isFinished, setIsFinished] = useState(false);
   const [isFlipped, setIsFlipped] = useState(false);
+  const [showHint, setShowHint] = useState(false);
   
   // Score tracking
   const [correctCount, setCorrectCount] = useState(0);
@@ -49,7 +50,6 @@ const Flashcards = () => {
     if (isSubmitted) return;
 
     const normalizedInput = userInput.trim().toLowerCase();
-    // In Active Recall, we show the definition (answer) and expect the term (prompt)
     const normalizedTarget = currentCard.prompt.trim().toLowerCase();
     
     const correct = normalizedInput === normalizedTarget;
@@ -61,6 +61,12 @@ const Flashcards = () => {
     } else {
       setIncorrectCount(prev => prev + 1);
     }
+  };
+
+  const handleShowAnswer = () => {
+    setIsCorrect(false);
+    setIsSubmitted(true);
+    setIncorrectCount(prev => prev + 1);
   };
 
   const handleNormalResult = (correct: boolean) => {
@@ -78,6 +84,7 @@ const Flashcards = () => {
       setUserInput("");
       setIsSubmitted(false);
       setIsFlipped(false);
+      setShowHint(false);
     } else {
       setIsFinished(true);
     }
@@ -89,6 +96,7 @@ const Flashcards = () => {
     setIsSubmitted(false);
     setIsFinished(false);
     setIsFlipped(false);
+    setShowHint(false);
     setCorrectCount(0);
     setIncorrectCount(0);
   };
@@ -143,7 +151,7 @@ const Flashcards = () => {
             </Button>
           </div>
           
-          <Tabs value={mode} onValueChange={(v) => { setMode(v as any); setIsFlipped(false); setUserInput(""); setIsSubmitted(false); }} className="w-full sm:w-auto">
+          <Tabs value={mode} onValueChange={(v) => { setMode(v as any); setIsFlipped(false); setUserInput(""); setIsSubmitted(false); setShowHint(false); }} className="w-full sm:w-auto">
             <TabsList className="grid w-full grid-cols-2 rounded-xl">
               <TabsTrigger value="active" className="rounded-lg gap-2">
                 <Brain size={14} /> Active Recall
@@ -179,7 +187,6 @@ const Flashcards = () => {
               <Card className="absolute inset-0 w-full h-full border-border shadow-none bg-card flex items-center justify-center text-center p-8 backface-hidden">
                 <CardContent className="p-0">
                   <p className="text-xl md:text-2xl font-medium leading-relaxed text-card-foreground">
-                    {/* Active Recall shows definition first, Normal shows term first */}
                     {mode === "active" ? currentCard.answer : currentCard.prompt}
                   </p>
                   {mode === "normal" && !isFlipped && (
@@ -195,7 +202,6 @@ const Flashcards = () => {
               >
                 <CardContent className="p-0">
                   <p className="text-xl font-medium leading-relaxed text-accent-foreground">
-                    {/* Back side is always the opposite of the front */}
                     {mode === "active" ? currentCard.prompt : currentCard.answer}
                   </p>
                 </CardContent>
@@ -214,7 +220,14 @@ const Flashcards = () => {
                 className="space-y-4"
               >
                 <div className="space-y-2">
-                  <label className="text-xs font-bold text-muted-foreground/60 uppercase tracking-wider">Type the Term</label>
+                  <div className="flex justify-between items-end">
+                    <label className="text-xs font-bold text-muted-foreground/60 uppercase tracking-wider">Type the Term</label>
+                    {showHint && !isSubmitted && (
+                      <span className="text-xs font-medium text-primary animate-in fade-in slide-in-from-right-2">
+                        Starts with: <span className="font-bold uppercase">{currentCard.prompt.charAt(0)}</span>
+                      </span>
+                    )}
+                  </div>
                   <Input
                     autoFocus
                     value={userInput}
@@ -230,9 +243,23 @@ const Flashcards = () => {
                 </div>
 
                 {!isSubmitted ? (
-                  <Button type="submit" className="w-full h-14 rounded-xl text-lg font-semibold shadow-lg shadow-primary/10">
-                    Check Answer
-                  </Button>
+                  <div className="flex gap-3">
+                    <Button type="submit" className="flex-[2] h-14 rounded-xl text-lg font-semibold shadow-lg shadow-primary/10">
+                      Check Answer
+                    </Button>
+                    <Button 
+                      type="button"
+                      variant="outline"
+                      onClick={() => showHint ? handleShowAnswer() : setShowHint(true)}
+                      className="flex-1 h-14 rounded-xl border-primary/20 text-primary hover:bg-primary/5"
+                    >
+                      {showHint ? (
+                        <span className="flex items-center gap-2">Show Answer</span>
+                      ) : (
+                        <span className="flex items-center gap-2"><Lightbulb size={18} /> Hint</span>
+                      )}
+                    </Button>
+                  </div>
                 ) : (
                   <motion.div 
                     initial={{ opacity: 0, scale: 0.95 }}
