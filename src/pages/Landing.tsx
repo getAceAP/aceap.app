@@ -39,7 +39,7 @@ const Landing = () => {
             </div>
             <h1 className="text-5xl md:text-7xl font-bold tracking-tight text-foreground leading-[1.2] md:leading-[1.1]">
               Master{" "}
-              <span className="relative inline-block min-w-[280px] sm:min-w-[400px] md:min-w-[600px] text-center align-bottom">
+              <span className="relative inline-block">
                 <AnimatePresence mode="wait">
                   <motion.span
                     key={subjects[subjectIndex]}
@@ -53,7 +53,7 @@ const Landing = () => {
                   </motion.span>
                 </AnimatePresence>
               </span>
-              <br className="hidden sm:block" />
+              <br />
               with <span className="text-muted-foreground">Active Recall.</span>
             </h1>
             <p className="text-xl text-muted-foreground leading-relaxed max-w-2xl mx-auto">
