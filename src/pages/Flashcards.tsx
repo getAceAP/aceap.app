@@ -5,7 +5,7 @@ import { units, Flashcard } from "@/data/content";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
-import { ArrowLeft, CheckCircle2, XCircle, RefreshCcw, Brain, Eye, Shuffle, Lightbulb } from "lucide-react";
+import { ArrowLeft, ArrowRight, CheckCircle2, XCircle, RefreshCcw, Brain, Eye, Shuffle, Lightbulb } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { motion, AnimatePresence } from "framer-motion";
@@ -299,9 +299,14 @@ const Flashcards = () => {
                 className="space-y-4"
               >
                 {!isFlipped ? (
-                  <Button onClick={() => setIsFlipped(true)} className="w-full h-14 rounded-xl text-lg font-semibold shadow-lg shadow-primary/10">
-                    Show Answer
-                  </Button>
+                  <div className="flex gap-3">
+                    <Button onClick={() => setIsFlipped(true)} className="flex-[2] h-14 rounded-xl text-lg font-semibold shadow-lg shadow-primary/10">
+                      Show Answer
+                    </Button>
+                    <Button variant="outline" onClick={handleNext} className="flex-1 h-14 rounded-xl border-border hover:bg-muted">
+                      Next <ArrowRight className="ml-2 h-4 w-4" />
+                    </Button>
+                  </div>
                 ) : (
                   <div className="grid grid-cols-2 gap-4">
                     <Button 
