@@ -22,7 +22,6 @@ const Quiz = () => {
 
   useEffect(() => {
     if (unit) {
-      // Randomize and pick up to 10 questions for a session
       const shuffled = [...unit.questions].sort(() => 0.5 - Math.random());
       setSessionQuestions(shuffled.slice(0, 10));
     }
@@ -58,13 +57,13 @@ const Quiz = () => {
         <div className="max-w-md mx-auto text-center space-y-6 py-12">
           <div className="space-y-2">
             <h2 className="text-3xl font-bold">Quiz Complete!</h2>
-            <p className="text-[#73726E]">You scored {score} out of {sessionQuestions.length}</p>
+            <p className="text-muted-foreground">You scored {score} out of {sessionQuestions.length}</p>
           </div>
-          <div className="text-6xl font-bold text-[#37352F]">
+          <div className="text-6xl font-bold text-foreground">
             {Math.round((score / sessionQuestions.length) * 100)}%
           </div>
           <div className="flex gap-4">
-            <Button onClick={() => window.location.reload()} className="flex-1 bg-[#37352F] hover:bg-[#37352F]/90">
+            <Button onClick={() => window.location.reload()} className="flex-1">
               <RefreshCcw className="mr-2 h-4 w-4" /> Try Again
             </Button>
             <Button variant="outline" onClick={() => navigate("/")} className="flex-1">
@@ -80,15 +79,15 @@ const Quiz = () => {
     <Layout>
       <div className="space-y-8">
         <div className="flex items-center justify-between">
-          <Button variant="ghost" onClick={() => navigate("/")} className="text-[#73726E]">
+          <Button variant="ghost" onClick={() => navigate("/")} className="text-muted-foreground">
             <ArrowLeft className="mr-2 h-4 w-4" /> Exit Quiz
           </Button>
-          <span className="text-sm font-medium text-[#73726E]">
+          <span className="text-sm font-medium text-muted-foreground">
             Question {currentIndex + 1} of {sessionQuestions.length}
           </span>
         </div>
 
-        <Progress value={progress} className="h-1 bg-[#E9E9E8]" />
+        <Progress value={progress} className="h-1 bg-muted" />
 
         <div className="space-y-6">
           <h2 className="text-2xl font-semibold leading-tight">
@@ -107,16 +106,16 @@ const Quiz = () => {
                   onClick={() => handleOptionSelect(option)}
                   className={cn(
                     "w-full text-left p-4 rounded-xl border transition-all duration-200",
-                    !isAnswered && "border-[#E9E9E8] hover:border-[#37352F] hover:bg-[#F5F5F4]",
-                    isAnswered && isCorrect && "border-green-500 bg-green-50 text-green-900",
-                    isAnswered && isSelected && !isCorrect && "border-red-500 bg-red-50 text-red-900",
-                    isAnswered && !isCorrect && !isSelected && "border-[#E9E9E8] opacity-50"
+                    !isAnswered && "border-border hover:border-primary hover:bg-muted",
+                    isAnswered && isCorrect && "border-green-500 bg-green-500/10 text-green-600 dark:text-green-400",
+                    isAnswered && isSelected && !isCorrect && "border-destructive bg-destructive/10 text-destructive",
+                    isAnswered && !isCorrect && !isSelected && "border-border opacity-50"
                   )}
                 >
                   <div className="flex items-center justify-between">
                     <span>{option}</span>
                     {isAnswered && isCorrect && <CheckCircle2 className="h-5 w-5 text-green-600" />}
-                    {isAnswered && isSelected && !isCorrect && <XCircle className="h-5 w-5 text-red-600" />}
+                    {isAnswered && isSelected && !isCorrect && <XCircle className="h-5 w-5 text-destructive" />}
                   </div>
                 </button>
               );
@@ -124,11 +123,11 @@ const Quiz = () => {
           </div>
 
           {isAnswered && (
-            <Card className="border-none bg-[#F5F5F4] shadow-none">
+            <Card className="border-none bg-muted shadow-none">
               <CardContent className="pt-6 space-y-4">
-                <div className="text-sm font-bold uppercase tracking-wider text-[#73726E]">Explanation</div>
-                <p className="text-[#37352F] leading-relaxed">{currentQuestion.explanation}</p>
-                <Button onClick={handleNext} className="w-full bg-[#37352F] hover:bg-[#37352F]/90">
+                <div className="text-sm font-bold uppercase tracking-wider text-muted-foreground">Explanation</div>
+                <p className="text-foreground leading-relaxed">{currentQuestion.explanation}</p>
+                <Button onClick={handleNext} className="w-full">
                   {currentIndex < sessionQuestions.length - 1 ? "Next Question" : "Finish Quiz"}
                 </Button>
               </CardContent>
