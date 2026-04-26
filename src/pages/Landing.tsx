@@ -39,7 +39,7 @@ const Landing = () => {
             </div>
             <h1 className="text-5xl md:text-7xl font-bold tracking-tight text-foreground leading-[1.1]">
               Master{" "}
-              <span className="relative inline-block min-w-[320px] text-left">
+              <span className="relative inline-block min-w-[320px] md:min-w-[500px] text-left">
                 <AnimatePresence mode="wait">
                   <motion.span
                     key={subjects[subjectIndex]}
@@ -47,7 +47,7 @@ const Landing = () => {
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: -10 }}
                     transition={{ duration: 0.4 }}
-                    className="inline-block text-primary underline decoration-primary/30 underline-offset-8"
+                    className="inline-block text-primary underline decoration-primary/30 underline-offset-8 whitespace-nowrap"
                   >
                     {subjects[subjectIndex]}
                   </motion.span>
