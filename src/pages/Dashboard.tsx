@@ -3,15 +3,21 @@ import { units } from "@/data/content";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
-import { ArrowRight, BrainCircuit, GraduationCap } from "lucide-react";
+import { BrainCircuit, GraduationCap, ArrowLeft } from "lucide-react";
 
-const Index = () => {
+const Dashboard = () => {
   return (
     <Layout>
       <div className="space-y-8">
-        <header className="space-y-2">
-          <h1 className="text-4xl font-bold tracking-tight">AP World History</h1>
-          <p className="text-xl text-[#73726E]">Master the curriculum with active recall and unit-specific practice.</p>
+        <header className="space-y-4">
+          <Link to="/" className="inline-flex items-center text-sm font-medium text-[#73726E] hover:text-[#37352F] transition-colors">
+            <ArrowLeft size={16} className="mr-1" />
+            Back to Home
+          </Link>
+          <div className="space-y-2">
+            <h1 className="text-4xl font-bold tracking-tight">Study Dashboard</h1>
+            <p className="text-xl text-[#73726E]">Select a unit to begin your active recall session.</p>
+          </div>
         </header>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -48,4 +54,4 @@ const Index = () => {
   );
 };
 
-export default Index;
+export default Dashboard;

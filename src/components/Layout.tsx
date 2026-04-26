@@ -1,6 +1,6 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import { BookOpen, Home } from "lucide-react";
+import { BookOpen, LayoutDashboard } from "lucide-react";
 
 const Layout = ({ children }: { children: React.ReactNode }) => {
   return (
@@ -14,8 +14,8 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
             <span>AceAP.app</span>
           </Link>
           <div className="flex gap-6 text-sm font-medium text-[#73726E]">
-            <Link to="/" className="hover:text-[#37352F] flex items-center gap-1">
-              <Home size={16} />
+            <Link to="/dashboard" className="hover:text-[#37352F] flex items-center gap-1">
+              <LayoutDashboard size={16} />
               Dashboard
             </Link>
           </div>
