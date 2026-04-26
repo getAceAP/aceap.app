@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import Layout from "@/components/Layout";
 import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
-import { ArrowRight, CheckCircle2, Zap, Brain, Target } from "lucide-react";
+import { ArrowRight, Zap, Brain, Target } from "lucide-react";
 
 const Landing = () => {
   return (
@@ -40,9 +40,6 @@ const Landing = () => {
                 Start Studying Now
                 <ArrowRight className="ml-2 h-5 w-5" />
               </Link>
-            </Button>
-            <Button variant="outline" size="lg" className="h-14 px-8 text-lg border-[#E9E9E8] hover:bg-[#F5F5F4] rounded-xl">
-              View Units
             </Button>
           </motion.div>
         </section>
