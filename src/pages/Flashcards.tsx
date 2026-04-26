@@ -49,9 +49,10 @@ const Flashcards = () => {
     if (isSubmitted) return;
 
     const normalizedInput = userInput.trim().toLowerCase();
-    const normalizedAnswer = currentCard.answer.trim().toLowerCase();
+    // In Active Recall, we show the definition (answer) and expect the term (prompt)
+    const normalizedTarget = currentCard.prompt.trim().toLowerCase();
     
-    const correct = normalizedInput === normalizedAnswer;
+    const correct = normalizedInput === normalizedTarget;
     setIsCorrect(correct);
     setIsSubmitted(true);
     
@@ -142,7 +143,7 @@ const Flashcards = () => {
             </Button>
           </div>
           
-          <Tabs value={mode} onValueChange={(v) => { setMode(v as any); setIsFlipped(false); }} className="w-full sm:w-auto">
+          <Tabs value={mode} onValueChange={(v) => { setMode(v as any); setIsFlipped(false); setUserInput(""); setIsSubmitted(false); }} className="w-full sm:w-auto">
             <TabsList className="grid w-full grid-cols-2 rounded-xl">
               <TabsTrigger value="active" className="rounded-lg gap-2">
                 <Brain size={14} /> Active Recall
@@ -177,8 +178,9 @@ const Flashcards = () => {
               {/* Front Side */}
               <Card className="absolute inset-0 w-full h-full border-border shadow-none bg-card flex items-center justify-center text-center p-8 backface-hidden">
                 <CardContent className="p-0">
-                  <p className="text-2xl font-medium leading-relaxed text-card-foreground">
-                    {currentCard.prompt}
+                  <p className="text-xl md:text-2xl font-medium leading-relaxed text-card-foreground">
+                    {/* Active Recall shows definition first, Normal shows term first */}
+                    {mode === "active" ? currentCard.answer : currentCard.prompt}
                   </p>
                   {mode === "normal" && !isFlipped && (
                     <p className="mt-4 text-xs font-bold text-muted-foreground/40 uppercase tracking-widest">Click to flip</p>
@@ -193,7 +195,8 @@ const Flashcards = () => {
               >
                 <CardContent className="p-0">
                   <p className="text-xl font-medium leading-relaxed text-accent-foreground">
-                    {currentCard.answer}
+                    {/* Back side is always the opposite of the front */}
+                    {mode === "active" ? currentCard.prompt : currentCard.answer}
                   </p>
                 </CardContent>
               </Card>
@@ -211,13 +214,13 @@ const Flashcards = () => {
                 className="space-y-4"
               >
                 <div className="space-y-2">
-                  <label className="text-xs font-bold text-muted-foreground/60 uppercase tracking-wider">Your Answer</label>
+                  <label className="text-xs font-bold text-muted-foreground/60 uppercase tracking-wider">Type the Term</label>
                   <Input
                     autoFocus
                     value={userInput}
                     onChange={(e) => setUserInput(e.target.value)}
                     disabled={isSubmitted}
-                    placeholder="Type the answer here..."
+                    placeholder="What is this term?"
                     className={cn(
                       "h-14 text-lg border-border focus-visible:ring-primary rounded-xl transition-all",
                       isSubmitted && isCorrect && "border-green-500 bg-green-500/10 text-green-600 dark:text-green-400",
@@ -243,9 +246,16 @@ const Flashcards = () => {
                         : "bg-destructive/10 text-destructive border-destructive/20"
                     )}>
                       {isCorrect ? <CheckCircle2 size={20} /> : <XCircle size={20} />}
-                      <span className="font-medium">
-                        {isCorrect ? "Correct!" : `Incorrect. The answer is: ${currentCard.answer}`}
-                      </span>
+                      <div className="flex flex-col">
+                        <span className="font-bold">
+                          {isCorrect ? "Correct!" : "Incorrect"}
+                        </span>
+                        {!isCorrect && (
+                          <span className="text-sm opacity-90">
+                            The correct term is: <span className="font-bold underline">{currentCard.prompt}</span>
+                          </span>
+                        )}
+                      </div>
                     </div>
                     <Button onClick={handleNext} className="w-full h-14 rounded-xl text-lg font-semibold">
                       {currentIndex < shuffledCards.length - 1 ? "Next Card" : "Finish Session"}
