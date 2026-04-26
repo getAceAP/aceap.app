@@ -26,7 +26,7 @@ const Landing = () => {
     <Layout>
       <div className="space-y-24 py-12">
         {/* Hero Section */}
-        <section className="text-center space-y-8 max-w-4xl mx-auto">
+        <section className="text-center space-y-8 max-w-5xl mx-auto">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -37,9 +37,9 @@ const Landing = () => {
               <Zap size={12} className="fill-primary" />
               Built for the 5
             </div>
-            <h1 className="text-5xl md:text-7xl font-bold tracking-tight text-foreground leading-[1.1]">
+            <h1 className="text-5xl md:text-7xl font-bold tracking-tight text-foreground leading-[1.2] md:leading-[1.1]">
               Master{" "}
-              <span className="relative inline-block min-w-[320px] md:min-w-[500px] text-left">
+              <span className="relative inline-block min-w-[280px] sm:min-w-[400px] md:min-w-[600px] text-left align-bottom">
                 <AnimatePresence mode="wait">
                   <motion.span
                     key={subjects[subjectIndex]}
@@ -53,7 +53,7 @@ const Landing = () => {
                   </motion.span>
                 </AnimatePresence>
               </span>
-              <br />
+              <br className="hidden sm:block" />
               with <span className="text-muted-foreground">Active Recall.</span>
             </h1>
             <p className="text-xl text-muted-foreground leading-relaxed max-w-2xl mx-auto">
