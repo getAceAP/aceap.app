@@ -31,11 +31,11 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
           <div className="flex items-center justify-end gap-3">
             <ThemeToggle />
             <div className="h-4 w-[1px] bg-border mx-1 hidden sm:block" />
-            <Button variant="ghost" size="sm" className="hidden sm:flex font-semibold">
-              Login
+            <Button asChild variant="ghost" size="sm" className="hidden sm:flex font-semibold">
+              <Link to="/login">Login</Link>
             </Button>
-            <Button size="sm" className="rounded-full px-5 font-semibold shadow-md shadow-primary/10">
-              Signup
+            <Button asChild size="sm" className="rounded-full px-5 font-semibold shadow-md shadow-primary/10">
+              <Link to="/signup">Signup</Link>
             </Button>
           </div>
         </div>

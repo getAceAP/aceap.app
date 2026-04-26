@@ -10,6 +10,8 @@ import Quiz from "./pages/Quiz";
 import Flashcards from "./pages/Flashcards";
 import Privacy from "./pages/Privacy";
 import Terms from "./pages/Terms";
+import Login from "./pages/Login";
+import Signup from "./pages/Signup";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -28,6 +30,8 @@ const App = () => (
           <Route path="/flashcards/:unitId" element={<Flashcards />} />
           <Route path="/privacy" element={<Privacy />} />
           <Route path="/terms" element={<Terms />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/signup" element={<Signup />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
