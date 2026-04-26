@@ -61,6 +61,147 @@ export const units: Unit[] = [
       { id: "u1-f15", prompt: "Tibetan Buddhism", answer: "makes great use of ritual" },
       { id: "u1-f16", prompt: "Syncretic", answer: "A religion that combines several traditions" },
       { id: "u1-f17", prompt: "Chan Buddhism", answer: "Known as Zen in Japan; stressed meditation and appreciation of natural and artistic beauty; popular with members of elite Chinese society" },
+      { id: "u1-f18", prompt: "Zen Buddhism", answerthink
+The previous response was cut off mid-code block in `src/data/content.ts`. I need to continue the `units` array from where it stopped.
+
+Looking at the previous output:
+It stopped at: `{ id: "u1-f18", prompt: "Zen Buddhism", answer`
+
+I need to:
+1. Complete Unit 1 flashcards.
+2. Complete Unit 2 flashcards (which were already provided in a previous turn).
+3. Complete Unit 3 flashcards (the new ones requested by the user).
+4. Complete the rest of the file (Units 4-9).
+
+Wait, the user said "Continue exactly where you left off without any preamble."
+This usually means I should provide the rest of the code block.
+
+However, the `dyad-write` tag needs to be complete. I can't just start mid-text without the tag if I want the system to process it, but usually, in these "continue" scenarios, I should provide the full file or at least the remaining part of the file wrapped in the correct tags.
+
+Actually, the previous response was a `dyad-write` for `src/data/content.ts`.
+I will rewrite the entire file `src/data/content.ts` with all the updates (Unit 2 and Unit 3) to ensure it's correct and complete.
+
+Unit 2 was updated in the turn before the last one.
+Unit 3 was being updated in the last turn.
+
+I will combine all updates into one complete `dyad-write` for `src/data/content.ts`.
+
+Flashcards for Unit 3 provided by user:
+- Qing Dynasty of China
+- Manchus
+- Mughal Empire
+- Ottoman Empire
+- Safavids
+- Songhai
+- Devshirme
+- Janissary
+- Samurai
+- Divine Right
+- Absolute Monarchy
+- Versailles
+- Zamindars
+- Taj Mahal
+- Tax farming
+- Protestant Reformation
+- 95 Theses
+- Martin Luther
+- Counter or Catholic Reformation
+- Jesuits
+- Indulgence
+- Simony
+- Inquisition
+- Thirty Years War
+- John Calvin
+- Sikhism
+- Shogunate
+- Bazaar
+- Byzantine Empire
+- Persians
+- Shia Islam
+- Sunni Islam
+- Tenochtitlan
+- Hernan Cortes
+- Smallpox
+- Mita System
+- Timbuktu
+- Berbers
+- Epic of Sundiata
+- African Religion
+- Peter the Great
+- Eastern Orthodox Church
+- Cossacks
+- Boyars
+- Hagia Sophia
+- Shari'ah
+- Imam
+- The Thousand and One Nights
+- Forbidden City
+- Aztec Tribute System
+
+I will now write the full file.<dyad-write path="src/data/content.ts" description="Completing the content file with updated Unit 2 and Unit 3 flashcards.">
+export interface Question {
+  id: string;
+  question: string;
+  options: string[];
+  correctAnswer: string;
+  explanation: string;
+}
+
+export interface Flashcard {
+  id: string;
+  prompt: string;
+  answer: string;
+}
+
+export interface Unit {
+  id: number;
+  title: string;
+  period: string;
+  description: string;
+  questions: Question[];
+  flashcards: Flashcard[];
+}
+
+export const units: Unit[] = [
+  {
+    id: 1,
+    title: "The Global Tapestry",
+    period: "1200-1450",
+    description: "State building and cultural developments across the globe.",
+    questions: [
+      {
+        id: "u1-q1",
+        question: "Which dynasty is credited with the creation of the Grand Canal in China?",
+        options: ["Tang", "Song", "Sui", "Yuan"],
+        correctAnswer: "Sui",
+        explanation: "The Sui Dynasty initiated the Grand Canal, though it was expanded by later dynasties."
+      },
+      {
+        id: "u1-q2",
+        question: "The 'Bhakti Movement' originated in which region?",
+        options: ["East Asia", "South Asia", "Middle East", "West Africa"],
+        correctAnswer: "South Asia",
+        explanation: "The Bhakti movement was a Hindu devotional trend that emerged in South Asia."
+      }
+    ],
+    flashcards: [
+      { id: "u1-f1", prompt: "Song Dynasty", answer: "(960-1279 CE) The Chinese dynasty that placed much more emphasis on civil administration, industry, education, and arts other than military." },
+      { id: "u1-f2", prompt: "Imperial Bureaucracy", answer: "Division of an empire into organized provinces to make it easier to control" },
+      { id: "u1-f3", prompt: "Meritocracy", answer: "a system in which promotion is based on individual ability or achievement" },
+      { id: "u1-f4", prompt: "Grand Canal", answer: "The 1,100-mile (1,700-kilometer) waterway linking the Yellow and the Yangzi Rivers. It was begun in the Han period and completed during the Sui Empire." },
+      { id: "u1-f5", prompt: "Gunpowder", answer: "The formula, brought to China in the 400s or 500s, was first used to make fumigators to keep away insect pests and evil spirits. In later centuries it was used to make explosives and grenades and to propel cannonballs, shot, and bullets." },
+      { id: "u1-f6", prompt: "Champa Rice", answer: "Quick-maturing rice that can allow two harvests in one growing season. Originally introduced into Champa from India, it was later sent to China as a tribute gift by the Champa state (as part of the tributary system.)" },
+      { id: "u1-f7", prompt: "Proto-industrialization", answer: "Preliminary shift away from agricultural economy in Europe; workers become full- or part-time producers of textile and metal products, working at home but in a capitalist system in which materials, work orders, and ultimate sales depended on urban merchants; prelude to Industrial Revolution." },
+      { id: "u1-f8", prompt: "Artisans", answer: "skilled workers who make goods by hand" },
+      { id: "u1-f9", prompt: "Scholar-gentry", answer: "Chinese class created by the marital linkage of the local land-holding aristocracy with the office-holding shi; superseded shi as governors of China." },
+      { id: "u1-f10", prompt: "Foot Binding", answer: "Practice in Chinese society to mutilate women's feet in order to make them smaller; produced pain and restricted women's movement; made it easier to confine women to the household." },
+      { id: "u1-f11", prompt: "woodblock printing", answer: "a form of printing in which an entire page is carved into a block of wood" },
+      { id: "u1-f12", prompt: "Buddhism", answer: "A religion based on the teachings of the Buddha." },
+      { id: "u1-f13", prompt: "Theravada Buddhism", answer: "Buddhist sect that focuses on the wisdom of the Buddha" },
+      { id: "u1-f14", prompt: "Mahayana Buddhism", answer: "Also known as popular Buddhism, is allows people more ways to reach enlightenment and boddhisatvas can help you reach enlightenment." },
+      { id: "u1-f15", prompt: "Tibetan Buddhism", answer: "makes great use of ritual" },
+      { id: "u1-f16", prompt: "Syncretic", answer: "A religion that combines several traditions" },
+      { id: "u1-f17", prompt: "Chan Buddhism", answer: "Known as Zen in Japan; stressed meditation and appreciation of natural and artistic beauty; popular with members of elite Chinese society" },
       { id: "u1-f18", prompt: "Zen Buddhism", answer: "a Japanese school of Mahayana Buddhism emphasizing the value of meditation and intuition." },
       { id: "u1-f19", prompt: "Filial Piety", answer: "In Confucian thought, one of the virtues to be cultivated, a love and respect for one's parents and ancestors." },
       { id: "u1-f20", prompt: "Neo-Confucianism", answer: "term that describes the resurgence of Confucianism and the influence of Confucian scholars during the T'ang Dynasty; a unification of Daoist or Buddhist metaphysics with Confucian pragmatism" },
@@ -226,7 +367,56 @@ export const units: Unit[] = [
       }
     ],
     flashcards: [
-      { id: "u3-f1", prompt: "The Russian ruler who westernized the empire in the late 17th century.", answer: "Peter the Great" }
+      { id: "u3-f1", prompt: "Qing Dynasty", answer: "The last imperial dynasty of China (1644-1912), founded by the Manchus. Expanded borders to include Taiwan, Tibet, and Mongolia." },
+      { id: "u3-f2", prompt: "Manchus", answer: "Northeast Asian peoples who defeated the Ming Dynasty and founded the Qing Dynasty in 1644." },
+      { id: "u3-f3", prompt: "Mughal Empire", answer: "Muslim state (1526-1857) exercising dominion over most of India in the sixteenth and seventeenth centuries." },
+      { id: "u3-f4", prompt: "Ottoman Empire", answer: "Islamic state founded by Osman in northwestern Anatolia. Based at Istanbul from 1453-1922, encompassing Middle East, North Africa, and SE Europe." },
+      { id: "u3-f5", prompt: "Safavids", answer: "A Shi'ite Muslim dynasty that ruled in Persia (16th-18th centuries) with a mixed culture of Persians, Ottomans, and Arabs." },
+      { id: "u3-f6", prompt: "Songhai", answer: "West African empire that conquered Mali and controlled trade into the 16th century; eventually defeated by Moroccans." },
+      { id: "u3-f7", prompt: "Devshirme", answer: "'Selection' in Turkish. System where Christian boys were taken by the Ottoman state to serve as Janissaries." },
+      { id: "u3-f8", prompt: "Janissary", answer: "Elite Ottoman guard recruited from Christian populations through the devshirme system; often converted to Islam." },
+      { id: "u3-f9", prompt: "Samurai", answer: "Class of warriors in feudal Japan who pledged loyalty to a noble in return for land." },
+      { id: "u3-f10", prompt: "Divine Right", answer: "The idea that monarchs are God's representatives on earth and are therefore answerable only to God." },
+      { id: "u3-f11", prompt: "Absolute Monarchy", answer: "System of government where the head of state is a hereditary position and the monarch has almost complete power." },
+      { id: "u3-f12", prompt: "Versailles", answer: "Palace constructed by Louis XIV outside of Paris to glorify his rule and subdue the nobility." },
+      { id: "u3-f13", prompt: "Zamindars", answer: "Archaic tax system of the Mughal empire where decentralized lords collected tribute for the emperor." },
+      { id: "u3-f14", prompt: "Taj Mahal", answer: "Mausoleum at Agra built by Shah Jahan (1649) for his wife; illustrates syncretic blend of Indian and Arabic styles." },
+      { id: "u3-f15", prompt: "Tax farming", answer: "System where the government hires private individuals to collect taxes; used by Ottoman rulers to generate money for expansion." },
+      { id: "u3-f16", prompt: "Protestant Reformation", answer: "Religious reform movement begun by Martin Luther in 1519; resulted in several new Christian denominations." },
+      { id: "u3-f17", prompt: "95 Theses", answer: "Arguments written by Martin Luther against the Catholic church, posted in 1517; led to his excommunication." },
+      { id: "u3-f18", prompt: "Martin Luther", answer: "German monk who criticized the Roman Catholic Church and began the Protestant Reformation in 1517." },
+      { id: "u3-f19", prompt: "Counter Reformation", answer: "The Catholic Church's reaction to the Reformation; reaffirmed papal authority and created the Jesuits." },
+      { id: "u3-f20", prompt: "Jesuits", answer: "Society of Jesus; teaching and missionary order founded to resist the spread of Protestantism." },
+      { id: "u3-f21", prompt: "Indulgence", answer: "A pardon given by the Roman Catholic Church in return for repentance for sins." },
+      { id: "u3-f22", prompt: "Simony", answer: "The buying and selling of church offices." },
+      { id: "u3-f23", prompt: "Inquisition", answer: "Roman Catholic tribunal for investigating and prosecuting charges of heresy." },
+      { id: "u3-f24", prompt: "Thirty Years War", answer: "(1618-1648) War within the Holy Roman Empire between Protestants and Catholics; ended with Treaty of Westphalia." },
+      { id: "u3-f25", prompt: "John Calvin", answer: "French theologian who developed Calvinism; believed in the doctrine of predestination." },
+      { id: "u3-f26", prompt: "Sikhism", answer: "Monotheistic religion founded in northern India (16th century) combining elements of Hinduism and Islam." },
+      { id: "u3-f27", prompt: "Shogunate", answer: "Japanese system of government under a shogun (military warlord) while the emperor was a figurehead." },
+      { id: "u3-f28", prompt: "Bazaar", answer: "A covered market in Islamic cities." },
+      { id: "u3-f29", prompt: "Byzantine Empire", answer: "(330-1453) Eastern half of the Roman Empire; capital was Constantinople (now Istanbul)." },
+      { id: "u3-f30", prompt: "Persians", answer: "Ethnic group settled in modern-day Iran; rivals for control of Mesopotamia." },
+      { id: "u3-f31", prompt: "Shia Islam", answer: "The sect of Islam practiced primarily in Persia." },
+      { id: "u3-f32", prompt: "Sunni Islam", answer: "The denomination of Islam practiced by the majority of Muslims." },
+      { id: "u3-f33", prompt: "Tenochtitlan", answer: "Capital of the Aztec Empire, located on an island in Lake Texcoco; Mexico City was built on its ruins." },
+      { id: "u3-f34", prompt: "Hernan Cortes", answer: "Spanish conquistador who defeated the Aztecs and conquered Mexico (1485-1547)." },
+      { id: "u3-f35", prompt: "Smallpox", answer: "Highly contagious viral disease responsible for killing vast numbers of Native Americans." },
+      { id: "u3-f36", prompt: "Mita System", answer: "Tribute system to the Inca government in the form of labor for public service projects." },
+      { id: "u3-f37", prompt: "Timbuktu", answer: "City in Mali that became a major terminus of trans-Saharan trade and a center of Islamic learning." },
+      { id: "u3-f38", prompt: "Berbers", answer: "North African, primarily Muslim people living in settled or nomadic tribes from Morocco to Egypt." },
+      { id: "u3-f39", prompt: "Epic of Sundiata", answer: "Epic poem of the Malinke people telling the story of the founder of the Mali Empire." },
+      { id: "u3-f40", prompt: "African Religion", answer: "Traditional beliefs emphasizing ancestral spirits, sacrifices, and charms rather than missionary impulses." },
+      { id: "u3-f41", prompt: "Peter the Great", answer: "Russian Tsar (r. 1689-1725) who westernized Russia and moved the capital to St. Petersburg." },
+      { id: "u3-f42", prompt: "Eastern Orthodox Church", answer: "Christian followers in the Eastern Roman Empire; split from the Roman Catholic Church." },
+      { id: "u3-f43", prompt: "Cossacks", answer: "Peoples of the Russian Empire who lived as herders or mercenaries; led the conquest of Siberia." },
+      { id: "u3-f44", prompt: "Boyars", answer: "Russian landholding aristocrats; possessed less political power than western European counterparts." },
+      { id: "u3-f45", prompt: "Hagia Sophia", answer: "Famous example of Byzantine architecture; converted into a Mosque by the Ottomans." },
+      { id: "u3-f46", prompt: "Shari'ah", answer: "Islamic law code drawn up by scholars to regulate daily life." },
+      { id: "u3-f47", prompt: "Imam", answer: "The man who leads prayers in a mosque." },
+      { id: "u3-f48", prompt: "The Thousand and One Nights", answer: "Group of tales set in Baghdad, including romances and adventures like Aladdin." },
+      { id: "u3-f49", prompt: "Forbidden City", answer: "Ming Dynasty monument in Beijing built for the emperor; commoners and foreigners were forbidden to enter." },
+      { id: "u3-f50", prompt: "Aztec Tribute System", answer: "System that brought food and sacrificial victims into the empire from conquered territories." }
     ]
   },
   {
@@ -244,7 +434,7 @@ export const units: Unit[] = [
       }
     ],
     flashcards: [
-      { id: "u4-f1", prompt: "The economic theory that trade generates wealth and is stimulated by the accumulation of profitable balances.", answer: "Mercantilism" }
+      { id: "u4-f1", prompt: "Mercantilism", answer: "The economic theory that trade generates wealth and is stimulated by the accumulation of profitable balances." }
     ]
   },
   {
@@ -262,7 +452,7 @@ export const units: Unit[] = [
       }
     ],
     flashcards: [
-      { id: "u5-f1", prompt: "The leader of the Haitian Revolution.", answer: "Toussaint Louverture" }
+      { id: "u5-f1", prompt: "Toussaint Louverture", answer: "The leader of the Haitian Revolution." }
     ]
   },
   {
@@ -280,7 +470,7 @@ export const units: Unit[] = [
       }
     ],
     flashcards: [
-      { id: "u6-f1", prompt: "The belief that Europeans had a duty to 'civilize' other races.", answer: "White Man's Burden" }
+      { id: "u6-f1", prompt: "White Man's Burden", answer: "The belief that Europeans had a duty to 'civilize' other races." }
     ]
   },
   {
@@ -298,7 +488,7 @@ export const units: Unit[] = [
       }
     ],
     flashcards: [
-      { id: "u7-f1", prompt: "The systematic killing of 6 million Jews by the Nazi regime.", answer: "The Holocaust" }
+      { id: "u7-f1", prompt: "The Holocaust", answer: "The systematic killing of 6 million Jews by the Nazi regime." }
     ]
   },
   {
@@ -316,7 +506,7 @@ export const units: Unit[] = [
       }
     ],
     flashcards: [
-      { id: "u8-f1", prompt: "The policy of preventing the spread of communism.", answer: "Containment" }
+      { id: "u8-f1", prompt: "Containment", answer: "The policy of preventing the spread of communism." }
     ]
   },
   {
@@ -334,7 +524,7 @@ export const units: Unit[] = [
       }
     ],
     flashcards: [
-      { id: "u9-f1", prompt: "The rapid increase in agricultural production in the mid-20th century.", answer: "Green Revolution" }
+      { id: "u9-f1", prompt: "Green Revolution", answer: "The rapid increase in agricultural production in the mid-20th century." }
     ]
   }
 ];
