@@ -1,18 +1,50 @@
-// Update this page (the content is just a fallback if you fail to update the page)
-
-import { MadeWithDyad } from "@/components/made-with-dyad";
+import Layout from "@/components/Layout";
+import { units } from "@/data/content";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Link } from "react-router-dom";
+import { ArrowRight, BrainCircuit, GraduationCap } from "lucide-react";
 
 const Index = () => {
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100">
-      <div className="text-center">
-        <h1 className="text-4xl font-bold mb-4">Welcome to Your Blank App</h1>
-        <p className="text-xl text-gray-600">
-          Start building your amazing project here!
-        </p>
+    <Layout>
+      <div className="space-y-8">
+        <header className="space-y-2">
+          <h1 className="text-4xl font-bold tracking-tight">AP World History</h1>
+          <p className="text-xl text-[#73726E]">Master the curriculum with active recall and unit-specific practice.</p>
+        </header>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {units.map((unit) => (
+            <Card key={unit.id} className="border-[#E9E9E8] shadow-none hover:border-[#D3D3D2] transition-colors bg-white">
+              <CardHeader className="pb-3">
+                <div className="text-xs font-bold text-[#ACABA9] uppercase tracking-wider mb-1">
+                  Unit {unit.id} • {unit.period}
+                </div>
+                <CardTitle className="text-xl">{unit.title}</CardTitle>
+                <CardDescription className="text-[#73726E] leading-relaxed">
+                  {unit.description}
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="flex gap-3">
+                <Button asChild variant="outline" className="flex-1 border-[#E9E9E8] hover:bg-[#F5F5F4]">
+                  <Link to={`/quiz/${unit.id}`} className="flex items-center gap-2">
+                    <GraduationCap size={16} />
+                    Quiz
+                  </Link>
+                </Button>
+                <Button asChild variant="outline" className="flex-1 border-[#E9E9E8] hover:bg-[#F5F5F4]">
+                  <Link to={`/flashcards/${unit.id}`} className="flex items-center gap-2">
+                    <BrainCircuit size={16} />
+                    Cards
+                  </Link>
+                </Button>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
       </div>
-      <MadeWithDyad />
-    </div>
+    </Layout>
   );
 };
 
