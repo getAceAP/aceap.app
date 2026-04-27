@@ -3,7 +3,7 @@ import { units } from "@/data/content";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
-import { BrainCircuit, GraduationCap, ArrowLeft } from "lucide-react";
+import { BrainCircuit, GraduationCap, ArrowLeft, FileText } from "lucide-react";
 
 const Units = () => {
   return (
@@ -32,18 +32,24 @@ const Units = () => {
                   {unit.description}
                 </CardDescription>
               </CardHeader>
-              <CardContent className="flex gap-3">
-                <Button asChild variant="outline" className="flex-1 border-border hover:bg-muted">
+              <CardContent className="flex flex-wrap gap-3">
+                <Button asChild variant="outline" className="flex-1 min-w-[100px] border-border hover:bg-muted">
                   <Link to={`/quiz/${unit.id}`} className="flex items-center gap-2">
                     <GraduationCap size={16} />
                     Quiz
                   </Link>
                 </Button>
-                <Button asChild variant="outline" className="flex-1 border-border hover:bg-muted">
+                <Button asChild variant="outline" className="flex-1 min-w-[100px] border-border hover:bg-muted">
                   <Link to={`/flashcards/${unit.id}`} className="flex items-center gap-2">
                     <BrainCircuit size={16} />
                     Cards
                   </Link>
+                </Button>
+                <Button variant="outline" className="flex-1 min-w-[100px] border-border hover:bg-muted opacity-60 cursor-not-allowed">
+                  <div className="flex items-center gap-2">
+                    <FileText size={16} />
+                    Guide
+                  </div>
                 </Button>
               </CardContent>
             </Card>
