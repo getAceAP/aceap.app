@@ -36,13 +36,13 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
           </div>
           
           {/* Right: Actions */}
-          <div className="flex items-center gap-2 sm:gap-3">
+          <div className="flex items-center gap-1 sm:gap-3">
             <ThemeToggle />
             <div className="h-4 w-[1px] bg-border mx-1 hidden sm:block" />
-            <Button asChild variant="ghost" size="sm" className="hidden sm:flex font-semibold">
+            <Button asChild variant="ghost" size="sm" className="flex font-semibold text-xs sm:text-sm px-2 sm:px-3">
               <Link to="/login">Login</Link>
             </Button>
-            <Button asChild size="sm" className="rounded-full px-4 sm:px-5 font-semibold shadow-md shadow-primary/10 text-xs sm:text-sm">
+            <Button asChild size="sm" className="rounded-full px-3 sm:px-5 font-semibold shadow-md shadow-primary/10 text-xs sm:text-sm">
               <Link to="/signup">Signup</Link>
             </Button>
           </div>
