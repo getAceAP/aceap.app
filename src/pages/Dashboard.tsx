@@ -40,7 +40,7 @@ const Dashboard = () => {
   return (
     <Layout>
       <div className="space-y-8">
-        <header className="space-y-2">
+        <header className="space-y-2 text-center">
           <h1 className="text-4xl font-bold tracking-tight">Select Subject</h1>
           <p className="text-xl text-muted-foreground">Choose a course to start your revision journey.</p>
         </header>
