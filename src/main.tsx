@@ -2,7 +2,6 @@ import { createRoot } from "react-dom/client";
 import App from "./App.tsx";
 import "./globals.css";
 import { ThemeProvider } from "./components/ThemeProvider";
-import { AudioProvider } from "./components/Layout"; // <-- new import
 import { registerSW } from 'virtual:pwa-register';
 import { toast } from "sonner";
 
@@ -24,8 +23,6 @@ const updateSW = registerSW({
 
 createRoot(document.getElementById("root")!).render(
   <ThemeProvider attribute="class" defaultTheme="light" enableSystem>
-    <AudioProvider> {/* <-- added provider */}
-      <App />
-    </AudioProvider>
+    <App />
   </ThemeProvider>
 );
