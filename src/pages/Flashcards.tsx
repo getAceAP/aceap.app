@@ -9,6 +9,7 @@ import { ArrowLeft, ArrowRight, CheckCircle2, XCircle, RefreshCcw, Brain, Eye, S
 import { cn } from "@/lib/utils";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { motion, AnimatePresence } from "framer-motion";
+import { playSound } from "@/utils/sounds";
 
 const Flashcards = () => {
   const { unitId } = useParams();
@@ -59,8 +60,10 @@ const Flashcards = () => {
 
     if (correct) {
       setCorrectCount(prev => prev + 1);
+      playSound('correct');
     } else {
       setIncorrectCount(prev => prev + 1);
+      playSound('wrong');
     }
   };
 
@@ -69,13 +72,16 @@ const Flashcards = () => {
     setIsSubmitted(true);
     setIncorrectCount(prev => prev + 1);
     setOverrideSet(false);
+    playSound('wrong');
   };
 
   const handleNormalResult = (correct: boolean) => {
     if (correct) {
       setCorrectCount(prev => prev + 1);
+      playSound('correct');
     } else {
       setIncorrectCount(prev => prev + 1);
+      playSound('wrong');
     }
     handleNext();
   };
@@ -111,6 +117,7 @@ const Flashcards = () => {
     if (!isCorrect) {
       setCorrectCount(prev => prev + 1);
       setIncorrectCount(prev => Math.max(prev - 1, 0));
+      playSound('correct');
     }
     setIsCorrect(true);
     setOverrideSet(true);
@@ -121,6 +128,7 @@ const Flashcards = () => {
     if (isCorrect) {
       setIncorrectCount(prev => prev + 1);
       setCorrectCount(prev => Math.max(prev - 1, 0));
+      playSound('wrong');
     }
     setIsCorrect(false);
     setOverrideSet(true);
