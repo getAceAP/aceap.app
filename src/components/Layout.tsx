@@ -12,7 +12,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
   return (
     <div className="min-h-screen bg-background text-foreground font-sans selection:bg-primary/20">
       <nav className="sticky top-0 z-50 bg-background/80 backdrop-blur-md border-b border-border px-4 sm:px-6 py-3">
-        <div className="max-w-5xl mx-auto flex items-center justify-between">
+        <div className="max-w-5xl mx-auto flex items-center justify-between relative">
           {/* Left: Logo */}
           <Link to="/" className="flex items-center gap-2 font-bold text-lg sm:text-xl hover:opacity-80 transition-opacity shrink-0">
             <div className="bg-primary text-primary-foreground p-1.5 rounded-lg shadow-lg shadow-primary/20">
@@ -21,8 +21,8 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
             <span className="tracking-tight">AceAP<span className="text-primary">.app</span></span>
           </Link>
 
-          {/* Center: Dashboard (Hidden on very small screens if not on dashboard) */}
-          <div className="hidden md:flex items-center justify-center flex-1 px-4">
+          {/* Center: Dashboard (Perfectly centered using absolute positioning) */}
+          <div className="hidden md:flex absolute left-1/2 -translate-x-1/2 items-center justify-center">
             <Link 
               to="/dashboard" 
               className={cn(
