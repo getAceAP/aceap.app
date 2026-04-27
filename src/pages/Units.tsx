@@ -35,7 +35,7 @@ const Units = () => {
               <CardContent className="flex flex-wrap gap-3">
                 <Button asChild variant="outline" className="flex-1 min-w-[100px] border-border hover:bg-muted">
                   <Link to={`/quiz/${unit.id}`} className="flex items-center gap-2">
-                    <GraduationCap size={16} />
+                    <graduationCap size={16} />
                     Quiz
                   </Link>
                 </Button>
@@ -45,11 +45,11 @@ const Units = () => {
                     Cards
                   </Link>
                 </Button>
-                <Button variant="outline" className="flex-1 min-w-[100px] border-border hover:bg-muted opacity-60 cursor-not-allowed">
-                  <div className="flex items-center gap-2">
+                <Button asChild variant="outline" className="flex-1 min-w-[100px] border-border hover:bg-muted">
+                  <Link to={`/guide/${unit.id}`} className="flex items-center gap-2">
                     <FileText size={16} />
                     Guide
-                  </div>
+                  </Link>
                 </Button>
               </CardContent>
             </Card>
