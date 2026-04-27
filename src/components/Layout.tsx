@@ -23,6 +23,9 @@ export const useAudio = () => {
   return ctx;
 };
 
+const correctBufferRef = useRef<AudioBuffer | null>(null);
+const incorrectBufferRef = useRef<AudioBuffer | null>(null);
+
 function loadBuffer(url: string): Promise<AudioBuffer> {
   return fetch(url)
     .then((res) => res.arrayBuffer())
@@ -38,10 +41,6 @@ function getAudioCtx() {
 }
 
 export const AudioProvider = ({ children }: { children: React.ReactNode }) => {
-  // Refs must be inside a component/hook
-  const correctBufferRef = useRef<AudioBuffer | null>(null);
-  const incorrectBufferRef = useRef<AudioBuffer | null>(null);
-
   const [muted, setMuted] = useState(() => {
     try {
       return JSON.parse(localStorage.getItem("aceap_mute") || "false");
@@ -53,6 +52,7 @@ export const AudioProvider = ({ children }: { children: React.ReactNode }) => {
   useEffect(() => {
     localStorage.setItem("aceap_mute", JSON.stringify(muted));
     if (!muted) {
+      // Ensure audio context is resumed on first user interaction
       const resume = async () => {
         const ctx = getAudioCtx();
         if (ctx.state === "suspended") await ctx.resume();
@@ -71,14 +71,12 @@ export const AudioProvider = ({ children }: { children: React.ReactNode }) => {
       return;
     }
     let mounted = true;
-    Promise.all([loadBuffer(correctSfx), loadBuffer(incorrectSfx)]).then(
-      ([correctBuf, incorrectBuf]) => {
-        if (mounted) {
-          correctBufferRef.current = correctBuf;
-          incorrectBufferRef.current = incorrectBuf;
-        }
+    Promise.all([loadBuffer(correctSfx), loadBuffer(incorrectSfx)]).then(([correctBuf, incorrectBuf]) => {
+      if (mounted) {
+        correctBufferRef.current = correctBuf;
+        incorrectBufferRef.current = incorrectBuf;
       }
-    );
+    });
     return () => {
       mounted = false;
     };
