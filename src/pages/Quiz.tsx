@@ -54,32 +54,34 @@ const Quiz = () => {
   if (isFinished) {
     return (
       <Layout>
-        <div className="max-w-md mx-auto text-center space-y-6 py-12">
+        <motion.div 
+          initial={{ opacity: 0, scale: 0.95 }}
+          animate={{ opacity: 1, scale: 1 }}
+          className="max-w-md mx-auto text-center space-y-8 py-6 sm:py-12"
+        >
           <div className="space-y-2">
-            <h2 className="text-3xl font-bold">Quiz Complete!</h2>
+            <h2 className="text-2xl sm:text-3xl font-bold">Quiz Complete!</h2>
             <p className="text-muted-foreground">You scored {score} out of {sessionQuestions.length}</p>
           </div>
-          <div className="text-6xl font-bold text-foreground">
-            {Math.round((score / sessionQuestions.length) * 100)}%
-          </div>
+          
           <div className="flex gap-4">
-            <Button onClick={() => window.location.reload()} className="flex-1">
+            <Button onClick={() => navigate("/units/ap-world")} className="flex-1">
               <RefreshCcw className="mr-2 h-4 w-4" /> Try Again
             </Button>
-            <Button variant="outline" onClick={() => navigate("/")} className="flex-1">
+            <Button variant="outline" onClick={() => navigate("/units/ap-world")} className="flex-1">
               Back to Units
             </Button>
           </div>
-        </div>
+        </motion.div>
       </Layout>
     );
   }
 
   return (
     <Layout>
-      <div className="space-y-8">
+      <div className="space-y-6 sm:space-y-8">
         <div className="flex items-center justify-between">
-          <Button variant="ghost" onClick={() => navigate("/")} className="text-muted-foreground">
+          <Button variant="ghost" onClick={() => navigate("/units/ap-world")} className="text-muted-foreground">
             <ArrowLeft className="mr-2 h-4 w-4" /> Exit Quiz
           </Button>
           <span className="text-sm font-medium text-muted-foreground">
