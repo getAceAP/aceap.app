@@ -53,18 +53,19 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
       <div className="md:hidden fixed bottom-6 left-1/2 -translate-x-1/2 z-50">
         <Link 
           to="/dashboard" 
-          className="flex items-center gap-2 bg-primary text-primary-foreground px-6 py-3 rounded-full shadow-2xl shadow-primary/40 font-bold text-sm"
+          className="flex items-center gap-2 bg-primary text-primary-foreground px-6 py-3 rounded-full shadow-2xl shadow-primary/40 font-bold text-sm active:scale-95 transition-transform"
         >
           <LayoutDashboard size={18} />
           Dashboard
         </Link>
       </div>
 
-      <main className="max-w-5xl mx-auto px-4 sm:px-6 py-8 sm:py-12 pb-24 md:pb-12">
+      <main className="max-w-5xl mx-auto px-4 sm:px-6 py-8 sm:py-12">
         {children}
       </main>
 
-      <footer className="max-w-5xl mx-auto px-4 sm:px-6 py-12 border-t border-border">
+      {/* Added extra bottom padding on mobile to clear the fixed button */}
+      <footer className="max-w-5xl mx-auto px-4 sm:px-6 py-12 pb-32 md:pb-12 border-t border-border">
         <div className="flex flex-col md:flex-row justify-between items-center gap-6 text-center md:text-left text-sm text-muted-foreground">
           <p>© {new Date().getFullYear()} AceAP.app — The Ultimate AP Revision Tool</p>
           <div className="flex gap-6">
