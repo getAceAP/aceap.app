@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import Layout from "@/components/Layout";
+import { useAudio } from "@/components/Layout";
 import { units, Flashcard } from "@/data/content";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -14,7 +15,8 @@ const Flashcards = () => {
   const { unitId } = useParams();
   const navigate = useNavigate();
   const unit = units.find((u) => u.id === Number(unitId));
-  
+  const { playCorrect, playIncorrect } = useAudio();
+
   const [mode, setMode] = useState<"active" | "normal">("active");
   const [shuffledCards, setShuffledCards] = useState<Flashcard[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -24,10 +26,10 @@ const Flashcards = () => {
   const [isFinished, setIsFinished] = useState(false);
   const [isFlipped, setIsFlipped] = useState(false);
   const [showHint, setShowHint] = useState(false);
-  
+
   const [correctCount, setCorrectCount] = useState(0);
   const [incorrectCount, setIncorrectCount] = useState(0);
-  const [overrideSet, setOverrideSet] = useState<boolean>(false); // tracks if user manually overrode
+  const [overrideSet, setOverrideSet] = useState<boolean>(false);
 
   useEffect(() => {
     if (unit) {
@@ -51,31 +53,36 @@ const Flashcards = () => {
 
     const normalizedInput = userInput.trim().toLowerCase();
     const normalizedTarget = currentCard.prompt.trim().toLowerCase();
-    
+
     const correct = normalizedInput === normalizedTarget;
     setIsCorrect(correct);
     setIsSubmitted(true);
-    setOverrideSet(false); // reset any previous override
+    setOverrideSet(false);
 
     if (correct) {
-      setCorrectCount(prev => prev + 1);
+      setCorrectCount((prev) => prev + 1);
+      playCorrect();
     } else {
-      setIncorrectCount(prev => prev + 1);
+      setIncorrectCount((prev) => prev + 1);
+      playIncorrect();
     }
   };
 
   const handleShowAnswer = () => {
     setIsCorrect(false);
     setIsSubmitted(true);
-    setIncorrectCount(prev => prev + 1);
+    setIncorrectCount((prev) => prev + 1);
     setOverrideSet(false);
+    playIncorrect();
   };
 
   const handleNormalResult = (correct: boolean) => {
     if (correct) {
-      setCorrectCount(prev => prev + 1);
+      setCorrectCount((prev) => prev + 1);
+      playCorrect();
     } else {
-      setIncorrectCount(prev => prev + 1);
+      setIncorrectCount((prev) => prev + 1);
+      playIncorrect();
     }
     handleNext();
   };
@@ -109,59 +116,24 @@ const Flashcards = () => {
   const overrideCorrect = () => {
     if (!isSubmitted) return;
     if (!isCorrect) {
-      setCorrectCount(prev => prev + 1);
-      setIncorrectCount(prev => Math.max(prev - 1, 0));
+      setCorrectCount((prev) => prev + 1);
+      setIncorrectCount((prev) => Math.max(prev - 1, 0));
     }
     setIsCorrect(true);
     setOverrideSet(true);
+    playCorrect();
   };
 
   const overrideIncorrect = () => {
     if (!isSubmitted) return;
     if (isCorrect) {
-      setIncorrectCount(prev => prev + 1);
-      setCorrectCount(prev => Math.max(prev - 1, 0));
+      setIncorrectCount((prev) => prev + 1);
+      setCorrectCount((prev) => Math.max(prev - 1, 0));
     }
     setIsCorrect(false);
     setOverrideSet(true);
+    playIncorrect();
   };
-
-  if (isFinished) {
-    return (
-      <Layout>
-        <motion.div 
-          initial={{ opacity: 0, scale: 0.95 }}
-          animate={{ opacity: 1, scale: 1 }}
-          className="max-w-md mx-auto text-center space-y-8 py-6 sm:py-12"
-        >
-          <div className="space-y-2">
-            <h2 className="text-2xl sm:text-3xl font-bold">Unit {unit.id} Complete!</h2>
-            <p className="text-muted-foreground">Session Summary</p>
-          </div>
-          
-          <div className="grid grid-cols-2 gap-4">
-            <div className="p-4 sm:p-6 rounded-2xl bg-green-500/10 border border-green-500/20">
-              <div className="text-2xl sm:text-3xl font-bold text-green-600 dark:text-green-400">{correctCount}</div>
-              <div className="text-[10px] sm:text-xs font-bold uppercase tracking-widest text-green-600/70">Correct</div>
-            </div>
-            <div className="p-4 sm:p-6 rounded-2xl bg-destructive/10 border border-destructive/20">
-              <div className="text-2xl sm:text-3xl font-bold text-destructive">{incorrectCount}</div>
-              <div className="text-[10px] sm:text-xs font-bold uppercase tracking-widest text-destructive/70">Incorrect</div>
-            </div>
-          </div>
-
-          <div className="flex flex-col sm:flex-row gap-3">
-            <Button onClick={resetSession} className="w-full h-12 rounded-xl">
-              <RefreshCcw className="mr-2 h-4 w-4" /> Restart
-            </Button>
-            <Button variant="outline" onClick={() => navigate("/units/ap-world")} className="w-full h-12 rounded-xl">
-              Back to Units
-            </Button>
-          </div>
-        </motion.div>
-      </Layout>
-    );
-  }
 
   return (
     <Layout>
@@ -185,7 +157,7 @@ const Flashcards = () => {
               </span>
             </div>
           </div>
-          
+
           <Tabs value={mode} onValueChange={(v) => { setMode(v as any); setIsFlipped(false); setUserInput(""); setIsSubmitted(false); setShowHint(false); setOverrideSet(false); }} className="w-full">
             <TabsList className="grid w-full grid-cols-2 rounded-xl h-11">
               <TabsTrigger value="active" className="rounded-lg gap-2 text-xs sm:text-sm">
@@ -199,7 +171,7 @@ const Flashcards = () => {
         </div>
 
         <div className="space-y-6 sm:space-y-8">
-          <div 
+          <div
             className="perspective-1000 cursor-pointer touch-none"
             onClick={() => mode === "normal" && setIsFlipped(!isFlipped)}
           >
@@ -222,7 +194,7 @@ const Flashcards = () => {
               </Card>
 
               {/* Back Side */}
-              <Card 
+              <Card
                 className="absolute inset-0 w-full h-full border-border shadow-none bg-accent flex items-center justify-center text-center p-6 sm:p-8 backface-hidden overflow-hidden"
                 style={{ transform: "rotateY(180deg)" }}
               >
@@ -237,12 +209,12 @@ const Flashcards = () => {
 
           <AnimatePresence mode="wait">
             {mode === "active" ? (
-              <motion.form 
+              <motion.form
                 key="active-form"
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -10 }}
-                onSubmit={handleSubmit} 
+                onSubmit={handleSubmit}
                 className="space-y-4"
               >
                 <div className="space-y-2">
@@ -273,7 +245,7 @@ const Flashcards = () => {
                     <Button type="submit" className="flex-[2] h-12 sm:h-14 rounded-xl text-base sm:text-lg font-semibold shadow-lg shadow-primary/10">
                       Check
                     </Button>
-                    <Button 
+                    <Button
                       type="button"
                       variant="outline"
                       onClick={() => showHint ? handleShowAnswer() : setShowHint(true)}
@@ -283,15 +255,15 @@ const Flashcards = () => {
                     </Button>
                   </div>
                 ) : (
-                  <motion.div 
+                  <motion.div
                     initial={{ opacity: 0, scale: 0.95 }}
                     animate={{ opacity: 1, scale: 1 }}
                     className="space-y-4"
                   >
                     <div className={cn(
                       "p-3 sm:p-4 rounded-xl flex items-center gap-3 border",
-                      isCorrect 
-                        ? "bg-green-500/10 text-green-600 dark:text-green-400 border-green-500/20" 
+                      isCorrect
+                        ? "bg-green-500/10 text-green-600 dark:text-green-400 border-green-500/20"
                         : "bg-destructive/10 text-destructive border-destructive/20"
                     )}>
                       {isCorrect ? <CheckCircle2 size={18} /> : <XCircle size={18} />}
@@ -334,7 +306,7 @@ const Flashcards = () => {
                 )}
               </motion.form>
             ) : (
-              <motion.div 
+              <motion.div
                 key="normal-controls"
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -352,14 +324,14 @@ const Flashcards = () => {
                   </div>
                 ) : (
                   <div className="grid grid-cols-2 gap-3 sm:gap-4">
-                    <Button 
-                      variant="outline" 
+                    <Button
+                      variant="outline"
                       onClick={() => handleNormalResult(false)}
                       className="h-12 sm:h-14 rounded-xl border-destructive text-destructive hover:bg-destructive/10 text-xs sm:text-sm"
                     >
                       <XCircle className="mr-1.5 h-4 w-4 sm:h-5 sm:w-5" /> Incorrect
                     </Button>
-                    <Button 
+                    <Button
                       onClick={() => handleNormalResult(true)}
                       className="h-12 sm:h-14 rounded-xl bg-green-600 hover:bg-green-700 text-white text-xs sm:text-sm"
                     >
