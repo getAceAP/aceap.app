@@ -11,6 +11,7 @@ import { BookOpen, Loader2 } from "lucide-react";
 import { supabase } from "@/utils/supabase";
 import { useAuth } from "@/context/AuthContext";
 import { showError, showSuccess } from "@/utils/toast";
+import { GoogleIcon } from "@/components/icons/GoogleIcon";
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -96,10 +97,11 @@ const Login = () => {
             </div>
             <Button 
               variant="outline" 
-              className="w-full rounded-xl h-11" 
+              className="w-full rounded-xl h-11 flex items-center justify-center gap-2" 
               onClick={signInWithGoogle}
             >
-              Google
+              <GoogleIcon className="w-5 h-5" />
+              Continue with Google
             </Button>
           </CardContent>
           <CardFooter className="flex flex-wrap items-center justify-center gap-1 text-sm text-muted-foreground">
