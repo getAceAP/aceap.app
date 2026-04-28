@@ -58,7 +58,7 @@ const Dashboard = () => {
                 <Sparkles size={12} />
                 New Feature
               </div>
-              <h2 className="text-2xl sm:text-3xl font-bold">2024 DBQ Predictions</h2>
+              <h2 className="text-2xl sm:text-3xl font-bold">2026 DBQ Predictions</h2>
               <p className="text-primary-foreground/80 max-w-md">
                 See which units are most likely to appear on this year's exam based on historical data.
               </p>
