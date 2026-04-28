@@ -5,17 +5,10 @@ import { ThemeToggle } from "./ThemeToggle";
 import { SoundToggle } from "./SoundToggle";
 import { Button } from "./ui/button";
 import { cn } from "@/lib/utils";
-import { useAuth } from "./AuthProvider";
-import { signOut } from "@/utils/auth";
 
 const Layout = ({ children }: { children: React.ReactNode }) => {
   const location = useLocation();
-  const { user, loading } = useAuth();
   const isDashboard = location.pathname === "/dashboard";
-
-  const handleSignOut = async () => {
-    await signOut();
-  };
 
   return (
     <div className="min-h-screen bg-background text-foreground font-sans selection:bg-primary/20">
@@ -48,33 +41,12 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
             <SoundToggle />
             <ThemeToggle />
             <div className="h-4 w-[1px] bg-border mx-1 hidden sm:block" />
-            
-            {loading ? (
-              <div className="h-8 w-8 rounded-full bg-muted animate-pulse" />
-            ) : user ? (
-              <>
-                <div className="flex items-center gap-2 text-sm">
-                  <span className="font-medium">{user.email}</span>
-                </div>
-                <Button 
-                  onClick={handleSignOut}
-                  variant="ghost" 
-                  size="sm" 
-                  className="flex font-semibold text-xs sm:text-sm px-2 sm:px-3"
-                >
-                  Logout
-                </Button>
-              </>
-            ) : (
-              <>
-                <Button asChild variant="ghost" size="sm" className="flex font-semibold text-xs sm:text-sm px-2 sm:px-3">
-                  <Link to="/login">Login</Link>
-                </Button>
-                <Button asChild size="sm" className="rounded-full px-3 sm:px-5 font-semibold shadow-md shadow-primary/10 text-xs sm:text-sm">
-                  <Link to="/signup">Signup</Link>
-                </Button>
-              </>
-            )}
+            <Button asChild variant="ghost" size="sm" className="flex font-semibold text-xs sm:text-sm px-2 sm:px-3">
+              <Link to="/login">Login</Link>
+            </Button>
+            <Button asChild size="sm" className="rounded-full px-3 sm:px-5 font-semibold shadow-md shadow-primary/10 text-xs sm:text-sm">
+              <Link to="/signup">Signup</Link>
+            </Button>
           </div>
         </div>
       </nav>

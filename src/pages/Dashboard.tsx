@@ -2,9 +2,8 @@ import Layout from "@/components/Layout";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
-import { BookOpen, Lock, ArrowRight, User } from "lucide-react";
+import { BookOpen, Lock, ArrowRight } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
-import { useAuth } from "@/components/AuthProvider";
 
 const subjects = [
   {
@@ -38,45 +37,12 @@ const subjects = [
 ];
 
 const Dashboard = () => {
-  const { user, loading } = useAuth();
-
-  if (loading) {
-    return (
-      <Layout>
-        <div className="flex items-center justify-center min-h-screen">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
-        </div>
-      </Layout>
-    );
-  }
-
-  if (!user) {
-    return (
-      <Layout>
-        <div className="max-w-md mx-auto text-center space-y-8 py-12">
-          <div className="space-y-2">
-            <h1 className="text-3xl font-bold">Welcome to AceAP</h1>
-            <p className="text-muted-foreground">Please login to access your study dashboard</p>
-          </div>
-          <div className="space-y-3">
-            <Button asChild className="w-full">
-              <Link to="/login">Login</Link>
-            </Button>
-            <Button variant="outline" asChild className="w-full">
-              <Link to="/signup">Create Account</Link>
-            </Button>
-          </div>
-        </div>
-      </Layout>
-    );
-  }
-
   return (
     <Layout>
       <div className="space-y-8">
         <header className="space-y-2 text-center">
-          <h1 className="text-4xl font-bold tracking-tight">Welcome back, {user.email}</h1>
-          <p className="text-xl text-muted-foreground">Select a subject to start your revision journey.</p>
+          <h1 className="text-4xl font-bold tracking-tight">Select Subject</h1>
+          <p className="text-xl text-muted-foreground">Choose a course to start your revision journey.</p>
         </header>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
