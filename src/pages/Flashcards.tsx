@@ -9,7 +9,6 @@ import { ArrowLeft, ArrowRight, CheckCircle2, XCircle, RefreshCcw, Brain, Eye, S
 import { cn } from "@/lib/utils";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { motion, AnimatePresence } from "framer-motion";
-import { playSound } from "@/utils/sounds";
 
 const Flashcards = () => {
   const { unitId } = useParams();
@@ -28,7 +27,6 @@ const Flashcards = () => {
   
   const [correctCount, setCorrectCount] = useState(0);
   const [incorrectCount, setIncorrectCount] = useState(0);
-  const [overrideSet, setOverrideSet] = useState<boolean>(false); // tracks if user manually overrode
 
   useEffect(() => {
     if (unit) {
@@ -56,14 +54,11 @@ const Flashcards = () => {
     const correct = normalizedInput === normalizedTarget;
     setIsCorrect(correct);
     setIsSubmitted(true);
-    setOverrideSet(false); // reset any previous override
-
+    
     if (correct) {
       setCorrectCount(prev => prev + 1);
-      playSound('correct');
     } else {
       setIncorrectCount(prev => prev + 1);
-      playSound('wrong');
     }
   };
 
@@ -71,17 +66,13 @@ const Flashcards = () => {
     setIsCorrect(false);
     setIsSubmitted(true);
     setIncorrectCount(prev => prev + 1);
-    setOverrideSet(false);
-    playSound('wrong');
   };
 
   const handleNormalResult = (correct: boolean) => {
     if (correct) {
       setCorrectCount(prev => prev + 1);
-      playSound('correct');
     } else {
       setIncorrectCount(prev => prev + 1);
-      playSound('wrong');
     }
     handleNext();
   };
@@ -93,7 +84,6 @@ const Flashcards = () => {
       setIsSubmitted(false);
       setIsFlipped(false);
       setShowHint(false);
-      setOverrideSet(false);
     } else {
       setIsFinished(true);
     }
@@ -108,30 +98,6 @@ const Flashcards = () => {
     setShowHint(false);
     setCorrectCount(0);
     setIncorrectCount(0);
-    setOverrideSet(false);
-  };
-
-  // Manual override handlers
-  const overrideCorrect = () => {
-    if (!isSubmitted) return;
-    if (!isCorrect) {
-      setCorrectCount(prev => prev + 1);
-      setIncorrectCount(prev => Math.max(prev - 1, 0));
-      playSound('correct');
-    }
-    setIsCorrect(true);
-    setOverrideSet(true);
-  };
-
-  const overrideIncorrect = () => {
-    if (!isSubmitted) return;
-    if (isCorrect) {
-      setIncorrectCount(prev => prev + 1);
-      setCorrectCount(prev => Math.max(prev - 1, 0));
-      playSound('wrong');
-    }
-    setIsCorrect(false);
-    setOverrideSet(true);
   };
 
   if (isFinished) {
@@ -194,7 +160,7 @@ const Flashcards = () => {
             </div>
           </div>
           
-          <Tabs value={mode} onValueChange={(v) => { setMode(v as any); setIsFlipped(false); setUserInput(""); setIsSubmitted(false); setShowHint(false); setOverrideSet(false); }} className="w-full">
+          <Tabs value={mode} onValueChange={(v) => { setMode(v as any); setIsFlipped(false); setUserInput(""); setIsSubmitted(false); setShowHint(false); }} className="w-full">
             <TabsList className="grid w-full grid-cols-2 rounded-xl h-11">
               <TabsTrigger value="active" className="rounded-lg gap-2 text-xs sm:text-sm">
                 <Brain size={14} /> Active Recall
@@ -314,27 +280,6 @@ const Flashcards = () => {
                         )}
                       </div>
                     </div>
-
-                    {/* Manual override buttons */}
-                    <div className="flex gap-2">
-                      <Button
-                        variant={isCorrect ? "default" : "outline"}
-                        onClick={overrideCorrect}
-                        disabled={overrideSet && isCorrect}
-                        className="flex-1 h-10 rounded-md"
-                      >
-                        Mark Correct
-                      </Button>
-                      <Button
-                        variant={!isCorrect ? "default" : "outline"}
-                        onClick={overrideIncorrect}
-                        disabled={overrideSet && !isCorrect}
-                        className="flex-1 h-10 rounded-md"
-                      >
-                        Mark Incorrect
-                      </Button>
-                    </div>
-
                     <Button onClick={handleNext} className="w-full h-12 sm:h-14 rounded-xl text-base sm:text-lg font-semibold">
                       {currentIndex < shuffledCards.length - 1 ? "Next Card" : "Finish Session"}
                     </Button>

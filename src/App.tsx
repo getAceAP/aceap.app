@@ -8,7 +8,6 @@ import Dashboard from "./pages/Dashboard";
 import Units from "./pages/Units";
 import Quiz from "./pages/Quiz";
 import Flashcards from "./pages/Flashcards";
-import StudyGuide from "./pages/StudyGuide";
 import Privacy from "./pages/Privacy";
 import Terms from "./pages/Terms";
 import Login from "./pages/Login";
@@ -29,7 +28,6 @@ const App = () => (
           <Route path="/units/ap-world" element={<Units />} />
           <Route path="/quiz/:unitId" element={<Quiz />} />
           <Route path="/flashcards/:unitId" element={<Flashcards />} />
-          <Route path="/guide/:unitId" element={<StudyGuide />} />
           <Route path="/privacy" element={<Privacy />} />
           <Route path="/terms" element={<Terms />} />
           <Route path="/login" element={<Login />} />

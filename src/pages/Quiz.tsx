@@ -7,8 +7,6 @@ import { Progress } from "@/components/ui/progress";
 import { Card, CardContent } from "@/components/ui/card";
 import { CheckCircle2, XCircle, ArrowLeft, RefreshCcw } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { motion } from "framer-motion";
-import { playSound } from "@/utils/sounds";
 
 const Quiz = () => {
   const { unitId } = useParams();
@@ -38,12 +36,8 @@ const Quiz = () => {
     if (isAnswered) return;
     setSelectedOption(option);
     setIsAnswered(true);
-    
     if (option === currentQuestion.correctAnswer) {
       setScore(score + 1);
-      playSound('correct');
-    } else {
-      playSound('wrong');
     }
   };
 
@@ -71,15 +65,7 @@ const Quiz = () => {
           </div>
           
           <div className="flex gap-4">
-            <Button onClick={() => {
-              const shuffled = [...unit.questions].sort(() => 0.5 - Math.random());
-              setSessionQuestions(shuffled.slice(0, 10));
-              setCurrentIndex(0);
-              setSelectedOption(null);
-              setIsAnswered(false);
-              setScore(0);
-              setIsFinished(false);
-            }} className="flex-1">
+            <Button onClick={() => navigate("/units/ap-world")} className="flex-1">
               <RefreshCcw className="mr-2 h-4 w-4" /> Try Again
             </Button>
             <Button variant="outline" onClick={() => navigate("/units/ap-world")} className="flex-1">
