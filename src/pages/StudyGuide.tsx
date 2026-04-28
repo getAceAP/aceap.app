@@ -2,7 +2,7 @@ import { useParams, useNavigate, Link } from "react-router-dom";
 import Layout from "@/components/Layout";
 import { units } from "@/data/content";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, BookOpen, Clock, MapPin, Info, Download } from "lucide-react";
+import { ArrowLeft, BookOpen, Clock, MapPin, Info, Download, Globe, Ship, Users, ShieldAlert } from "lucide-react";
 import { motion } from "framer-motion";
 
 const StudyGuide = () => {
@@ -15,6 +15,7 @@ const StudyGuide = () => {
   const isUnit1 = unit.id === 1;
   const isUnit2 = unit.id === 2;
   const isUnit3 = unit.id === 3;
+  const isUnit4 = unit.id === 4;
 
   return (
     <Layout>
@@ -63,37 +64,15 @@ const StudyGuide = () => {
           className="prose prose-slate dark:prose-invert max-w-none bg-card border border-border rounded-3xl p-8 sm:p-12 shadow-sm space-y-12"
         >
           {isUnit1 ? (
-            <>
-              {/* Unit 1 Content */}
-              <div className="space-y-6">
-                <div className="bg-primary/5 border border-primary/10 rounded-2xl p-6 flex gap-4 items-start not-prose">
-                  <Info className="text-primary shrink-0 mt-1" size={20} />
-                  <div>
-                    <h3 className="font-bold text-primary mb-1">Big Picture Overview</h3>
-                    <p className="text-sm text-muted-foreground leading-relaxed">
-                      Unit 1 (1200-1450) examines how states across the globe established and maintained power through religious legitimization, bureaucratic innovations, and trade expansion.
-                    </p>
-                  </div>
-                </div>
-                {/* ... rest of unit 1 content ... */}
-              </div>
-            </>
+            <div className="text-center py-12">
+              <h2 className="text-2xl font-bold">Unit 1: The Global Tapestry</h2>
+              <p className="text-muted-foreground">Content for Unit 1 is available in the previous version.</p>
+            </div>
           ) : isUnit2 ? (
-            <>
-              {/* Unit 2 Content */}
-              <div className="space-y-6">
-                <div className="bg-primary/5 border border-primary/10 rounded-2xl p-6 flex gap-4 items-start not-prose">
-                  <Info className="text-primary shrink-0 mt-1" size={20} />
-                  <div>
-                    <h3 className="font-bold text-primary mb-1">Big Picture Overview</h3>
-                    <p className="text-sm text-muted-foreground leading-relaxed">
-                      Unit 2 (1200-1450) focuses on the intensification of existing trade networks and the creation of new ones.
-                    </p>
-                  </div>
-                </div>
-                {/* ... rest of unit 2 content ... */}
-              </div>
-            </>
+            <div className="text-center py-12">
+              <h2 className="text-2xl font-bold">Unit 2: Networks of Exchange</h2>
+              <p className="text-muted-foreground">Content for Unit 2 is available in the previous version.</p>
+            </div>
           ) : isUnit3 ? (
             <>
               {/* Unit 3 Content: Land-Based Empires */}
@@ -184,74 +163,171 @@ const StudyGuide = () => {
                       <li><strong>Aztec Sacrifice:</strong> Public rituals demonstrated the state's role in maintaining cosmic order.</li>
                     </ul>
                   </div>
+                </div>
+              </section>
 
-                  <div className="border-l-4 border-orange-500 bg-orange-50 dark:bg-orange-900/20 p-6 rounded-r-xl">
-                    <h3 className="text-xl font-bold mb-2">Monumental Architecture</h3>
-                    <p className="text-sm">Rulers built massive structures to display power and wealth:</p>
-                    <ul className="list-disc list-inside space-y-1 text-sm mt-2">
-                      <li>Versailles (France)</li>
-                      <li>Taj Mahal (Mughal India)</li>
-                      <li>Forbidden City (Ming/Qing China)</li>
-                    </ul>
+              <section className="space-y-6">
+                <h2 className="text-3xl font-bold border-b-2 border-primary/20 pb-2 pt-4">3.4 Comparison in Land-Based Empires</h2>
+                <p>While each empire was unique, they all faced the challenge of governing large, diverse territories.</p>
+                
+                <div className="bg-accent/30 rounded-2xl p-6 not-prose border border-primary/10">
+                  <h3 className="font-bold text-lg mb-4">Common Themes of Consolidation</h3>
+                  <div className="grid sm:grid-cols-2 gap-6">
+                    <div className="space-y-2">
+                      <h4 className="font-bold text-primary flex items-center gap-2">
+                        <Users size={18} /> Centralization
+                      </h4>
+                      <p className="text-sm text-muted-foreground">Shifting power away from local nobles to a central monarch or bureaucracy.</p>
+                    </div>
+                    <div className="space-y-2">
+                      <h4 className="font-bold text-primary flex items-center gap-2">
+                        <Globe size={18} /> Diversity
+                      </h4>
+                      <p className="text-sm text-muted-foreground">Managing multi-ethnic and multi-religious populations (e.g., Ottoman Millet system vs. Mughal tolerance).</p>
+                    </div>
+                  </div>
+                </div>
+              </section>
+            </>
+          ) : isUnit4 ? (
+            <>
+              {/* Unit 4 Content: Transoceanic Interconnections */}
+              <div className="space-y-6">
+                <div className="bg-primary/5 border border-primary/10 rounded-2xl p-6 flex gap-4 items-start not-prose">
+                  <Ship className="text-primary shrink-0 mt-1" size={20} />
+                  <div>
+                    <h3 className="font-bold text-primary mb-1">Big Picture Overview</h3>
+                    <p className="text-sm text-muted-foreground leading-relaxed">
+                      Unit 4 (1450-1750) marks the first time in history that the Eastern and Western Hemispheres were permanently linked. This led to the Columbian Exchange, the rise of maritime empires, and a global shift in economic power.
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              <section className="space-y-6">
+                <h2 className="text-3xl font-bold border-b-2 border-primary/20 pb-2 pt-4">4.1 Technological Innovations</h2>
+                <p>Cross-cultural interactions resulted in the diffusion of technology and facilitated European exploration.</p>
+                <div className="grid grid-cols-2 md:grid-cols-3 gap-4 not-prose">
+                  {[
+                    { name: "Lateen Sail", desc: "Triangular sail for windward sailing" },
+                    { name: "Astrolabe", desc: "Determined latitude using stars" },
+                    { name: "Caravel", desc: "Small, fast Portuguese ship" },
+                    { name: "Fluyt", desc: "Dutch cargo ship (maximized space)" },
+                    { name: "Compass", desc: "Directional navigation" },
+                    { name: "Carrack", desc: "Large ocean-going vessel" }
+                  ].map((tech) => (
+                    <div key={tech.name} className="p-4 rounded-xl border border-border bg-muted/30">
+                      <div className="font-bold text-primary text-sm">{tech.name}</div>
+                      <div className="text-[10px] text-muted-foreground">{tech.desc}</div>
+                    </div>
+                  ))}
+                </div>
+              </section>
+
+              <section className="space-y-6">
+                <h2 className="text-3xl font-bold border-b-2 border-primary/20 pb-2 pt-4">4.2 & 4.3 Exploration & The Columbian Exchange</h2>
+                <p>State-sponsored exploration led to the massive exchange of biological and cultural materials.</p>
+                
+                <div className="bg-blue-500/5 border border-blue-500/20 rounded-2xl p-6 not-prose">
+                  <h3 className="font-bold text-blue-600 mb-4 flex items-center gap-2">
+                    <Globe size={20} /> The Columbian Exchange
+                  </h3>
+                  <div className="grid sm:grid-cols-2 gap-8">
+                    <div className="space-y-3">
+                      <div className="text-xs font-bold uppercase text-blue-600/60">To the Americas</div>
+                      <ul className="text-sm space-y-1">
+                        <li>🦠 <strong>Disease:</strong> Smallpox, Measles (90% death rate)</li>
+                        <li>🐎 <strong>Animals:</strong> Horses, Pigs, Cattle</li>
+                        <li>🌾 <strong>Crops:</strong> Sugar, Wheat, Coffee</li>
+                      </ul>
+                    </div>
+                    <div className="space-y-3">
+                      <div className="text-xs font-bold uppercase text-blue-600/60">To Afro-Eurasia</div>
+                      <ul className="text-sm space-y-1">
+                        <li>🥔 <strong>Crops:</strong> Potatoes, Maize (Pop. growth)</li>
+                        <li>🍅 <strong>Crops:</strong> Tomatoes, Chili peppers</li>
+                        <li>🚬 <strong>Luxury:</strong> Tobacco, Cacao</li>
+                      </ul>
+                    </div>
                   </div>
                 </div>
               </section>
 
               <section className="space-y-6">
-                <h2 className="text-3xl font-bold border-b-2 border-primary/20 pb-2 pt-4">3.3 Belief Systems</h2>
-                <p>The period saw significant changes and continuities in religious traditions.</p>
+                <h2 className="text-3xl font-bold border-b-2 border-primary/20 pb-2 pt-4">4.4 & 4.5 Maritime Empires Established & Maintained</h2>
+                <p>Europeans established trading posts and colonies, utilizing mercantilism and joint-stock companies.</p>
                 
-                <div className="grid md:grid-cols-2 gap-6">
-                  <div className="p-6 rounded-2xl border border-border bg-card">
-                    <h3 className="font-bold text-lg mb-3">Protestant Reformation</h3>
-                    <p className="text-sm leading-relaxed">
-                      Martin Luther's 95 Theses (1517) challenged Catholic corruption. Led to permanent split in Western Christianity and decades of religious wars (e.g., Thirty Years War).
-                    </p>
+                <div className="space-y-4">
+                  <div className="p-6 rounded-xl border border-border bg-card">
+                    <h3 className="font-bold text-lg mb-2">Labor Systems in the Americas</h3>
+                    <ul className="list-disc list-inside text-sm space-y-2">
+                      <li><strong>Encomienda:</strong> Spanish settlers granted land and native labor.</li>
+                      <li><strong>Hacienda:</strong> Large estates producing for local markets.</li>
+                      <li><strong>Mita:</strong> Adapted Incan labor tax for silver mining (Potosi).</li>
+                      <li><strong>Chattel Slavery:</strong> People treated as property; basis of plantation economies.</li>
+                    </ul>
                   </div>
-                  <div className="p-6 rounded-2xl border border-border bg-card">
-                    <h3 className="font-bold text-lg mb-3">Sikhism</h3>
-                    <p className="text-sm leading-relaxed">
-                      Emerging in South Asia, Sikhism blended elements of Hinduism and Islam, emphasizing equality and devotion to one God.
-                    </p>
+
+                  <div className="p-6 rounded-xl border border-border bg-card">
+                    <h3 className="font-bold text-lg mb-2">Mercantilism & Trade</h3>
+                    <p className="text-sm">Economic theory that trade generates wealth. States sought a <strong>favorable balance of trade</strong> (more exports than imports) and accumulated gold/silver.</p>
+                    <div className="mt-4 p-4 bg-muted rounded-lg text-xs italic">
+                      "Joint-stock companies (VOC, British East India Co.) allowed private investors to share the risk and profit of global trade."
+                    </div>
                   </div>
                 </div>
               </section>
 
-              <div className="bg-primary/5 border border-primary/10 rounded-xl p-6 mt-8 not-prose">
-                <h3 className="text-xl font-bold mb-3 text-primary">Unit 3 Summary Table</h3>
-                <div className="overflow-x-auto">
-                  <table className="w-full text-xs">
-                    <thead>
-                      <tr className="border-b border-primary/20">
-                        <th className="py-2 text-left">Empire</th>
-                        <th className="py-2 text-left">Legitimization</th>
-                        <th className="py-2 text-left">Military</th>
-                        <th className="py-2 text-left">Conflict</th>
-                      </tr>
-                    </thead>
-                    <tbody className="text-muted-foreground">
-                      <tr className="border-b border-border/50">
-                        <td className="py-2 font-medium text-foreground">Ottoman</td>
-                        <td className="py-2">Islam, Architecture</td>
-                        <td className="py-2">Janissaries</td>
-                        <td className="py-2">vs. Safavids</td>
-                      </tr>
-                      <tr className="border-b border-border/50">
-                        <td className="py-2 font-medium text-foreground">Mughal</td>
-                        <td className="py-2">Tolerance, Taj Mahal</td>
-                        <td className="py-2">Gunpowder</td>
-                        <td className="py-2">Internal revolts</td>
-                      </tr>
-                      <tr className="border-b border-border/50">
-                        <td className="py-2 font-medium text-foreground">France</td>
-                        <td className="py-2">Divine Right, Versailles</td>
-                        <td className="py-2">Professional Army</td>
-                        <td className="py-2">Religious Wars</td>
-                      </tr>
-                    </tbody>
-                  </table>
+              <section className="space-y-6">
+                <h2 className="text-3xl font-bold border-b-2 border-primary/20 pb-2 pt-4">4.6 Challenges to State Power</h2>
+                <p>Resistance to imperial expansion came from both internal and external sources.</p>
+                <div className="grid sm:grid-cols-2 gap-4 not-prose">
+                  <div className="p-4 rounded-xl border border-destructive/20 bg-destructive/5">
+                    <h4 className="font-bold text-destructive flex items-center gap-2">
+                      <ShieldAlert size={16} /> Pueblo Revolt (1680)
+                    </h4>
+                    <p className="text-xs text-muted-foreground mt-1">Indigenous uprising against Spanish religious and labor oppression in modern-day New Mexico.</p>
+                  </div>
+                  <div className="p-4 rounded-xl border border-destructive/20 bg-destructive/5">
+                    <h4 className="font-bold text-destructive flex items-center gap-2">
+                      <ShieldAlert size={16} /> Metacom's War (1675)
+                    </h4>
+                    <p className="text-xs text-muted-foreground mt-1">Final major effort by Native Americans of southern New England to drive out English settlers.</p>
+                  </div>
                 </div>
-              </div>
+              </section>
+
+              <section className="space-y-6">
+                <h2 className="text-3xl font-bold border-b-2 border-primary/20 pb-2 pt-4">4.7 Changing Social Hierarchies</h2>
+                <p>The Casta System in Latin America was a rigid hierarchy based on racial ancestry.</p>
+                <div className="max-w-md mx-auto border border-border rounded-2xl overflow-hidden not-prose">
+                  <div className="bg-primary/10 p-3 text-center font-bold text-primary border-b border-border">The Casta System</div>
+                  <div className="p-4 space-y-2 text-sm text-center">
+                    <div className="font-bold">Peninsulares</div>
+                    <div className="text-muted-foreground text-xs">Born in Spain</div>
+                    <div className="h-px bg-border w-1/2 mx-auto" />
+                    <div className="font-bold">Creoles</div>
+                    <div className="text-muted-foreground text-xs">Spanish descent, born in Americas</div>
+                    <div className="h-px bg-border w-1/2 mx-auto" />
+                    <div className="font-bold">Mestizos / Mulattoes</div>
+                    <div className="text-muted-foreground text-xs">Mixed ancestry</div>
+                    <div className="h-px bg-border w-1/2 mx-auto" />
+                    <div className="font-bold text-muted-foreground">Indigenous / Enslaved Africans</div>
+                  </div>
+                </div>
+              </section>
+
+              <section className="space-y-6">
+                <h2 className="text-3xl font-bold border-b-2 border-primary/20 pb-2 pt-4">4.8 Continuity and Change</h2>
+                <p>While global trade expanded, many regional trade patterns and cultural traditions persisted.</p>
+                <div className="bg-muted/30 p-6 rounded-2xl border border-border">
+                  <ul className="space-y-3 text-sm">
+                    <li>✅ <strong>Change:</strong> Global circulation of silver (Potosi to China).</li>
+                    <li>✅ <strong>Change:</strong> Syncretic religions (Santeria, Virgin of Guadalupe).</li>
+                    <li>🔄 <strong>Continuity:</strong> Indian Ocean trade remained dominated by Asian merchants for much of the period.</li>
+                  </ul>
+                </div>
+              </section>
             </>
           ) : (
             <div className="text-center py-12 space-y-4">
