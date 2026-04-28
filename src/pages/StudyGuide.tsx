@@ -2,7 +2,7 @@ import { useParams, useNavigate, Link } from "react-router-dom";
 import Layout from "@/components/Layout";
 import { units } from "@/data/content";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, BookOpen, Clock, MapPin, Info, Download, Globe, Ship, Users, ShieldAlert, Zap, Factory, Landmark, Scale } from "lucide-react";
+import { ArrowLeft, BookOpen, Clock, MapPin, Info, Download, Globe, Ship, Users, ShieldAlert, Zap, Factory, Landmark, Scale, Anchor, Swords, TrendingUp, HeartPulse } from "lucide-react";
 import { motion } from "framer-motion";
 
 const StudyGuide = () => {
@@ -62,7 +62,7 @@ const StudyGuide = () => {
         <motion.div 
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="prose prose-slate dark:prose-invert max-w-none bg-card border border-border rounded-3xl p-8 sm:p-12 shadow-sm space-y-12"
+          className="prose prose-slate dark:prose-invert max-w-none bg-card border border-border rounded-3xl p-8 sm:p-12 shadow-sm space-y-16"
         >
           {isUnit1 ? (
             <div className="text-center py-12">
@@ -87,56 +87,25 @@ const StudyGuide = () => {
                     </p>
                   </div>
                 </div>
-
-                <div className="grid md:grid-cols-3 gap-4 not-prose">
-                  <div className="border border-border rounded-xl p-4 bg-muted/30">
-                    <div className="text-2xl font-bold text-primary">1453</div>
-                    <div className="text-xs text-muted-foreground">Fall of Constantinople</div>
-                  </div>
-                  <div className="border border-border rounded-xl p-4 bg-muted/30">
-                    <div className="text-2xl font-bold">1644</div>
-                    <div className="text-xs text-muted-foreground">Rise of Qing Dynasty</div>
-                  </div>
-                  <div className="border border-border rounded-xl p-4 bg-muted/30">
-                    <div className="text-2xl font-bold text-primary">1750</div>
-                    <div className="text-xs text-muted-foreground">Period End</div>
-                  </div>
-                </div>
               </div>
 
               <section className="space-y-6">
                 <h2 className="text-3xl font-bold border-b-2 border-primary/20 pb-2 pt-4">3.1 Empire Expansion</h2>
                 <p>The use of gunpowder and armed trade allowed for the rapid expansion of empires across Afro-Eurasia.</p>
-                
                 <div className="grid md:grid-cols-2 gap-6 not-prose">
                   <div className="bg-muted/50 rounded-xl p-6 border border-border">
                     <h3 className="text-xl font-bold mb-4 text-primary">The Gunpowder Empires</h3>
                     <ul className="space-y-3 text-sm">
-                      <li>
-                        <span className="font-bold">Ottoman Empire:</span>
-                        <p className="mt-1">Sunni Muslim state. Conquered Constantinople (1453). Used Janissaries (elite slave soldiers) and heavy artillery.</p>
-                      </li>
-                      <li>
-                        <span className="font-bold">Safavid Empire:</span>
-                        <p className="mt-1">Shi'a Muslim state in Persia. Constant conflict with Ottomans over religious and territorial disputes.</p>
-                      </li>
-                      <li>
-                        <span className="font-bold">Mughal Empire:</span>
-                        <p className="mt-1">Muslim rulers over Hindu majority in India. Known for religious tolerance under Akbar and architectural feats like the Taj Mahal.</p>
-                      </li>
+                      <li><strong>Ottoman Empire:</strong> Sunni Muslim state. Conquered Constantinople (1453). Used Janissaries and heavy artillery.</li>
+                      <li><strong>Safavid Empire:</strong> Shi'a Muslim state in Persia. Constant conflict with Ottomans.</li>
+                      <li><strong>Mughal Empire:</strong> Muslim rulers over Hindu majority in India. Known for religious tolerance under Akbar.</li>
                     </ul>
                   </div>
                   <div className="bg-muted/50 rounded-xl p-6 border border-border">
                     <h3 className="text-xl font-bold mb-4 text-primary">East Asian Expansion</h3>
                     <ul className="space-y-3 text-sm">
-                      <li>
-                        <span className="font-bold">Manchu (Qing) Dynasty:</span>
-                        <p className="mt-1">Overthrew Ming. Expanded into Taiwan, Tibet, and Mongolia. Maintained distinct Manchu identity while using Chinese bureaucracy.</p>
-                      </li>
-                      <li>
-                        <span className="font-bold">Russian Empire:</span>
-                        <p className="mt-1">Expanded eastward into Siberia. Peter the Great westernized the military and administration to compete with Europe.</p>
-                      </li>
+                      <li><strong>Manchu (Qing) Dynasty:</strong> Overthrew Ming. Expanded into Taiwan, Tibet, and Mongolia.</li>
+                      <li><strong>Russian Empire:</strong> Expanded eastward into Siberia. Peter the Great westernized the military.</li>
                     </ul>
                   </div>
                 </div>
@@ -145,7 +114,6 @@ const StudyGuide = () => {
               <section className="space-y-6">
                 <h2 className="text-3xl font-bold border-b-2 border-primary/20 pb-2 pt-4">3.2 Administration & Legitimization</h2>
                 <p>Rulers used a variety of methods to legitimize and consolidate their power.</p>
-
                 <div className="space-y-4">
                   <div className="border-l-4 border-blue-500 bg-blue-50 dark:bg-blue-900/20 p-6 rounded-r-xl">
                     <h3 className="text-xl font-bold mb-2">Bureaucratic Elites</h3>
@@ -155,36 +123,21 @@ const StudyGuide = () => {
                       <li><strong>Mughal Zamindars:</strong> Local officials who collected taxes for the central government.</li>
                     </ul>
                   </div>
-
-                  <div className="border-l-4 border-purple-500 bg-purple-50 dark:bg-purple-900/20 p-6 rounded-r-xl">
-                    <h3 className="text-xl font-bold mb-2">Religious Legitimization</h3>
-                    <ul className="list-disc list-inside space-y-2 text-sm">
-                      <li><strong>Divine Right:</strong> European monarchs (like Louis XIV) claimed authority directly from God.</li>
-                      <li><strong>Songhai Islam:</strong> Rulers promoted Islam to unify the empire and facilitate trade.</li>
-                      <li><strong>Aztec Sacrifice:</strong> Public rituals demonstrated the state's role in maintaining cosmic order.</li>
-                    </ul>
-                  </div>
                 </div>
               </section>
 
               <section className="space-y-6">
                 <h2 className="text-3xl font-bold border-b-2 border-primary/20 pb-2 pt-4">3.4 Comparison in Land-Based Empires</h2>
-                <p>While each empire was unique, they all faced the challenge of governing large, diverse territories.</p>
-                
                 <div className="bg-accent/30 rounded-2xl p-6 not-prose border border-primary/10">
                   <h3 className="font-bold text-lg mb-4">Common Themes of Consolidation</h3>
                   <div className="grid sm:grid-cols-2 gap-6">
                     <div className="space-y-2">
-                      <h4 className="font-bold text-primary flex items-center gap-2">
-                        <Users size={18} /> Centralization
-                      </h4>
+                      <h4 className="font-bold text-primary flex items-center gap-2"><Users size={18} /> Centralization</h4>
                       <p className="text-sm text-muted-foreground">Shifting power away from local nobles to a central monarch or bureaucracy.</p>
                     </div>
                     <div className="space-y-2">
-                      <h4 className="font-bold text-primary flex items-center gap-2">
-                        <Globe size={18} /> Diversity
-                      </h4>
-                      <p className="text-sm text-muted-foreground">Managing multi-ethnic and multi-religious populations (e.g., Ottoman Millet system vs. Mughal tolerance).</p>
+                      <h4 className="font-bold text-primary flex items-center gap-2"><Globe size={18} /> Diversity</h4>
+                      <p className="text-sm text-muted-foreground">Managing multi-ethnic and multi-religious populations.</p>
                     </div>
                   </div>
                 </div>
@@ -197,136 +150,161 @@ const StudyGuide = () => {
                 <div className="bg-primary/5 border border-primary/10 rounded-2xl p-6 flex gap-4 items-start not-prose">
                   <Ship className="text-primary shrink-0 mt-1" size={20} />
                   <div>
-                    <h3 className="font-bold text-primary mb-1">Big Picture Overview</h3>
+                    <h3 className="font-bold text-primary mb-1">Unit 4: Transoceanic Interconnections (1450-1750)</h3>
                     <p className="text-sm text-muted-foreground leading-relaxed">
-                      Unit 4 (1450-1750) marks the first time in history that the Eastern and Western Hemispheres were permanently linked. This led to the Columbian Exchange, the rise of maritime empires, and a global shift in economic power.
+                      This era marks the first time in history that the Eastern and Western Hemispheres were permanently linked. This global connection led to the Columbian Exchange, the rise of maritime empires, and a fundamental shift in global economic power from land-based routes to oceanic trade.
                     </p>
                   </div>
                 </div>
               </div>
 
-              <section className="space-y-6">
-                <h2 className="text-3xl font-bold border-b-2 border-primary/20 pb-2 pt-4">4.1 Technological Innovations</h2>
-                <p>Cross-cultural interactions resulted in the diffusion of technology and facilitated European exploration.</p>
-                <div className="grid grid-cols-2 md:grid-cols-3 gap-4 not-prose">
-                  {[
-                    { name: "Lateen Sail", desc: "Triangular sail for windward sailing" },
-                    { name: "Astrolabe", desc: "Determined latitude using stars" },
-                    { name: "Caravel", desc: "Small, fast Portuguese ship" },
-                    { name: "Fluyt", desc: "Dutch cargo ship (maximized space)" },
-                    { name: "Compass", desc: "Directional navigation" },
-                    { name: "Carrack", desc: "Large ocean-going vessel" }
-                  ].map((tech) => (
-                    <div key={tech.name} className="p-4 rounded-xl border border-border bg-muted/30">
-                      <div className="font-bold text-primary text-sm">{tech.name}</div>
-                      <div className="text-[10px] text-muted-foreground">{tech.desc}</div>
-                    </div>
-                  ))}
+              <section className="space-y-8">
+                <div className="border-l-4 border-primary pl-6">
+                  <h2 className="text-3xl font-bold m-0">4.1 Technological Innovations</h2>
+                  <p className="text-muted-foreground mt-2">The foundation of global exploration.</p>
                 </div>
-              </section>
-
-              <section className="space-y-6">
-                <h2 className="text-3xl font-bold border-b-2 border-primary/20 pb-2 pt-4">4.2 & 4.3 Exploration & The Columbian Exchange</h2>
-                <p>State-sponsored exploration led to the massive exchange of biological and cultural materials.</p>
-                
-                <div className="bg-blue-500/5 border border-blue-500/20 rounded-2xl p-6 not-prose">
-                  <h3 className="font-bold text-blue-600 mb-4 flex items-center gap-2">
-                    <Globe size={20} /> The Columbian Exchange
-                  </h3>
-                  <div className="grid sm:grid-cols-2 gap-8">
-                    <div className="space-y-3">
-                      <div className="text-xs font-bold uppercase text-blue-600/60">To the Americas</div>
-                      <ul className="text-sm space-y-1">
-                        <li>🦠 <strong>Disease:</strong> Smallpox, Measles (90% death rate)</li>
-                        <li>🐎 <strong>Animals:</strong> Horses, Pigs, Cattle</li>
-                        <li>🌾 <strong>Crops:</strong> Sugar, Wheat, Coffee</li>
-                      </ul>
-                    </div>
-                    <div className="space-y-3">
-                      <div className="text-xs font-bold uppercase text-blue-600/60">To Afro-Eurasia</div>
-                      <ul className="text-sm space-y-1">
-                        <li>🥔 <strong>Crops:</strong> Potatoes, Maize (Pop. growth)</li>
-                        <li>🍅 <strong>Crops:</strong> Tomatoes, Chili peppers</li>
-                        <li>🚬 <strong>Luxury:</strong> Tobacco, Cacao</li>
-                      </ul>
-                    </div>
-                  </div>
-                </div>
-              </section>
-
-              <section className="space-y-6">
-                <h2 className="text-3xl font-bold border-b-2 border-primary/20 pb-2 pt-4">4.4 & 4.5 Maritime Empires Established & Maintained</h2>
-                <p>Europeans established trading posts and colonies, utilizing mercantilism and joint-stock companies.</p>
-                
-                <div className="space-y-4">
-                  <div className="p-6 rounded-xl border border-border bg-card">
-                    <h3 className="font-bold text-lg mb-2">Labor Systems in the Americas</h3>
-                    <ul className="list-disc list-inside text-sm space-y-2">
-                      <li><strong>Encomienda:</strong> Spanish settlers granted land and native labor.</li>
-                      <li><strong>Hacienda:</strong> Large estates producing for local markets.</li>
-                      <li><strong>Mita:</strong> Adapted Incan labor tax for silver mining (Potosi).</li>
-                      <li><strong>Chattel Slavery:</strong> People treated as property; basis of plantation economies.</li>
+                <p>Knowledge from the Classical, Islamic, and Asian worlds spread to Europe, facilitating new developments in cartography and navigation. Rulers and merchants sought more efficient ways to reach Asian markets, leading to the adoption of several key technologies:</p>
+                <div className="grid sm:grid-cols-2 gap-6 not-prose">
+                  <div className="p-6 rounded-2xl bg-muted/30 border border-border">
+                    <h3 className="font-bold text-primary flex items-center gap-2 mb-3"><Anchor size={18} /> Navigation Tools</h3>
+                    <ul className="space-y-2 text-sm">
+                      <li><strong>Astrolabe:</strong> Used to determine latitude by measuring the position of the stars.</li>
+                      <li><strong>Magnetic Compass:</strong> Originally Chinese; allowed sailors to determine direction even in cloudy weather.</li>
+                      <li><strong>Astronomical Charts:</strong> Improved maps of the stars allowed for more precise navigation over open water.</li>
                     </ul>
                   </div>
+                  <div className="p-6 rounded-2xl bg-muted/30 border border-border">
+                    <h3 className="font-bold text-primary flex items-center gap-2 mb-3"><Ship size={18} /> Ship Designs</h3>
+                    <ul className="space-y-2 text-sm">
+                      <li><strong>Caravel:</strong> Small, highly maneuverable Portuguese ship with lateen sails.</li>
+                      <li><strong>Carrack:</strong> Large, multi-masted ship used for heavy trade (Portuguese).</li>
+                      <li><strong>Fluyt:</strong> Dutch cargo ship designed to maximize space and minimize crew size, giving the Dutch a competitive edge in trade.</li>
+                    </ul>
+                  </div>
+                </div>
+                <p className="italic text-sm text-muted-foreground">Key Concept: The understanding of global wind and current patterns (like the "volta do mar") was just as critical as the physical tools themselves.</p>
+              </section>
 
-                  <div className="p-6 rounded-xl border border-border bg-card">
-                    <h3 className="font-bold text-lg mb-2">Mercantilism & Trade</h3>
-                    <p className="text-sm">Economic theory that trade generates wealth. States sought a <strong>favorable balance of trade</strong> (more exports than imports) and accumulated gold/silver.</p>
-                    <div className="mt-4 p-4 bg-muted rounded-lg text-xs italic">
-                      "Joint-stock companies (VOC, British East India Co.) allowed private investors to share the risk and profit of global trade."
+              <section className="space-y-8">
+                <div className="border-l-4 border-primary pl-6">
+                  <h2 className="text-3xl font-bold m-0">4.2 Exploration: Causes and Events</h2>
+                  <p className="text-muted-foreground mt-2">The race for global dominance.</p>
+                </div>
+                <p>State-sponsored transoceanic maritime exploration was driven by the "Three G's": Gold (wealth), Glory (prestige), and God (religious conversion). The fall of Constantinople in 1453 forced Europeans to find new routes to the East.</p>
+                <div className="space-y-4">
+                  <div className="p-6 rounded-2xl border border-border bg-card">
+                    <h3 className="font-bold text-lg mb-3">Portuguese & Spanish Pioneers</h3>
+                    <p className="text-sm leading-relaxed">Portugal, led by <strong>Prince Henry the Navigator</strong>, focused on the African coast. <strong>Vasco da Gama</strong> reached India in 1498, establishing a "trading post empire." Spain, seeking a westward route, sponsored <strong>Christopher Columbus</strong> in 1492, leading to the accidental discovery of the Americas.</p>
+                  </div>
+                  <div className="p-6 rounded-2xl border border-border bg-card">
+                    <h3 className="font-bold text-lg mb-3">Northern Atlantic Exploration</h3>
+                    <p className="text-sm leading-relaxed">The English, French, and Dutch searched for a <strong>Northwest Passage</strong> to Asia. While they failed to find it, they established lucrative colonies in North America (e.g., Quebec, Jamestown, New Amsterdam) and tapped into the fur trade.</p>
+                  </div>
+                </div>
+              </section>
+
+              <section className="space-y-8">
+                <div className="border-l-4 border-primary pl-6">
+                  <h2 className="text-3xl font-bold m-0">4.3 The Columbian Exchange</h2>
+                  <p className="text-muted-foreground mt-2">The biological collision of two worlds.</p>
+                </div>
+                <p>The Columbian Exchange was the massive transfer of plants, animals, and diseases between the Eastern and Western Hemispheres. It had profound demographic and environmental consequences.</p>
+                <div className="grid md:grid-cols-3 gap-6 not-prose">
+                  <div className="p-6 rounded-2xl bg-destructive/5 border border-destructive/20">
+                    <h3 className="font-bold text-destructive flex items-center gap-2 mb-3"><HeartPulse size={18} /> Disease</h3>
+                    <p className="text-xs leading-relaxed">Smallpox, measles, and influenza decimated indigenous populations (the <strong>Great Dying</strong>), with mortality rates reaching 90% in some areas.</p>
+                  </div>
+                  <div className="p-6 rounded-2xl bg-green-500/5 border border-green-500/20">
+                    <h3 className="font-bold text-green-600 flex items-center gap-2 mb-3"><Users size={18} /> Population</h3>
+                    <p className="text-xs leading-relaxed">American crops like <strong>potatoes, maize, and manioc</strong> led to massive population growth in Afro-Eurasia due to their high caloric value.</p>
+                  </div>
+                  <div className="p-6 rounded-2xl bg-blue-500/5 border border-blue-500/20">
+                    <h3 className="font-bold text-blue-600 flex items-center gap-2 mb-3"><TrendingUp size={18} /> Environment</h3>
+                    <p className="text-xs leading-relaxed">Deforestation and soil depletion occurred as Europeans introduced plantation agriculture and domesticated animals like cattle and pigs.</p>
+                  </div>
+                </div>
+              </section>
+
+              <section className="space-y-8">
+                <div className="border-l-4 border-primary pl-6">
+                  <h2 className="text-3xl font-bold m-0">4.4 & 4.5 Maritime Empires Established & Maintained</h2>
+                  <p className="text-muted-foreground mt-2">Mercantilism and the global economy.</p>
+                </div>
+                <p>Europeans established maritime empires through a combination of military force and economic innovation. <strong>Mercantilism</strong> became the dominant economic theory, emphasizing the accumulation of gold and silver through a favorable balance of trade.</p>
+                <div className="space-y-6">
+                  <div className="bg-muted/30 p-8 rounded-3xl border border-border">
+                    <h3 className="font-bold text-xl mb-4">Labor Systems in the Americas</h3>
+                    <div className="grid sm:grid-cols-2 gap-6 text-sm">
+                      <div className="space-y-2">
+                        <p><strong>Encomienda:</strong> Spanish crown granted land and native labor to settlers in exchange for "protection" and Christianization.</p>
+                        <p><strong>Hacienda:</strong> Large self-sufficient estates producing for local markets.</p>
+                      </div>
+                      <div className="space-y-2">
+                        <p><strong>Mita System:</strong> Adapted from the Inca; forced labor in silver mines (like Potosi).</p>
+                        <p><strong>Chattel Slavery:</strong> People treated as property; became the backbone of the plantation economy (sugar, tobacco).</p>
+                      </div>
                     </div>
                   </div>
-                </div>
-              </section>
-
-              <section className="space-y-6">
-                <h2 className="text-3xl font-bold border-b-2 border-primary/20 pb-2 pt-4">4.6 Challenges to State Power</h2>
-                <p>Resistance to imperial expansion came from both internal and external sources.</p>
-                <div className="grid sm:grid-cols-2 gap-4 not-prose">
-                  <div className="p-4 rounded-xl border border-destructive/20 bg-destructive/5">
-                    <h4 className="font-bold text-destructive flex items-center gap-2">
-                      <ShieldAlert size={16} /> Pueblo Revolt (1680)
-                    </h4>
-                    <p className="text-xs text-muted-foreground mt-1">Indigenous uprising against Spanish religious and labor oppression in modern-day New Mexico.</p>
-                  </div>
-                  <div className="p-4 rounded-xl border border-destructive/20 bg-destructive/5">
-                    <h4 className="font-bold text-destructive flex items-center gap-2">
-                      <ShieldAlert size={16} /> Metacom's War (1675)
-                    </h4>
-                    <p className="text-xs text-muted-foreground mt-1">Final major effort by Native Americans of southern New England to drive out English settlers.</p>
+                  <div className="p-6 rounded-2xl border border-border bg-card">
+                    <h3 className="font-bold text-lg mb-3">Joint-Stock Companies</h3>
+                    <p className="text-sm leading-relaxed">The <strong>Dutch East India Company (VOC)</strong> and the <strong>British East India Company</strong> allowed private investors to pool capital for global trade, sharing both risk and profit. These companies often acted as quasi-governments, raising armies and minting money.</p>
                   </div>
                 </div>
               </section>
 
-              <section className="space-y-6">
-                <h2 className="text-3xl font-bold border-b-2 border-primary/20 pb-2 pt-4">4.7 Changing Social Hierarchies</h2>
-                <p>The Casta System in Latin America was a rigid hierarchy based on racial ancestry.</p>
-                <div className="max-w-md mx-auto border border-border rounded-2xl overflow-hidden not-prose">
-                  <div className="bg-primary/10 p-3 text-center font-bold text-primary border-b border-border">The Casta System</div>
-                  <div className="p-4 space-y-2 text-sm text-center">
-                    <div className="font-bold">Peninsulares</div>
-                    <div className="text-muted-foreground text-xs">Born in Spain</div>
-                    <div className="h-px bg-border w-1/2 mx-auto" />
-                    <div className="font-bold">Creoles</div>
-                    <div className="text-muted-foreground text-xs">Spanish descent, born in Americas</div>
-                    <div className="h-px bg-border w-1/2 mx-auto" />
-                    <div className="font-bold">Mestizos / Mulattoes</div>
-                    <div className="text-muted-foreground text-xs">Mixed ancestry</div>
-                    <div className="h-px bg-border w-1/2 mx-auto" />
-                    <div className="font-bold text-muted-foreground">Indigenous / Enslaved Africans</div>
+              <section className="space-y-8">
+                <div className="border-l-4 border-primary pl-6">
+                  <h2 className="text-3xl font-bold m-0">4.6 Challenges to State Power</h2>
+                  <p className="text-muted-foreground mt-2">Resistance from within and without.</p>
+                </div>
+                <p>Imperial expansion was met with significant resistance from indigenous groups and enslaved people:</p>
+                <ul className="space-y-4 text-sm">
+                  <li><strong>Ana Nzinga:</strong> Queen of Ndongo and Matamba who resisted Portuguese expansion in Africa through diplomacy and warfare.</li>
+                  <li><strong>Pueblo Revolt (1680):</strong> Indigenous uprising in modern-day New Mexico that successfully expelled the Spanish for over a decade.</li>
+                  <li><strong>Maroon Societies:</strong> Communities of escaped enslaved people in the Caribbean and Brazil who maintained their independence and culture.</li>
+                  <li><strong>Metacom's War:</strong> A final major effort by Native Americans in New England to drive out English settlers.</li>
+                </ul>
+              </section>
+
+              <section className="space-y-8">
+                <div className="border-l-4 border-primary pl-6">
+                  <h2 className="text-3xl font-bold m-0">4.7 Changing Social Hierarchies</h2>
+                  <p className="text-muted-foreground mt-2">The birth of the Casta System.</p>
+                </div>
+                <p>The meeting of diverse peoples led to the creation of new, rigid social hierarchies, particularly in Latin America:</p>
+                <div className="max-w-lg mx-auto bg-muted/30 border border-border rounded-3xl p-8 text-center not-prose">
+                  <div className="space-y-4">
+                    <div className="p-3 bg-primary text-primary-foreground rounded-xl font-bold">Peninsulares (Born in Spain)</div>
+                    <div className="p-3 bg-primary/80 text-primary-foreground rounded-xl font-bold">Creoles (Spanish descent, born in Americas)</div>
+                    <div className="p-3 bg-primary/60 text-primary-foreground rounded-xl font-bold">Mestizos (Mixed Spanish/Indigenous)</div>
+                    <div className="p-3 bg-primary/40 text-primary-foreground rounded-xl font-bold">Mulattoes (Mixed Spanish/African)</div>
+                    <div className="p-3 bg-muted text-muted-foreground rounded-xl font-bold">Indigenous & Enslaved Africans</div>
                   </div>
                 </div>
               </section>
 
-              <section className="space-y-6">
-                <h2 className="text-3xl font-bold border-b-2 border-primary/20 pb-2 pt-4">4.8 Continuity and Change</h2>
-                <p>While global trade expanded, many regional trade patterns and cultural traditions persisted.</p>
-                <div className="bg-muted/30 p-6 rounded-2xl border border-border">
-                  <ul className="space-y-3 text-sm">
-                    <li>✅ <strong>Change:</strong> Global circulation of silver (Potosi to China).</li>
-                    <li>✅ <strong>Change:</strong> Syncretic religions (Santeria, Virgin of Guadalupe).</li>
-                    <li>🔄 <strong>Continuity:</strong> Indian Ocean trade remained dominated by Asian merchants for much of the period.</li>
-                  </ul>
+              <section className="space-y-8">
+                <div className="border-l-4 border-primary pl-6">
+                  <h2 className="text-3xl font-bold m-0">4.8 Continuity and Change</h2>
+                  <p className="text-muted-foreground mt-2">Synthesizing the era.</p>
+                </div>
+                <div className="grid sm:grid-cols-2 gap-6 not-prose">
+                  <div className="p-6 rounded-2xl border border-border bg-card">
+                    <h3 className="font-bold text-primary mb-3">Continuities</h3>
+                    <ul className="text-xs space-y-2">
+                      <li>Regional trade patterns in the Indian Ocean persisted.</li>
+                      <li>Traditional religious beliefs remained strong despite missionary efforts.</li>
+                      <li>Land-based empires (Ottoman, Qing) remained powerful players.</li>
+                    </ul>
+                  </div>
+                  <div className="p-6 rounded-2xl border border-border bg-card">
+                    <h3 className="font-bold text-primary mb-3">Changes</h3>
+                    <ul className="text-xs space-y-2">
+                      <li>Global circulation of silver (Potosi to China).</li>
+                      <li>Rise of syncretic religions (Santeria, Vodun).</li>
+                      <li>Shift of economic power to maritime nations.</li>
+                    </ul>
+                  </div>
                 </div>
               </section>
             </>
@@ -337,140 +315,163 @@ const StudyGuide = () => {
                 <div className="bg-primary/5 border border-primary/10 rounded-2xl p-6 flex gap-4 items-start not-prose">
                   <Scale className="text-primary shrink-0 mt-1" size={20} />
                   <div>
-                    <h3 className="font-bold text-primary mb-1">Big Picture Overview</h3>
+                    <h3 className="font-bold text-primary mb-1">Unit 5: Revolutions (1750-1900)</h3>
                     <p className="text-sm text-muted-foreground leading-relaxed">
-                      Unit 5 (1750-1900) is defined by two major shifts: the Enlightenment-led political revolutions and the Industrial Revolution. These forces fundamentally reshaped global politics, economics, and social structures.
+                      This era is defined by two seismic shifts: the Enlightenment-led political revolutions that challenged monarchies, and the Industrial Revolution that fundamentally altered how humans produced goods and lived their lives.
                     </p>
                   </div>
                 </div>
               </div>
 
-              <section className="space-y-6">
-                <h2 className="text-3xl font-bold border-b-2 border-primary/20 pb-2 pt-4">5.1 The Enlightenment</h2>
-                <p>The Enlightenment applied new ways of understanding and empiricism to human relationships and politics.</p>
-                <div className="grid sm:grid-cols-2 gap-4 not-prose">
-                  <div className="p-4 rounded-xl border border-border bg-card">
-                    <h4 className="font-bold text-primary">Natural Rights</h4>
-                    <p className="text-xs text-muted-foreground mt-1">John Locke's idea that all humans are born with rights to life, liberty, and property.</p>
-                  </div>
-                  <div className="p-4 rounded-xl border border-border bg-card">
-                    <h4 className="font-bold text-primary">Social Contract</h4>
-                    <p className="text-xs text-muted-foreground mt-1">The agreement between people and government; if government fails, people can overthrow it.</p>
-                  </div>
+              <section className="space-y-8">
+                <div className="border-l-4 border-primary pl-6">
+                  <h2 className="text-3xl font-bold m-0">5.1 The Enlightenment</h2>
+                  <p className="text-muted-foreground mt-2">The age of reason.</p>
                 </div>
-                <div className="bg-muted/30 p-6 rounded-2xl border border-border">
-                  <h3 className="font-bold text-lg mb-3">Key Thinkers</h3>
-                  <ul className="text-sm space-y-2">
-                    <li><strong>Montesquieu:</strong> Separation of powers (3 branches).</li>
-                    <li><strong>Voltaire:</strong> Religious tolerance and freedom of speech.</li>
-                    <li><strong>Adam Smith:</strong> Laissez-faire economics (The Wealth of Nations).</li>
-                    <li><strong>Mary Wollstonecraft:</strong> Early feminism; argued for women's education.</li>
-                  </ul>
-                </div>
-              </section>
-
-              <section className="space-y-6">
-                <h2 className="text-3xl font-bold border-b-2 border-primary/20 pb-2 pt-4">5.2 Nationalism and Revolutions</h2>
-                <p>Enlightenment ideas led to a wave of revolutions against monarchies and colonial rule.</p>
-                <div className="space-y-4">
-                  <div className="p-6 rounded-xl border border-border bg-card">
-                    <h3 className="font-bold text-lg mb-2">Major Revolutions</h3>
-                    <ul className="list-disc list-inside text-sm space-y-2">
-                      <li><strong>American Revolution (1776):</strong> First successful use of Enlightenment ideas to gain independence.</li>
-                      <li><strong>French Revolution (1789):</strong> Overthrew absolute monarchy; "Liberty, Equality, Fraternity."</li>
-                      <li><strong>Haitian Revolution (1791):</strong> Only successful slave revolt in history; led by Toussaint L'Ouverture.</li>
-                      <li><strong>Latin American Revolutions:</strong> Simon Bolivar led movements to liberate South America from Spain.</li>
-                    </ul>
-                  </div>
-                </div>
-              </section>
-
-              <section className="space-y-6">
-                <h2 className="text-3xl font-bold border-b-2 border-primary/20 pb-2 pt-4">5.3 - 5.5 The Industrial Revolution</h2>
-                <p>The transition to new manufacturing processes began in Great Britain and spread globally.</p>
+                <p>The Enlightenment applied new ways of understanding and empiricism to human relationships and politics. It challenged traditional authority and promoted individual rights.</p>
                 <div className="grid sm:grid-cols-2 gap-6 not-prose">
-                  <div className="bg-muted/50 rounded-xl p-6 border border-border">
-                    <h3 className="text-xl font-bold mb-4 text-primary flex items-center gap-2">
-                      <Factory size={20} /> Why Britain?
-                    </h3>
+                  <div className="p-6 rounded-2xl bg-muted/30 border border-border">
+                    <h3 className="font-bold text-primary mb-3">Core Concepts</h3>
                     <ul className="space-y-2 text-sm">
-                      <li>✅ Access to coal and iron</li>
-                      <li>✅ Proximity to waterways</li>
-                      <li>✅ Urbanization (Enclosure Movement)</li>
-                      <li>✅ Legal protection of private property</li>
+                      <li><strong>Natural Rights:</strong> Locke's idea of life, liberty, and property.</li>
+                      <li><strong>Social Contract:</strong> The agreement between the governed and the government.</li>
+                      <li><strong>Separation of Powers:</strong> Montesquieu's 3-branch system.</li>
                     </ul>
                   </div>
-                  <div className="bg-muted/50 rounded-xl p-6 border border-border">
-                    <h3 className="text-xl font-bold mb-4 text-primary flex items-center gap-2">
-                      <Zap size={20} /> Key Technologies
-                    </h3>
+                  <div className="p-6 rounded-2xl bg-muted/30 border border-border">
+                    <h3 className="font-bold text-primary mb-3">Social Impact</h3>
                     <ul className="space-y-2 text-sm">
-                      <li>🔥 <strong>Steam Engine:</strong> James Watt (powered factories/ships)</li>
-                      <li>🚂 <strong>Railroads:</strong> Mass transport of goods/people</li>
-                      <li>⚡ <strong>Electricity:</strong> Second Industrial Revolution</li>
-                      <li>🏗️ <strong>Bessemer Process:</strong> Mass production of steel</li>
+                      <li><strong>Abolitionism:</strong> Movement to end slavery and serfdom.</li>
+                      <li><strong>Feminism:</strong> Wollstonecraft and de Gouges argued for women's rights.</li>
+                      <li><strong>Secularism:</strong> Questioning the role of religion in public life.</li>
                     </ul>
                   </div>
                 </div>
               </section>
 
-              <section className="space-y-6">
-                <h2 className="text-3xl font-bold border-b-2 border-primary/20 pb-2 pt-4">5.6 - 5.8 Global Responses & Economics</h2>
-                <p>States and individuals responded to industrialization in diverse ways.</p>
-                <div className="space-y-4">
-                  <div className="p-6 rounded-xl border border-border bg-card">
-                    <h3 className="font-bold text-lg mb-2 flex items-center gap-2">
-                      <Landmark size={20} /> State-Sponsored Industrialization
-                    </h3>
-                    <p className="text-sm">Some governments led industrialization to catch up with the West:</p>
-                    <ul className="list-disc list-inside text-sm mt-2">
-                      <li><strong>Meiji Restoration (Japan):</strong> Rapidly modernized to avoid colonization.</li>
-                      <li><strong>Muhammad Ali (Egypt):</strong> Built textile factories and modernized the military.</li>
-                    </ul>
-                  </div>
-
-                  <div className="p-6 rounded-xl border border-border bg-card">
-                    <h3 className="font-bold text-lg mb-2">Economic Ideologies</h3>
-                    <div className="grid sm:grid-cols-2 gap-4">
-                      <div className="p-3 bg-muted rounded-lg">
-                        <h4 className="font-bold text-sm">Capitalism</h4>
-                        <p className="text-xs">Private ownership, free markets, profit motive (Adam Smith).</p>
-                      </div>
-                      <div className="p-3 bg-muted rounded-lg">
-                        <h4 className="font-bold text-sm">Communism</h4>
-                        <p className="text-xs">State ownership, classless society, workers' revolt (Karl Marx).</p>
-                      </div>
+              <section className="space-y-8">
+                <div className="border-l-4 border-primary pl-6">
+                  <h2 className="text-3xl font-bold m-0">5.2 Nationalism and Revolutions</h2>
+                  <p className="text-muted-foreground mt-2">The fall of monarchies.</p>
+                </div>
+                <p>Enlightenment ideas sparked a wave of revolutions across the Atlantic world, leading to the creation of new nation-states.</p>
+                <div className="space-y-6">
+                  <div className="grid sm:grid-cols-2 gap-4 text-sm">
+                    <div className="p-6 rounded-2xl border border-border bg-card">
+                      <h3 className="font-bold mb-2">American Revolution (1776)</h3>
+                      <p>Colonists revolted against British rule, citing "no taxation without representation." Resulted in the first modern republic.</p>
+                    </div>
+                    <div className="p-6 rounded-2xl border border-border bg-card">
+                      <h3 className="font-bold mb-2">French Revolution (1789)</h3>
+                      <p>The Third Estate revolted against the monarchy and nobility. Led to the <strong>Declaration of the Rights of Man</strong> and the Reign of Terror.</p>
+                    </div>
+                    <div className="p-6 rounded-2xl border border-border bg-card">
+                      <h3 className="font-bold mb-2">Haitian Revolution (1791)</h3>
+                      <p>Led by <strong>Toussaint L'Ouverture</strong>, it was the only successful slave revolt in history, resulting in an independent black republic.</p>
+                    </div>
+                    <div className="p-6 rounded-2xl border border-border bg-card">
+                      <h3 className="font-bold mb-2">Latin American Revolutions</h3>
+                      <p><strong>Simon Bolivar</strong> led movements to liberate South America from Spanish rule, as detailed in his <strong>Jamaica Letter</strong>.</p>
                     </div>
                   </div>
                 </div>
               </section>
 
-              <section className="space-y-6">
-                <h2 className="text-3xl font-bold border-b-2 border-primary/20 pb-2 pt-4">5.9 Society and the Industrial Age</h2>
-                <p>Industrialization fundamentally changed how people lived and worked.</p>
-                <div className="grid sm:grid-cols-3 gap-4 not-prose">
-                  <div className="p-4 rounded-xl border border-border bg-muted/30">
-                    <h4 className="font-bold text-primary text-sm">Urbanization</h4>
-                    <p className="text-[10px] text-muted-foreground">Mass migration to cities; led to overcrowding and pollution.</p>
-                  </div>
-                  <div className="p-4 rounded-xl border border-border bg-muted/30">
-                    <h4 className="font-bold text-primary text-sm">New Classes</h4>
-                    <p className="text-[10px] text-muted-foreground">Rise of the middle class (bourgeoisie) and working class (proletariat).</p>
-                  </div>
-                  <div className="p-4 rounded-xl border border-border bg-muted/30">
-                    <h4 className="font-bold text-primary text-sm">Gender Roles</h4>
-                    <p className="text-[10px] text-muted-foreground">Cult of Domesticity for middle class; working class women in factories.</p>
+              <section className="space-y-8">
+                <div className="border-l-4 border-primary pl-6">
+                  <h2 className="text-3xl font-bold m-0">5.3 & 5.4 Industrial Revolution Begins & Spreads</h2>
+                  <p className="text-muted-foreground mt-2">The birth of the factory system.</p>
+                </div>
+                <p>The Industrial Revolution began in Great Britain due to a unique combination of factors: access to coal/iron, proximity to waterways, urbanization, and legal protection of private property.</p>
+                <div className="bg-muted/30 p-8 rounded-3xl border border-border not-prose">
+                  <h3 className="font-bold text-xl mb-4 flex items-center gap-2"><Factory size={20} /> Global Spread</h3>
+                  <div className="grid sm:grid-cols-3 gap-6 text-sm">
+                    <div className="space-y-2">
+                      <h4 className="font-bold text-primary">United States</h4>
+                      <p>Rapid industrialization in the North, fueled by textile mills and massive railroad expansion.</p>
+                    </div>
+                    <div className="space-y-2">
+                      <h4 className="font-bold text-primary">Russia</h4>
+                      <p>State-sponsored industrialization focused on heavy industry and the <strong>Trans-Siberian Railroad</strong>.</p>
+                    </div>
+                    <div className="space-y-2">
+                      <h4 className="font-bold text-primary">Japan</h4>
+                      <p>The <strong>Meiji Restoration</strong> saw Japan rapidly modernize to avoid Western colonization.</p>
+                    </div>
                   </div>
                 </div>
               </section>
 
-              <section className="space-y-6">
-                <h2 className="text-3xl font-bold border-b-2 border-primary/20 pb-2 pt-4">5.10 Continuity and Change</h2>
+              <section className="space-y-8">
+                <div className="border-l-4 border-primary pl-6">
+                  <h2 className="text-3xl font-bold m-0">5.5 & 5.6 Technology & Government's Role</h2>
+                  <p className="text-muted-foreground mt-2">Steam, steel, and state power.</p>
+                </div>
+                <p>The <strong>Steam Engine</strong> (James Watt) was the defining technology of the first phase, while the <strong>Second Industrial Revolution</strong> focused on steel, chemicals, and electricity.</p>
+                <div className="p-6 rounded-2xl border border-border bg-card">
+                  <h3 className="font-bold text-lg mb-3">State-Sponsored Industrialization</h3>
+                  <p className="text-sm leading-relaxed">In Egypt, <strong>Muhammad Ali</strong> attempted to industrialize the textile industry to compete with Europe. In Japan, the government built factories and then sold them to private investors (zaibatsu) to jumpstart the economy.</p>
+                </div>
+              </section>
+
+              <section className="space-y-8">
+                <div className="border-l-4 border-primary pl-6">
+                  <h2 className="text-3xl font-bold m-0">5.7 & 5.8 Economic Innovations & Reactions</h2>
+                  <p className="text-muted-foreground mt-2">Capitalism vs. Socialism.</p>
+                </div>
+                <p>The rise of industrial capitalism led to new business structures and intense social criticism.</p>
+                <div className="grid sm:grid-cols-2 gap-6 not-prose">
+                  <div className="p-6 rounded-2xl bg-blue-500/5 border border-blue-500/20">
+                    <h3 className="font-bold text-blue-600 mb-3 flex items-center gap-2"><Landmark size={18} /> Innovations</h3>
+                    <ul className="text-xs space-y-2">
+                      <li><strong>Transnational Businesses:</strong> HSBC, Unilever.</li>
+                      <li><strong>Limited Liability:</strong> Protected investors from personal debt.</li>
+                      <li><strong>Stock Markets:</strong> Allowed for massive capital accumulation.</li>
+                    </ul>
+                  </div>
+                  <div className="p-6 rounded-2xl bg-orange-500/5 border border-orange-500/20">
+                    <h3 className="font-bold text-orange-600 mb-3 flex items-center gap-2"><Swords size={18} /> Reactions</h3>
+                    <ul className="text-xs space-y-2">
+                      <li><strong>Labor Unions:</strong> Fought for better wages and 8-hour days.</li>
+                      <li><strong>Marxism:</strong> Karl Marx argued for a workers' revolution to end class struggle.</li>
+                      <li><strong>Tanzimat Reforms:</strong> Ottoman attempt to modernize and secularize.</li>
+                    </ul>
+                  </div>
+                </div>
+              </section>
+
+              <section className="space-y-8">
+                <div className="border-l-4 border-primary pl-6">
+                  <h2 className="text-3xl font-bold m-0">5.9 Society and the Industrial Age</h2>
+                  <p className="text-muted-foreground mt-2">Urbanization and new classes.</p>
+                </div>
+                <p>Industrialization fundamentally changed the social fabric of the world:</p>
+                <div className="grid sm:grid-cols-3 gap-4 text-sm">
+                  <div className="p-4 rounded-xl border border-border bg-muted/30">
+                    <h4 className="font-bold text-primary">Urbanization</h4>
+                    <p className="text-xs mt-1">Mass migration to cities led to overcrowding, pollution, and disease in tenements.</p>
+                  </div>
+                  <div className="p-4 rounded-xl border border-border bg-muted/30">
+                    <h4 className="font-bold text-primary">New Classes</h4>
+                    <p className="text-xs mt-1">Rise of the <strong>Middle Class</strong> (white collar) and the <strong>Working Class</strong> (proletariat).</p>
+                  </div>
+                  <div className="p-4 rounded-xl border border-border bg-muted/30">
+                    <h4 className="font-bold text-primary">Gender Roles</h4>
+                    <p className="text-xs mt-1">The <strong>Cult of Domesticity</strong> for middle-class women; working-class women in factories.</p>
+                  </div>
+                </div>
+              </section>
+
+              <section className="space-y-8">
+                <div className="border-l-4 border-primary pl-6">
+                  <h2 className="text-3xl font-bold m-0">5.10 Continuity and Change</h2>
+                  <p className="text-muted-foreground mt-2">Synthesizing the era.</p>
+                </div>
                 <div className="bg-accent/30 rounded-2xl p-6 border border-primary/10">
                   <ul className="space-y-3 text-sm">
-                    <li>✅ <strong>Change:</strong> Shift from human/animal power to fossil fuels.</li>
-                    <li>✅ <strong>Change:</strong> Rise of global trade and transnational businesses (HSBC, Unilever).</li>
-                    <li>🔄 <strong>Continuity:</strong> Persistence of social hierarchies, though the basis shifted from land to capital.</li>
+                    <li>✅ <strong>Change:</strong> Shift from human/animal power to fossil fuels (coal, oil).</li>
+                    <li>✅ <strong>Change:</strong> Global integration through steamships and telegraphs.</li>
+                    <li>🔄 <strong>Continuity:</strong> Persistence of patriarchy and social hierarchies, though the basis shifted from land to capital.</li>
                   </ul>
                 </div>
               </section>
