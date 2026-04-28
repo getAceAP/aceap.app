@@ -2,7 +2,7 @@ import { useParams, useNavigate, Link } from "react-router-dom";
 import Layout from "@/components/Layout";
 import { units } from "@/data/content";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, BookOpen, Clock, MapPin, Info, Download, Globe, Ship, Users, ShieldAlert, Zap, Factory, Landmark, Scale, Anchor, Swords, TrendingUp, HeartPulse } from "lucide-react";
+import { ArrowLeft, BookOpen, Clock, MapPin, Info, Download, Globe, Ship, Users, ShieldAlert, Zap, Factory, Landmark, Scale, Anchor, Swords, TrendingUp, HeartPulse, Landmark as Government, ScrollText, Map } from "lucide-react";
 import { motion } from "framer-motion";
 
 const StudyGuide = () => {
@@ -65,15 +65,184 @@ const StudyGuide = () => {
           className="prose prose-slate dark:prose-invert max-w-none bg-card border border-border rounded-3xl p-8 sm:p-12 shadow-sm space-y-16"
         >
           {isUnit1 ? (
-            <div className="text-center py-12">
-              <h2 className="text-2xl font-bold">Unit 1: The Global Tapestry</h2>
-              <p className="text-muted-foreground">Content for Unit 1 is available in the previous version.</p>
-            </div>
+            <>
+              {/* Unit 1 Content: The Global Tapestry */}
+              <div className="space-y-6">
+                <div className="bg-primary/5 border border-primary/10 rounded-2xl p-6 flex gap-4 items-start not-prose">
+                  <Globe className="text-primary shrink-0 mt-1" size={20} />
+                  <div>
+                    <h3 className="font-bold text-primary mb-1">Unit 1: The Global Tapestry (1200-1450)</h3>
+                    <p className="text-sm text-muted-foreground leading-relaxed">
+                      This unit explores how states formed, expanded, and declined in various parts of the world. It focuses on the internal developments of civilizations before they were deeply interconnected by global trade.
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              <section className="space-y-8">
+                <div className="border-l-4 border-primary pl-6">
+                  <h2 className="text-3xl font-bold m-0">1.1 East Asia</h2>
+                  <p className="text-muted-foreground mt-2">The dominance of the Song Dynasty.</p>
+                </div>
+                <p>The <strong>Song Dynasty</strong> (960-1279) utilized traditional methods of Confucianism and an imperial bureaucracy to maintain and justify its rule.</p>
+                <div className="grid sm:grid-cols-2 gap-6 not-prose">
+                  <div className="p-6 rounded-2xl bg-muted/30 border border-border">
+                    <h3 className="font-bold text-primary flex items-center gap-2 mb-3"><Government size={18} /> Governance</h3>
+                    <ul className="space-y-2 text-sm">
+                      <li><strong>Bureaucracy:</strong> A vast organization in which appointed officials carried out the empire's policies.</li>
+                      <li><strong>Meritocracy:</strong> Officials obtained positions by demonstrating their merit on civil service exams based on Confucian texts.</li>
+                    </ul>
+                  </div>
+                  <div className="p-6 rounded-2xl bg-muted/30 border border-border">
+                    <h3 className="font-bold text-primary flex items-center gap-2 mb-3"><Users size={18} /> Social Structure</h3>
+                    <ul className="space-y-2 text-sm">
+                      <li><strong>Filial Piety:</strong> The duty of family members to subordinate their needs to those of the male head of the family.</li>
+                      <li><strong>Neo-Confucianism:</strong> A syncretic system, combining rational thought with the more abstract ideas of Daoism and Buddhism.</li>
+                    </ul>
+                  </div>
+                </div>
+              </section>
+
+              <section className="space-y-8">
+                <div className="border-l-4 border-primary pl-6">
+                  <h2 className="text-3xl font-bold m-0">1.2 Dar al-Islam</h2>
+                  <p className="text-muted-foreground mt-2">Fragmentation and Innovation.</p>
+                </div>
+                <p>As the Abbasid Caliphate fragmented, new Islamic political entities emerged, most of which were dominated by Turkic peoples.</p>
+                <div className="space-y-4">
+                  <div className="p-6 rounded-2xl border border-border bg-card">
+                    <h3 className="font-bold text-lg mb-3">New Political Entities</h3>
+                    <ul className="list-disc list-inside space-y-2 text-sm">
+                      <li><strong>Seljuk Empire:</strong> Turkic Muslims who captured Baghdad and limited the Caliph's power to religious matters.</li>
+                      <li><strong>Mamluk Sultanate:</strong> Established by former enslaved soldiers in Egypt who defeated the Mongols.</li>
+                      <li><strong>Delhi Sultanate:</strong> Islamic state in northern India that introduced Islam to a Hindu-majority region.</li>
+                    </ul>
+                  </div>
+                  <div className="p-6 rounded-2xl border border-border bg-card">
+                    <h3 className="font-bold text-lg mb-3">Cultural Innovations</h3>
+                    <p className="text-sm leading-relaxed">Islamic scholars made significant advances in mathematics (Nasir al-Din al-Tusi), medicine, and philosophy. The <strong>House of Wisdom</strong> in Baghdad served as a major center for learning and preservation of Greek texts.</p>
+                  </div>
+                </div>
+              </section>
+
+              <section className="space-y-8">
+                <div className="border-l-4 border-primary pl-6">
+                  <h2 className="text-3xl font-bold m-0">1.4 & 1.5 Americas and Africa</h2>
+                  <p className="text-muted-foreground mt-2">State building in isolation.</p>
+                </div>
+                <div className="grid md:grid-cols-2 gap-6 not-prose">
+                  <div className="p-6 rounded-2xl bg-muted/30 border border-border">
+                    <h3 className="font-bold text-primary mb-3">The Americas</h3>
+                    <ul className="space-y-2 text-sm">
+                      <li><strong>Maya:</strong> City-states ruled by king-priests; advanced math and astronomy.</li>
+                      <li><strong>Aztec (Mexica):</strong> Powerful empire in central Mexico; used a <strong>tribute system</strong> to maintain control.</li>
+                      <li><strong>Inca:</strong> Centralized empire in the Andes; used the <strong>Mita system</strong> (mandatory public service).</li>
+                    </ul>
+                  </div>
+                  <div className="p-6 rounded-2xl bg-muted/30 border border-border">
+                    <h3 className="font-bold text-primary mb-3">Africa</h3>
+                    <ul className="space-y-2 text-sm">
+                      <li><strong>Mali:</strong> Wealthy West African kingdom; controlled the gold-salt trade.</li>
+                      <li><strong>Great Zimbabwe:</strong> Powerful state in SE Africa known for its massive stone architecture.</li>
+                      <li><strong>Ethiopia:</strong> A Christian kingdom in East Africa that remained independent.</li>
+                    </ul>
+                  </div>
+                </div>
+              </section>
+            </>
           ) : isUnit2 ? (
-            <div className="text-center py-12">
-              <h2 className="text-2xl font-bold">Unit 2: Networks of Exchange</h2>
-              <p className="text-muted-foreground">Content for Unit 2 is available in the previous version.</p>
-            </div>
+            <>
+              {/* Unit 2 Content: Networks of Exchange */}
+              <div className="space-y-6">
+                <div className="bg-primary/5 border border-primary/10 rounded-2xl p-6 flex gap-4 items-start not-prose">
+                  <Map className="text-primary shrink-0 mt-1" size={20} />
+                  <div>
+                    <h3 className="font-bold text-primary mb-1">Unit 2: Networks of Exchange (1200-1450)</h3>
+                    <p className="text-sm text-muted-foreground leading-relaxed">
+                      This unit focuses on the intensification of trade routes across Afro-Eurasia and the cultural, technological, and biological consequences of these connections.
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              <section className="space-y-8">
+                <div className="border-l-4 border-primary pl-6">
+                  <h2 className="text-3xl font-bold m-0">2.1 The Silk Roads</h2>
+                  <p className="text-muted-foreground mt-2">The revival of land-based trade.</p>
+                </div>
+                <p>The Silk Roads connected East Asia to the Mediterranean. Trade flourished under the protection of large empires like the Mongols.</p>
+                <div className="grid sm:grid-cols-2 gap-6 not-prose">
+                  <div className="p-6 rounded-2xl bg-muted/30 border border-border">
+                    <h3 className="font-bold text-primary flex items-center gap-2 mb-3"><Landmark size={18} /> Commercial Innovations</h3>
+                    <ul className="space-y-2 text-sm">
+                      <li><strong>Caravanserai:</strong> Inns along trade routes where travelers could rest and trade.</li>
+                      <li><strong>Flying Cash:</strong> A system of credit that allowed merchants to deposit money in one location and withdraw it in another.</li>
+                      <li><strong>Banking Houses:</strong> Established in Europe to facilitate large-scale trade.</li>
+                    </ul>
+                  </div>
+                  <div className="p-6 rounded-2xl bg-muted/30 border border-border">
+                    <h3 className="font-bold text-primary flex items-center gap-2 mb-3"><TrendingUp size={18} /> Impact</h3>
+                    <p className="text-xs leading-relaxed">Increased demand for luxury goods (silk, porcelain) led to expanded production in China and Persia. Cities like <strong>Kashgar</strong> and <strong>Samarkand</strong> became major centers of trade and culture.</p>
+                  </div>
+                </div>
+              </section>
+
+              <section className="space-y-8">
+                <div className="border-l-4 border-primary pl-6">
+                  <h2 className="text-3xl font-bold m-0">2.2 The Mongol Empire</h2>
+                  <p className="text-muted-foreground mt-2">The largest contiguous land empire.</p>
+                </div>
+                <p>Under <strong>Genghis Khan</strong>, the Mongols united nomadic tribes and conquered vast territories, creating a period of stability known as the <strong>Pax Mongolica</strong>.</p>
+                <div className="space-y-4">
+                  <div className="p-6 rounded-2xl border border-border bg-card">
+                    <h3 className="font-bold text-lg mb-3">Governance and Trade</h3>
+                    <p className="text-sm leading-relaxed">The Mongols facilitated Afro-Eurasian trade and communication as new peoples were drawn into their conquerors' economies and trade networks. They were religiously tolerant and often adopted the cultures of the people they conquered (e.g., the Il-khanate adopting Islam).</p>
+                  </div>
+                  <div className="p-6 rounded-2xl border border-border bg-card">
+                    <h3 className="font-bold text-lg mb-3">The Four Khanates</h3>
+                    <ul className="list-disc list-inside space-y-2 text-sm">
+                      <li><strong>Golden Horde:</strong> Ruled over Russia.</li>
+                      <li><strong>Il-khanate:</strong> Ruled over Persia and the Middle East.</li>
+                      <li><strong>Chagatai Khanate:</strong> Central Asia.</li>
+                      <li><strong>Yuan Dynasty:</strong> Ruled over China (established by Kublai Khan).</li>
+                    </ul>
+                  </div>
+                </div>
+              </section>
+
+              <section className="space-y-8">
+                <div className="border-l-4 border-primary pl-6">
+                  <h2 className="text-3xl font-bold m-0">2.3 Indian Ocean Trade</h2>
+                  <p className="text-muted-foreground mt-2">The maritime Silk Road.</p>
+                </div>
+                <p>The Indian Ocean trade network connected East Africa, the Middle East, South Asia, and Southeast Asia. It relied on an understanding of environmental patterns.</p>
+                <div className="grid md:grid-cols-2 gap-6 not-prose">
+                  <div className="p-6 rounded-2xl bg-blue-500/5 border border-blue-500/20">
+                    <h3 className="font-bold text-blue-600 flex items-center gap-2 mb-3"><Zap size={18} /> Technology</h3>
+                    <ul className="space-y-2 text-xs">
+                      <li><strong>Monsoon Winds:</strong> Seasonal winds that dictated the timing of voyages.</li>
+                      <li><strong>Lateen Sails:</strong> Triangular sails that allowed ships to sail against the wind.</li>
+                      <li><strong>Astrolabe & Compass:</strong> Improved navigation and direction-finding.</li>
+                    </ul>
+                  </div>
+                  <div className="p-6 rounded-2xl bg-green-500/5 border border-green-500/20">
+                    <h3 className="font-bold text-green-600 flex items-center gap-2 mb-3"><Globe size={18} /> Cultural Exchange</h3>
+                    <p className="text-xs leading-relaxed">The spread of Islam led to the rise of <strong>Swahili City-States</strong> in East Africa and the <strong>Sultanate of Malacca</strong> in SE Asia. <strong>Diasporic communities</strong> of merchants introduced their own cultures into other indigenous cultures.</p>
+                  </div>
+                </div>
+              </section>
+
+              <section className="space-y-8">
+                <div className="border-l-4 border-primary pl-6">
+                  <h2 className="text-3xl font-bold m-0">2.6 Environmental Consequences</h2>
+                  <p className="text-muted-foreground mt-2">The spread of disease and crops.</p>
+                </div>
+                <div className="bg-destructive/5 border border-destructive/20 rounded-2xl p-6 not-prose">
+                  <h3 className="font-bold text-destructive flex items-center gap-2 mb-3"><ShieldAlert size={18} /> The Black Death</h3>
+                  <p className="text-sm leading-relaxed">The <strong>Bubonic Plague</strong> spread along trade routes from East Asia to Europe, killing an estimated 1/3 of the European population. This led to labor shortages and the eventual decline of the manorial system in Europe.</p>
+                </div>
+              </section>
+            </>
           ) : isUnit3 ? (
             <>
               {/* Unit 3 Content: Land-Based Empires */}
