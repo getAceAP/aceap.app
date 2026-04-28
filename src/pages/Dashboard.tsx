@@ -2,8 +2,9 @@ import Layout from "@/components/Layout";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
-import { BookOpen, Lock, ArrowRight } from "lucide-react";
+import { BookOpen, Lock, ArrowRight, Sparkles } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
+import { motion } from "framer-motion";
 
 const subjects = [
   {
@@ -44,6 +45,35 @@ const Dashboard = () => {
           <h1 className="text-4xl font-bold tracking-tight">Select Subject</h1>
           <p className="text-xl text-muted-foreground">Choose a course to start your revision journey.</p>
         </header>
+
+        {/* Predictions Banner */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="relative overflow-hidden rounded-3xl bg-primary p-6 sm:p-8 text-primary-foreground shadow-2xl shadow-primary/20"
+        >
+          <div className="relative z-10 flex flex-col sm:flex-row items-center justify-between gap-6">
+            <div className="space-y-2 text-center sm:text-left">
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/20 text-[10px] font-bold uppercase tracking-widest">
+                <Sparkles size={12} />
+                New Feature
+              </div>
+              <h2 className="text-2xl sm:text-3xl font-bold">2024 DBQ Predictions</h2>
+              <p className="text-primary-foreground/80 max-w-md">
+                See which units are most likely to appear on this year's exam based on historical data.
+              </p>
+            </div>
+            <Button asChild variant="secondary" size="lg" className="rounded-xl px-8 font-bold shadow-lg">
+              <Link to="/predictions">
+                View Predictions
+                <ArrowRight className="ml-2 h-5 w-5" />
+              </Link>
+            </Button>
+          </div>
+          {/* Decorative background element */}
+          <div className="absolute -right-12 -top-12 w-64 h-64 bg-white/10 rounded-full blur-3xl" />
+          <div className="absolute -left-12 -bottom-12 w-64 h-64 bg-black/10 rounded-full blur-3xl" />
+        </motion.div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {subjects.map((subject) => (
