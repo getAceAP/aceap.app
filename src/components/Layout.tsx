@@ -2,6 +2,7 @@ import React from "react";
 import { Link, useLocation } from "react-router-dom";
 import { BookOpen, LayoutDashboard } from "lucide-react";
 import { ThemeToggle } from "./ThemeToggle";
+import { SoundToggle } from "./SoundToggle";
 import { Button } from "./ui/button";
 import { cn } from "@/lib/utils";
 
@@ -36,7 +37,8 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
           </div>
           
           {/* Right: Actions */}
-          <div className="flex items-center gap-1 sm:gap-3">
+          <div className="flex items-center gap-1 sm:gap-2">
+            <SoundToggle />
             <ThemeToggle />
             <div className="h-4 w-[1px] bg-border mx-1 hidden sm:block" />
             <Button asChild variant="ghost" size="sm" className="flex font-semibold text-xs sm:text-sm px-2 sm:px-3">
