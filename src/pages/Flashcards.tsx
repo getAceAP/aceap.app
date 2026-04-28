@@ -5,11 +5,20 @@ import { units, Flashcard } from "@/data/content";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
-import { ArrowLeft, ArrowRight, CheckCircle2, XCircle, RefreshCcw, Brain, Eye, Shuffle, Lightbulb } from "lucide-react";
+import { ArrowLeft, ArrowRight, CheckCircle2, XCircle, RefreshCcw, Brain, Eye, Shuffle, Settings2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { motion, AnimatePresence } from "framer-motion";
 import { playSound } from "@/utils/sounds";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuLabel,
+  DropdownMenuRadioGroup,
+  DropdownMenuRadioItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 const Flashcards = () => {
   const { unitId } = useParams();
@@ -17,6 +26,7 @@ const Flashcards = () => {
   const unit = units.find((u) => u.id === Number(unitId));
   
   const [mode, setMode] = useState<"active" | "normal">("active");
+  const [frontSide, setFrontSide] = useState<"term" | "definition">("definition");
   const [shuffledCards, setShuffledCards] = useState<Flashcard[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [userInput, setUserInput] = useState("");
@@ -28,7 +38,7 @@ const Flashcards = () => {
   
   const [correctCount, setCorrectCount] = useState(0);
   const [incorrectCount, setIncorrectCount] = useState(0);
-  const [overrideSet, setOverrideSet] = useState<boolean>(false); // tracks if user manually overrode
+  const [overrideSet, setOverrideSet] = useState<boolean>(false);
 
   useEffect(() => {
     if (unit) {
@@ -39,6 +49,11 @@ const Flashcards = () => {
   if (!unit || shuffledCards.length === 0) return null;
 
   const currentCard = shuffledCards[currentIndex];
+
+  // Determine what is shown on front vs back based on settings
+  const frontContent = frontSide === "term" ? currentCard.prompt : currentCard.answer;
+  const backContent = frontSide === "term" ? currentCard.answer : currentCard.prompt;
+  const targetAnswer = frontSide === "term" ? currentCard.answer : currentCard.prompt;
 
   const handleShuffle = () => {
     const shuffled = [...shuffledCards].sort(() => Math.random() - 0.5);
@@ -51,12 +66,14 @@ const Flashcards = () => {
     if (isSubmitted || !userInput.trim()) return;
 
     const normalizedInput = userInput.trim().toLowerCase();
-    const normalizedTarget = currentCard.prompt.trim().toLowerCase();
+    const normalizedTarget = targetAnswer.trim().toLowerCase();
     
+    // For active recall, we usually want to guess the term from the definition
+    // If front is term, we guess definition (harder). If front is definition, we guess term.
     const correct = normalizedInput === normalizedTarget;
     setIsCorrect(correct);
     setIsSubmitted(true);
-    setOverrideSet(false); // reset any previous override
+    setOverrideSet(false);
 
     if (correct) {
       setCorrectCount(prev => prev + 1);
@@ -111,7 +128,6 @@ const Flashcards = () => {
     setOverrideSet(false);
   };
 
-  // Manual override handlers
   const overrideCorrect = () => {
     if (!isSubmitted) return;
     if (!isCorrect) {
@@ -183,6 +199,22 @@ const Flashcards = () => {
               <Button variant="outline" size="sm" onClick={handleShuffle} className="rounded-lg text-[10px] font-bold uppercase tracking-wider h-8">
                 <Shuffle className="mr-1.5 h-3 w-3" /> Shuffle
               </Button>
+              
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="outline" size="sm" className="rounded-lg h-8 px-2">
+                    <Settings2 className="h-3.5 w-3.5" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="start" className="w-48 rounded-xl">
+                  <DropdownMenuLabel className="text-xs">Front Side</DropdownMenuLabel>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuRadioGroup value={frontSide} onValueChange={(v: any) => { setFrontSide(v); resetSession(); }}>
+                    <DropdownMenuRadioItem value="definition" className="text-xs">Definition First</DropdownMenuRadioItem>
+                    <DropdownMenuRadioItem value="term" className="text-xs">Term First</DropdownMenuRadioItem>
+                  </DropdownMenuRadioGroup>
+                </DropdownMenuContent>
+              </DropdownMenu>
             </div>
             <div className="flex items-center gap-3 text-xs sm:text-sm font-bold">
               <span className="text-green-600 dark:text-green-400">{correctCount}</span>
@@ -221,7 +253,7 @@ const Flashcards = () => {
               <Card className="absolute inset-0 w-full h-full border-border shadow-none bg-card flex items-center justify-center text-center p-6 sm:p-8 backface-hidden overflow-hidden">
                 <CardContent className="p-0 w-full">
                   <p className="text-lg sm:text-xl md:text-2xl font-medium leading-relaxed text-card-foreground break-words">
-                    {mode === "active" ? currentCard.answer : currentCard.prompt}
+                    {frontContent}
                   </p>
                   {mode === "normal" && !isFlipped && (
                     <p className="mt-4 text-[10px] font-bold text-muted-foreground/40 uppercase tracking-widest">Tap to flip</p>
@@ -236,7 +268,7 @@ const Flashcards = () => {
               >
                 <CardContent className="p-0 w-full">
                   <p className="text-lg sm:text-xl font-medium leading-relaxed text-accent-foreground break-words">
-                    {mode === "active" ? currentCard.prompt : currentCard.answer}
+                    {backContent}
                   </p>
                 </CardContent>
               </Card>
@@ -255,10 +287,12 @@ const Flashcards = () => {
               >
                 <div className="space-y-2">
                   <div className="flex justify-between items-end">
-                    <label className="text-[10px] font-bold text-muted-foreground/60 uppercase tracking-wider">Type the Term</label>
+                    <label className="text-[10px] font-bold text-muted-foreground/60 uppercase tracking-wider">
+                      Type the {frontSide === "definition" ? "Term" : "Definition"}
+                    </label>
                     {showHint && !isSubmitted && (
                       <span className="text-[10px] font-medium text-primary animate-in fade-in slide-in-from-right-2">
-                        Starts with: <span className="font-bold uppercase">{currentCard.prompt.charAt(0)}</span>
+                        Starts with: <span className="font-bold uppercase">{targetAnswer.charAt(0)}</span>
                       </span>
                     )}
                   </div>
@@ -267,7 +301,7 @@ const Flashcards = () => {
                     value={userInput}
                     onChange={(e) => setUserInput(e.target.value)}
                     disabled={isSubmitted}
-                    placeholder="What is this term?"
+                    placeholder={`What is the ${frontSide === "definition" ? "term" : "definition"}?`}
                     className={cn(
                       "h-12 sm:h-14 text-base sm:text-lg border-border focus-visible:ring-primary rounded-xl transition-all",
                       isSubmitted && isCorrect && "border-green-500 bg-green-500/10 text-green-600 dark:text-green-400",
@@ -309,13 +343,12 @@ const Flashcards = () => {
                         </span>
                         {!isCorrect && (
                           <span className="text-xs sm:text-sm opacity-90">
-                            Correct term: <span className="font-bold underline">{currentCard.prompt}</span>
+                            Correct answer: <span className="font-bold underline">{targetAnswer}</span>
                           </span>
                         )}
                       </div>
                     </div>
 
-                    {/* Manual override buttons */}
                     <div className="flex gap-2">
                       <Button
                         variant={isCorrect ? "default" : "outline"}
