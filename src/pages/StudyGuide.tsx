@@ -2,7 +2,7 @@ import { useParams, useNavigate, Link } from "react-router-dom";
 import Layout from "@/components/Layout";
 import { units } from "@/data/content";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, BookOpen, Clock, MapPin, Info, Download, Globe, Ship, Users, ShieldAlert } from "lucide-react";
+import { ArrowLeft, BookOpen, Clock, MapPin, Info, Download, Globe, Ship, Users, ShieldAlert, Zap, Factory, Landmark, Scale } from "lucide-react";
 import { motion } from "framer-motion";
 
 const StudyGuide = () => {
@@ -16,6 +16,7 @@ const StudyGuide = () => {
   const isUnit2 = unit.id === 2;
   const isUnit3 = unit.id === 3;
   const isUnit4 = unit.id === 4;
+  const isUnit5 = unit.id === 5;
 
   return (
     <Layout>
@@ -325,6 +326,151 @@ const StudyGuide = () => {
                     <li>✅ <strong>Change:</strong> Global circulation of silver (Potosi to China).</li>
                     <li>✅ <strong>Change:</strong> Syncretic religions (Santeria, Virgin of Guadalupe).</li>
                     <li>🔄 <strong>Continuity:</strong> Indian Ocean trade remained dominated by Asian merchants for much of the period.</li>
+                  </ul>
+                </div>
+              </section>
+            </>
+          ) : isUnit5 ? (
+            <>
+              {/* Unit 5 Content: Revolutions */}
+              <div className="space-y-6">
+                <div className="bg-primary/5 border border-primary/10 rounded-2xl p-6 flex gap-4 items-start not-prose">
+                  <Scale className="text-primary shrink-0 mt-1" size={20} />
+                  <div>
+                    <h3 className="font-bold text-primary mb-1">Big Picture Overview</h3>
+                    <p className="text-sm text-muted-foreground leading-relaxed">
+                      Unit 5 (1750-1900) is defined by two major shifts: the Enlightenment-led political revolutions and the Industrial Revolution. These forces fundamentally reshaped global politics, economics, and social structures.
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              <section className="space-y-6">
+                <h2 className="text-3xl font-bold border-b-2 border-primary/20 pb-2 pt-4">5.1 The Enlightenment</h2>
+                <p>The Enlightenment applied new ways of understanding and empiricism to human relationships and politics.</p>
+                <div className="grid sm:grid-cols-2 gap-4 not-prose">
+                  <div className="p-4 rounded-xl border border-border bg-card">
+                    <h4 className="font-bold text-primary">Natural Rights</h4>
+                    <p className="text-xs text-muted-foreground mt-1">John Locke's idea that all humans are born with rights to life, liberty, and property.</p>
+                  </div>
+                  <div className="p-4 rounded-xl border border-border bg-card">
+                    <h4 className="font-bold text-primary">Social Contract</h4>
+                    <p className="text-xs text-muted-foreground mt-1">The agreement between people and government; if government fails, people can overthrow it.</p>
+                  </div>
+                </div>
+                <div className="bg-muted/30 p-6 rounded-2xl border border-border">
+                  <h3 className="font-bold text-lg mb-3">Key Thinkers</h3>
+                  <ul className="text-sm space-y-2">
+                    <li><strong>Montesquieu:</strong> Separation of powers (3 branches).</li>
+                    <li><strong>Voltaire:</strong> Religious tolerance and freedom of speech.</li>
+                    <li><strong>Adam Smith:</strong> Laissez-faire economics (The Wealth of Nations).</li>
+                    <li><strong>Mary Wollstonecraft:</strong> Early feminism; argued for women's education.</li>
+                  </ul>
+                </div>
+              </section>
+
+              <section className="space-y-6">
+                <h2 className="text-3xl font-bold border-b-2 border-primary/20 pb-2 pt-4">5.2 Nationalism and Revolutions</h2>
+                <p>Enlightenment ideas led to a wave of revolutions against monarchies and colonial rule.</p>
+                <div className="space-y-4">
+                  <div className="p-6 rounded-xl border border-border bg-card">
+                    <h3 className="font-bold text-lg mb-2">Major Revolutions</h3>
+                    <ul className="list-disc list-inside text-sm space-y-2">
+                      <li><strong>American Revolution (1776):</strong> First successful use of Enlightenment ideas to gain independence.</li>
+                      <li><strong>French Revolution (1789):</strong> Overthrew absolute monarchy; "Liberty, Equality, Fraternity."</li>
+                      <li><strong>Haitian Revolution (1791):</strong> Only successful slave revolt in history; led by Toussaint L'Ouverture.</li>
+                      <li><strong>Latin American Revolutions:</strong> Simon Bolivar led movements to liberate South America from Spain.</li>
+                    </ul>
+                  </div>
+                </div>
+              </section>
+
+              <section className="space-y-6">
+                <h2 className="text-3xl font-bold border-b-2 border-primary/20 pb-2 pt-4">5.3 - 5.5 The Industrial Revolution</h2>
+                <p>The transition to new manufacturing processes began in Great Britain and spread globally.</p>
+                <div className="grid sm:grid-cols-2 gap-6 not-prose">
+                  <div className="bg-muted/50 rounded-xl p-6 border border-border">
+                    <h3 className="text-xl font-bold mb-4 text-primary flex items-center gap-2">
+                      <Factory size={20} /> Why Britain?
+                    </h3>
+                    <ul className="space-y-2 text-sm">
+                      <li>✅ Access to coal and iron</li>
+                      <li>✅ Proximity to waterways</li>
+                      <li>✅ Urbanization (Enclosure Movement)</li>
+                      <li>✅ Legal protection of private property</li>
+                    </ul>
+                  </div>
+                  <div className="bg-muted/50 rounded-xl p-6 border border-border">
+                    <h3 className="text-xl font-bold mb-4 text-primary flex items-center gap-2">
+                      <Zap size={20} /> Key Technologies
+                    </h3>
+                    <ul className="space-y-2 text-sm">
+                      <li>🔥 <strong>Steam Engine:</strong> James Watt (powered factories/ships)</li>
+                      <li>🚂 <strong>Railroads:</strong> Mass transport of goods/people</li>
+                      <li>⚡ <strong>Electricity:</strong> Second Industrial Revolution</li>
+                      <li>🏗️ <strong>Bessemer Process:</strong> Mass production of steel</li>
+                    </ul>
+                  </div>
+                </div>
+              </section>
+
+              <section className="space-y-6">
+                <h2 className="text-3xl font-bold border-b-2 border-primary/20 pb-2 pt-4">5.6 - 5.8 Global Responses & Economics</h2>
+                <p>States and individuals responded to industrialization in diverse ways.</p>
+                <div className="space-y-4">
+                  <div className="p-6 rounded-xl border border-border bg-card">
+                    <h3 className="font-bold text-lg mb-2 flex items-center gap-2">
+                      <Landmark size={20} /> State-Sponsored Industrialization
+                    </h3>
+                    <p className="text-sm">Some governments led industrialization to catch up with the West:</p>
+                    <ul className="list-disc list-inside text-sm mt-2">
+                      <li><strong>Meiji Restoration (Japan):</strong> Rapidly modernized to avoid colonization.</li>
+                      <li><strong>Muhammad Ali (Egypt):</strong> Built textile factories and modernized the military.</li>
+                    </ul>
+                  </div>
+
+                  <div className="p-6 rounded-xl border border-border bg-card">
+                    <h3 className="font-bold text-lg mb-2">Economic Ideologies</h3>
+                    <div className="grid sm:grid-cols-2 gap-4">
+                      <div className="p-3 bg-muted rounded-lg">
+                        <h4 className="font-bold text-sm">Capitalism</h4>
+                        <p className="text-xs">Private ownership, free markets, profit motive (Adam Smith).</p>
+                      </div>
+                      <div className="p-3 bg-muted rounded-lg">
+                        <h4 className="font-bold text-sm">Communism</h4>
+                        <p className="text-xs">State ownership, classless society, workers' revolt (Karl Marx).</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </section>
+
+              <section className="space-y-6">
+                <h2 className="text-3xl font-bold border-b-2 border-primary/20 pb-2 pt-4">5.9 Society and the Industrial Age</h2>
+                <p>Industrialization fundamentally changed how people lived and worked.</p>
+                <div className="grid sm:grid-cols-3 gap-4 not-prose">
+                  <div className="p-4 rounded-xl border border-border bg-muted/30">
+                    <h4 className="font-bold text-primary text-sm">Urbanization</h4>
+                    <p className="text-[10px] text-muted-foreground">Mass migration to cities; led to overcrowding and pollution.</p>
+                  </div>
+                  <div className="p-4 rounded-xl border border-border bg-muted/30">
+                    <h4 className="font-bold text-primary text-sm">New Classes</h4>
+                    <p className="text-[10px] text-muted-foreground">Rise of the middle class (bourgeoisie) and working class (proletariat).</p>
+                  </div>
+                  <div className="p-4 rounded-xl border border-border bg-muted/30">
+                    <h4 className="font-bold text-primary text-sm">Gender Roles</h4>
+                    <p className="text-[10px] text-muted-foreground">Cult of Domesticity for middle class; working class women in factories.</p>
+                  </div>
+                </div>
+              </section>
+
+              <section className="space-y-6">
+                <h2 className="text-3xl font-bold border-b-2 border-primary/20 pb-2 pt-4">5.10 Continuity and Change</h2>
+                <div className="bg-accent/30 rounded-2xl p-6 border border-primary/10">
+                  <ul className="space-y-3 text-sm">
+                    <li>✅ <strong>Change:</strong> Shift from human/animal power to fossil fuels.</li>
+                    <li>✅ <strong>Change:</strong> Rise of global trade and transnational businesses (HSBC, Unilever).</li>
+                    <li>🔄 <strong>Continuity:</strong> Persistence of social hierarchies, though the basis shifted from land to capital.</li>
                   </ul>
                 </div>
               </section>
