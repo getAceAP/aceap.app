@@ -52,14 +52,14 @@ const Signup = () => {
           <CardHeader className="space-y-2 text-center">
             <div className="flex justify-center mb-4">
               <div className="bg-primary text-primary-foreground p-2 rounded-xl shadow-lg shadow-primary/20">
-                <BookOpen size={24} />
+                < BookOpen size={24} />
               </div>
             </div>
             <CardTitle className="text-2xl font-bold">Create an account</CardTitle>
             <CardDescription>
               Start your journey to a 5 today
             </CardDescription>
-          </Header>
+          </CardHeader>
           <CardContent className="space-y-4">
             <form onSubmit={handleSignup} className="space-y-4">
               <div className="grid grid-cols-2 gap-4">
