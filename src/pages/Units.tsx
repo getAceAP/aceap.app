@@ -34,19 +34,19 @@ const Units = () => {
               </CardHeader>
               <CardContent className="flex flex-wrap gap-3">
                 <Button asChild variant="outline" className="flex-1 min-w-[100px] border-border hover:bg-muted">
-                  <Link to={`/quiz/${unit.id}`} className="flex items-center gap-2">
-                    <graduationCap size={16} />
+                  <Link to={`/units/ap-world/quiz/${unit.id}`} className="flex items-center gap-2">
+                    <GraduationCap size={16} />
                     Quiz
                   </Link>
                 </Button>
                 <Button asChild variant="outline" className="flex-1 min-w-[100px] border-border hover:bg-muted">
-                  <Link to={`/flashcards/${unit.id}`} className="flex items-center gap-2">
+                  <Link to={`/units/ap-world/flashcards/${unit.id}`} className="flex items-center gap-2">
                     <BrainCircuit size={16} />
                     Cards
                   </Link>
                 </Button>
                 <Button asChild variant="outline" className="flex-1 min-w-[100px] border-border hover:bg-muted">
-                  <Link to={`/guide/${unit.id}`} className="flex items-center gap-2">
+                  <Link to={`/units/ap-world/guide/${unit.id}`} className="flex items-center gap-2">
                     <FileText size={16} />
                     Guide
                   </Link>

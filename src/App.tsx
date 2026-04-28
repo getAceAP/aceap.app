@@ -28,9 +28,9 @@ const App = () => (
           <Route path="/" element={<Landing />} />
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/units/ap-world" element={<Units />} />
-          <Route path="/quiz/:unitId" element={<Quiz />} />
-          <Route path="/flashcards/:unitId" element={<Flashcards />} />
-          <Route path="/guide/:unitId" element={<StudyGuide />} />
+          <Route path="/units/ap-world/quiz/:unitId" element={<Quiz />} />
+          <Route path="/units/ap-world/flashcards/:unitId" element={<Flashcards />} />
+          <Route path="/units/ap-world/guide/:unitId" element={<StudyGuide />} />
           <Route path="/predictions" element={<Predictions />} />
           <Route path="/privacy" element={<Privacy />} />
           <Route path="/terms" element={<Terms />} />

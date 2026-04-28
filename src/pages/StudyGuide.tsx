@@ -1095,10 +1095,10 @@ const StudyGuide = () => {
           </div>
           <div className="flex gap-3">
             <Button asChild variant="outline" className="rounded-xl">
-              <Link to={`/flashcards/${unit.id}`}>Practice Cards</Link>
+              <Link to={`/units/ap-world/flashcards/${unit.id}`}>Practice Cards</Link>
             </Button>
             <Button asChild className="rounded-xl">
-              <Link to={`/quiz/${unit.id}`}>Take Quiz</Link>
+              <Link to={`/units/ap-world/quiz/${unit.id}`}>Take Quiz</Link>
             </Button>
           </div>
         </footer>
