@@ -5,11 +5,14 @@ import { units, Flashcard } from "@/data/content";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
-import { ArrowLeft, ArrowRight, CheckCircle2, XCircle, RefreshCcw, Brain, Eye, Shuffle, Settings2 } from "lucide-react";
+import { ArrowLeft, ArrowRight, CheckCircle2, XCircle, RefreshCcw, Brain, Eye, Shuffle, Settings2, GraduationCap, Sparkles } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { motion, AnimatePresence } from "framer-motion";
 import { playSound } from "@/utils/sounds";
+import { useAuth } from "@/context/AuthContext";
+import { useFlashcardProgress, MasteryStatus } from "@/hooks/useFlashcardProgress";
+import { Badge } from "@/components/ui/badge";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -23,7 +26,9 @@ import {
 const Flashcards = () => {
   const { unitId } = useParams();
   const navigate = useNavigate();
+  const { user } = useAuth();
   const unit = units.find((u) => u.id === Number(unitId));
+  const { progress, updateProgress } = useFlashcardProgress(Number(unitId));
   
   const [mode, setMode] = useState<"active" | "normal">("active");
   const [frontSide, setFrontSide] = useState<"term" | "definition">("definition");
@@ -49,8 +54,8 @@ const Flashcards = () => {
   if (!unit || shuffledCards.length === 0) return null;
 
   const currentCard = shuffledCards[currentIndex];
+  const cardProgress = progress[currentCard.id];
 
-  // Determine what is shown on front vs back based on settings
   const frontContent = frontSide === "term" ? currentCard.prompt : currentCard.answer;
   const backContent = frontSide === "term" ? currentCard.answer : currentCard.prompt;
   const targetAnswer = frontSide === "term" ? currentCard.answer : currentCard.prompt;
@@ -68,8 +73,6 @@ const Flashcards = () => {
     const normalizedInput = userInput.trim().toLowerCase();
     const normalizedTarget = targetAnswer.trim().toLowerCase();
     
-    // For active recall, we usually want to guess the term from the definition
-    // If front is term, we guess definition (harder). If front is definition, we guess term.
     const correct = normalizedInput === normalizedTarget;
     setIsCorrect(correct);
     setIsSubmitted(true);
@@ -78,6 +81,7 @@ const Flashcards = () => {
     if (correct) {
       setCorrectCount(prev => prev + 1);
       playSound('correct');
+      if (user) updateProgress(currentCard.id, true);
     } else {
       setIncorrectCount(prev => prev + 1);
       playSound('wrong');
@@ -96,6 +100,7 @@ const Flashcards = () => {
     if (correct) {
       setCorrectCount(prev => prev + 1);
       playSound('correct');
+      if (user) updateProgress(currentCard.id, true);
     } else {
       setIncorrectCount(prev => prev + 1);
       playSound('wrong');
@@ -134,6 +139,7 @@ const Flashcards = () => {
       setCorrectCount(prev => prev + 1);
       setIncorrectCount(prev => Math.max(prev - 1, 0));
       playSound('correct');
+      if (user) updateProgress(currentCard.id, true);
     }
     setIsCorrect(true);
     setOverrideSet(true);
@@ -148,6 +154,26 @@ const Flashcards = () => {
     }
     setIsCorrect(false);
     setOverrideSet(true);
+  };
+
+  const getStatusBadge = (status?: MasteryStatus) => {
+    if (!user || !status || status === 'new') return null;
+    
+    if (status === 'learned') {
+      return (
+        <Badge className="bg-green-500/10 text-green-600 border-green-500/20 gap-1 px-2 py-0.5">
+          <GraduationCap size={12} />
+          Learned
+        </Badge>
+      );
+    }
+    
+    return (
+      <Badge className="bg-blue-500/10 text-blue-600 border-blue-500/20 gap-1 px-2 py-0.5">
+        <Sparkles size={12} />
+        Still Learning
+      </Badge>
+    );
   };
 
   if (isFinished) {
@@ -251,6 +277,9 @@ const Flashcards = () => {
             >
               {/* Front Side */}
               <Card className="absolute inset-0 w-full h-full border-border shadow-none bg-card flex items-center justify-center text-center p-6 sm:p-8 backface-hidden overflow-hidden">
+                <div className="absolute top-4 right-4">
+                  {getStatusBadge(cardProgress?.status)}
+                </div>
                 <CardContent className="p-0 w-full">
                   <p className="text-lg sm:text-xl md:text-2xl font-medium leading-relaxed text-card-foreground break-words">
                     {frontContent}
