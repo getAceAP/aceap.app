@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '@/utils/supabase';
 import { useAuth } from '@/context/AuthContext';
+import { showError, showSuccess } from '@/utils/toast';
 
 export type MasteryStatus = 'new' | 'learning' | 'learned';
 
@@ -41,15 +42,20 @@ export const useFlashcardProgress = (unitId: number) => {
         });
         setProgress(progressMap);
       }
-    } catch (err) {
+    } catch (err: any) {
       console.error("Error fetching progress:", err);
+      showError(`Failed to load progress: ${err.message}`);
     } finally {
       setLoading(false);
     }
   };
 
   const updateProgress = async (flashcardId: string, wasCorrect: boolean) => {
-    if (!user || !wasCorrect) return;
+    if (!user) {
+      showError("Please log in to save your progress!");
+      return;
+    }
+    if (!wasCorrect) return; // Only count correct answers
 
     const current = progress[flashcardId] || { correct_count: 0 };
     const newCount = current.correct_count + 1;
@@ -74,8 +80,14 @@ export const useFlashcardProgress = (unitId: number) => {
         ...prev,
         [flashcardId]: { flashcard_id: flashcardId, correct_count: newCount, status },
       }));
-    } catch (err) {
+
+      // Show success toast when a card is mastered
+      if (newCount === 3) {
+        showSuccess("Card mastered! 🎉");
+      }
+    } catch (err: any) {
       console.error("Error updating progress:", err);
+      showError(`Failed to save progress: ${err.message}`);
     }
   };
 
