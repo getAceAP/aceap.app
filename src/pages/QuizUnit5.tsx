@@ -1,0 +1,332 @@
+import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import Layout from "@/components/Layout";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Progress } from "@/components/ui/progress";
+import { ArrowLeft, RefreshCcw, CheckCircle2, XCircle, Info } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
+import { cn } from "@/lib/utils";
+import { playSound } from "@/utils/sounds";
+
+const stimuli = [
+  {
+    id: 1,
+    text: "The Enlightenment applied new ways of understanding and empiricism to human relationships and politics. Thinkers like John Locke argued for natural rights—life, liberty, and property—and the social contract between the governed and the government.",
+    img: "https://images.unsplash.com/photo-1524995997946-a1c2e315a42f?auto=format&fit=crop&w=800&q=80",
+    source: "National Portrait Gallery - Portrait of John Locke, c. 1697"
+  },
+  {
+    id: 2,
+    text: "The French Revolution (1789) challenged the absolute monarchy and the system of aristocratic privileges. The Declaration of the Rights of Man and of the Citizen outlined the natural rights of all people and the rights they possessed as citizens.",
+    img: "https://images.unsplash.com/photo-1551732998-9573f695fdbb?auto=format&fit=crop&w=800&q=80",
+    source: "Musée Carnavalet - Storming of the Bastille, July 14, 1789"
+  },
+  {
+    id: 3,
+    text: "The Haitian Revolution (1791-1804) was the only successful slave revolt in history. Led by Toussaint L'Ouverture, it resulted in the creation of the first independent black republic and the abolition of slavery in the colony of Saint-Domingue.",
+    img: "https://images.unsplash.com/photo-1599408162162-cdb143551737?auto=format&fit=crop&w=800&q=80",
+    source: "Historical Archive - Portrait of Toussaint L'Ouverture"
+  },
+  {
+    id: 4,
+    text: "The Industrial Revolution began in Great Britain due to a unique combination of factors: access to coal and iron, proximity to waterways, urbanization, and legal protection of private property. The steam engine was the defining technology of this era.",
+    img: "https://images.unsplash.com/photo-1513828583688-c52646db42da?auto=format&fit=crop&w=800&q=80",
+    source: "Science Museum London - James Watt's Rotative Steam Engine, 1788"
+  },
+  {
+    id: 5,
+    text: "The Meiji Restoration in Japan (1868) was a state-sponsored industrialization effort. To avoid Western colonization, Japan rapidly modernized its military, economy, and education system, becoming a major global power by 1900.",
+    img: "https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?auto=format&fit=crop&w=800&q=80",
+    source: "Tokyo National Museum - Emperor Meiji in Western Military Uniform"
+  },
+  {
+    id: 6,
+    text: "Adam Smith's 'The Wealth of Nations' (1776) laid the foundation for modern capitalism. He advocated for free markets, the 'invisible hand,' and laissez-faire policies, arguing that individual self-interest leads to collective prosperity.",
+    img: "https://images.unsplash.com/photo-1554224155-6726b3ff858f?auto=format&fit=crop&w=800&q=80",
+    source: "University of Glasgow - First Edition of The Wealth of Nations"
+  },
+  {
+    id: 7,
+    text: "Karl Marx and Friedrich Engels published 'The Communist Manifesto' (1848) as a reaction to the hardships of industrial capitalism. They argued that history is a series of class struggles and predicted a proletariat revolution.",
+    img: "https://images.unsplash.com/photo-1589829085413-56de8ae18c73?auto=format&fit=crop&w=800&q=80",
+    source: "International Institute of Social History - Original Manuscript of the Manifesto"
+  },
+  {
+    id: 8,
+    text: "Urbanization was a major consequence of industrialization. Cities grew rapidly as people moved from rural areas to work in factories, leading to overcrowding, pollution, and the rise of tenements and poor living conditions.",
+    img: "https://images.unsplash.com/photo-1514565131-fce0801e5785?auto=format&fit=crop&w=800&q=80",
+    source: "Museum of the City of New York - Tenement Life in the 19th Century"
+  },
+  {
+    id: 9,
+    text: "The Second Industrial Revolution (late 19th century) focused on steel, chemicals, electricity, and precision machinery. The telegraph and telephone revolutionized communication, while railroads and steamships integrated global markets.",
+    img: "https://images.unsplash.com/photo-1474487022152-5217965b3b9e?auto=format&fit=crop&w=800&q=80",
+    source: "Smithsonian Institution - Early Telegraph Machine, c. 1880"
+  },
+  {
+    id: 10,
+    text: "Feminism emerged during the Enlightenment. Mary Wollstonecraft and Olympe de Gouges argued that the principles of liberty and equality should apply to women, calling for better education and political rights.",
+    img: "https://images.unsplash.com/photo-1573164713988-8665fc963095?auto=format&fit=crop&w=800&q=80",
+    source: "National Portrait Gallery - Portrait of Mary Wollstonecraft, 1797"
+  }
+];
+
+const questions = [
+  // Stimulus 1: Enlightenment (1-5)
+  { id: 1, stimulusId: 1, question: "John Locke's 'natural rights' included which of the following?", options: ["Life, Liberty, Happiness", "Life, Liberty, Property", "Freedom, Equality, Fraternity", "Order, Progress, Security"], correctAnswer: "Life, Liberty, Property", explanation: "Locke argued that all humans are born with the rights to life, liberty, and property." },
+  { id: 2, stimulusId: 1, question: "The 'social contract' is an agreement between whom?", options: ["The King and the Church", "The People and the Government", "Different Nations", "The Rich and the Poor"], correctAnswer: "The People and the Government", explanation: "The social contract theory posits that people give up some freedoms in exchange for government protection of their rights." },
+  { id: 3, stimulusId: 1, question: "Which Enlightenment thinker advocated for the separation of powers?", options: ["Voltaire", "Rousseau", "Montesquieu", "Adam Smith"], correctAnswer: "Montesquieu", explanation: "Montesquieu's 'The Spirit of the Laws' proposed dividing government into three branches to prevent tyranny." },
+  { id: 4, stimulusId: 1, question: "Enlightenment ideas primarily challenged which form of government?", options: ["Democracy", "Absolute Monarchy", "Republic", "Theocracy"], correctAnswer: "Absolute Monarchy", explanation: "Enlightenment thinkers questioned the 'Divine Right of Kings' and absolute power." },
+  { id: 5, stimulusId: 1, question: "What was a major social consequence of Enlightenment thought?", options: ["The rise of slavery", "The abolitionist movement", "The end of trade", "The fall of the Church"], correctAnswer: "The abolitionist movement", explanation: "The focus on individual rights and equality led many to question and oppose the institution of slavery." },
+
+  // Stimulus 2: French Revolution (6-10)
+  { id: 6, stimulusId: 2, question: "Which group made up the 'Third Estate' in pre-revolutionary France?", options: ["The Clergy", "The Nobility", "The Commoners", "The Royal Family"], correctAnswer: "The Commoners", explanation: "The Third Estate included peasants, artisans, and the bourgeoisie, making up 97% of the population." },
+  { id: 7, stimulusId: 2, question: "What was the primary cause of the French Revolution?", options: ["Religious conflict", "Economic crisis and inequality", "Foreign invasion", "A plague"], correctAnswer: "Economic crisis and inequality", explanation: "High taxes on the Third Estate and a massive national debt triggered the revolution." },
+  { id: 8, stimulusId: 2, question: "The 'Declaration of the Rights of Man' was inspired by which document?", options: ["The Magna Carta", "The US Declaration of Independence", "The Communist Manifesto", "The Bible"], correctAnswer: "The US Declaration of Independence", explanation: "The French document mirrored the American focus on natural rights and popular sovereignty." },
+  { id: 9, stimulusId: 2, question: "Who was the radical leader during the 'Reign of Terror'?", options: ["Napoleon Bonaparte", "Louis XVI", "Maximilien Robespierre", "Marquis de Lafayette"], correctAnswer: "Maximilien Robespierre", explanation: "Robespierre led the Committee of Public Safety during the revolution's most violent phase." },
+  { id: 10, stimulusId: 2, question: "What was the ultimate outcome of the French Revolution by 1804?", options: ["A stable democracy", "The return of the old monarchy", "The rise of Napoleon as Emperor", "The total destruction of France"], correctAnswer: "The rise of Napoleon as Emperor", explanation: "Napoleon seized power in a coup and eventually declared himself Emperor, ending the revolutionary period." },
+
+  // Stimulus 3: Haitian Revolution (11-15)
+  { id: 11, stimulusId: 3, question: "Haiti was a colony of which European power?", options: ["Spain", "Britain", "France", "Portugal"], correctAnswer: "France", explanation: "Haiti, then known as Saint-Domingue, was France's wealthiest sugar colony." },
+  { id: 12, stimulusId: 3, question: "Who was the primary leader of the Haitian Revolution?", options: ["Simon Bolivar", "Toussaint L'Ouverture", "Jose de San Martin", "Napoleon"], correctAnswer: "Toussaint L'Ouverture", explanation: "L'Ouverture was a former enslaved man who organized the rebel forces into a disciplined army." },
+  { id: 13, stimulusId: 3, question: "What made the Haitian Revolution unique?", options: ["It was led by the nobility", "It was the only successful slave revolt", "It was peaceful", "It failed to gain independence"], correctAnswer: "It was the only successful slave revolt", explanation: "It is the only instance in history where enslaved people overthrew their masters and created a new state." },
+  { id: 14, stimulusId: 3, question: "How did the Haitian Revolution affect the United States?", options: ["It led to the Louisiana Purchase", "It caused the US Civil War", "It ended US slavery", "It had no effect"], correctAnswer: "It led to the Louisiana Purchase", explanation: "Napoleon's failure in Haiti led him to sell the Louisiana Territory to the US in 1803." },
+  { id: 15, stimulusId: 3, question: "What was the main economic driver of Saint-Domingue?", options: ["Silver mining", "Fur trade", "Sugar and coffee plantations", "Textile manufacturing"], correctAnswer: "Sugar and coffee plantations", explanation: "The colony produced massive amounts of sugar and coffee using enslaved labor." },
+
+  // Stimulus 4: Industrial Revolution (16-20)
+  { id: 16, stimulusId: 4, question: "Why did the Industrial Revolution begin in Great Britain?", options: ["Large gold reserves", "Access to coal and iron", "A warm climate", "A small population"], correctAnswer: "Access to coal and iron", explanation: "Britain had abundant natural resources necessary for steam power and machine building." },
+  { id: 17, stimulusId: 4, question: "Who improved the steam engine to make it practical for industry?", options: ["Eli Whitney", "James Watt", "Thomas Edison", "Alexander Graham Bell"], correctAnswer: "James Watt", explanation: "Watt's improvements allowed the steam engine to power factories and locomotives." },
+  { id: 18, stimulusId: 4, question: "The 'factory system' led to which of the following?", options: ["Increased artisan work", "Specialization of labor", "The end of cities", "Lower production rates"], correctAnswer: "Specialization of labor", explanation: "Factories divided tasks into simple, repetitive steps to increase efficiency." },
+  { id: 19, stimulusId: 4, question: "Which industry was the first to be industrialized?", options: ["Steel", "Chemicals", "Textiles", "Automotive"], correctAnswer: "Textiles", explanation: "The production of cloth was the first to move from homes (cottage industry) to factories." },
+  { id: 20, stimulusId: 4, question: "What was a major environmental impact of early industrialization?", options: ["Reforestation", "Air and water pollution", "Increased biodiversity", "The end of mining"], correctAnswer: "Air and water pollution", explanation: "Coal-burning factories and lack of waste regulation led to severe pollution in industrial cities." },
+
+  // Stimulus 5: Meiji Restoration (21-25)
+  { id: 21, stimulusId: 5, question: "What was the primary goal of the Meiji Restoration?", options: ["To isolate Japan", "To modernize and industrialize", "To return to feudalism", "To join the Chinese Empire"], correctAnswer: "To modernize and industrialize", explanation: "Japan sought to adopt Western technology and methods to protect its sovereignty." },
+  { id: 22, stimulusId: 5, question: "Which group lost their traditional status during the Meiji era?", options: ["The Merchants", "The Samurai", "The Peasants", "The Emperor"], correctAnswer: "The Samurai", explanation: "The feudal class of warriors was abolished as Japan created a modern conscript army." },
+  { id: 23, stimulusId: 5, question: "How did the Japanese government support industrialization?", options: ["By banning trade", "By building state-owned factories", "By lowering taxes", "By invading Europe"], correctAnswer: "By building state-owned factories", explanation: "The government jumpstarted industry by building factories and then selling them to private investors (zaibatsu)." },
+  { id: 24, stimulusId: 5, question: "The Meiji Restoration was a response to which event?", options: ["The Opium War", "The arrival of Commodore Matthew Perry", "The French Revolution", "The Black Death"], correctAnswer: "The arrival of Commodore Matthew Perry", explanation: "Perry's arrival in 1853 forced Japan to open its ports and realize its technological disadvantage." },
+  { id: 25, stimulusId: 5, question: "What was the result of Japan's modernization by 1900?", options: ["It was colonized by Britain", "It became a major imperial power", "It remained a feudal society", "It collapsed into civil war"], correctAnswer: "It became a major imperial power", explanation: "Japan's rapid success allowed it to defeat China and Russia and begin its own empire." },
+
+  // Stimulus 6: Capitalism (26-30)
+  { id: 26, stimulusId: 6, question: "Adam Smith's 'invisible hand' refers to what?", options: ["Government regulation", "Market forces of supply and demand", "The power of the King", "Religious influence"], correctAnswer: "Market forces of supply and demand", explanation: "Smith argued that the market naturally regulates itself without government interference." },
+  { id: 27, stimulusId: 6, question: "What does 'laissez-faire' mean?", options: ["Government control", "Hands-off / Let it be", "Fair trade for all", "High taxes on the rich"], correctAnswer: "Hands-off / Let it be", explanation: "Laissez-faire is the policy of minimum government interference in the economy." },
+  { id: 28, stimulusId: 6, question: "According to Smith, what drives economic progress?", options: ["Charity", "Individual self-interest", "Government planning", "War"], correctAnswer: "Individual self-interest", explanation: "Smith believed that individuals seeking profit would benefit society as a whole." },
+  { id: 29, stimulusId: 6, question: "Capitalism replaced which previous economic system?", options: ["Socialism", "Mercantilism", "Communism", "Barter"], correctAnswer: "Mercantilism", explanation: "Capitalism moved away from state-controlled trade toward private ownership and free markets." },
+  { id: 30, stimulusId: 6, question: "What is a 'transnational business'?", options: ["A local shop", "A company operating in multiple countries", "A government-owned utility", "A non-profit organization"], correctAnswer: "A company operating in multiple countries", explanation: "Businesses like HSBC and Unilever began to operate globally during this era." },
+
+  // Stimulus 7: Marxism (31-35)
+  { id: 31, stimulusId: 7, question: "Marx defined the 'proletariat' as which group?", options: ["The owners of factories", "The working class", "The nobility", "The clergy"], correctAnswer: "The working class", explanation: "The proletariat are the workers who do not own the means of production." },
+  { id: 32, stimulusId: 7, question: "Who were the 'bourgeoisie' in Marx's view?", options: ["The poor peasants", "The middle-class owners", "The royal family", "The military"], correctAnswer: "The middle-class owners", explanation: "The bourgeoisie owned the factories, land, and capital." },
+  { id: 33, stimulusId: 7, question: "What did Marx predict would happen to capitalism?", options: ["It would last forever", "It would be overthrown by workers", "It would become more fair", "It would end due to a plague"], correctAnswer: "It would be overthrown by workers", explanation: "Marx believed the proletariat would eventually revolt and establish a classless society." },
+  { id: 34, stimulusId: 7, question: "Marxism was a reaction to which of the following?", options: ["The Enlightenment", "The hardships of the Industrial Revolution", "The fall of Rome", "The discovery of the Americas"], correctAnswer: "The hardships of the Industrial Revolution", explanation: "Marx sought to address the extreme inequality and poor conditions faced by industrial workers." },
+  { id: 35, stimulusId: 7, question: "What is the core idea of 'socialism'?", options: ["Private ownership of everything", "Collective or government ownership of production", "No government at all", "Rule by the military"], correctAnswer: "Collective or government ownership of production", explanation: "Socialism advocates for society as a whole to own and manage resources." },
+
+  // Stimulus 8: Urbanization (36-40)
+  { id: 36, stimulusId: 8, question: "What was the primary cause of rapid urbanization?", options: ["Better farming", "The search for factory jobs", "Religious pilgrimages", "War in the countryside"], correctAnswer: "The search for factory jobs", explanation: "The shift from agriculture to industry drew millions of people to cities." },
+  { id: 37, stimulusId: 8, question: "What were 'tenements'?", options: ["Luxury apartments", "Overcrowded, low-quality housing", "Government offices", "Religious temples"], correctAnswer: "Overcrowded, low-quality housing", explanation: "Tenements were built to house the massive influx of poor workers in industrial cities." },
+  { id: 38, stimulusId: 8, question: "Which disease was common in overcrowded industrial cities?", options: ["Smallpox", "Cholera", "Malaria", "Scurvy"], correctAnswer: "Cholera", explanation: "Poor sanitation and contaminated water led to frequent cholera outbreaks." },
+  { id: 39, stimulusId: 8, question: "How did urbanization affect the family structure?", options: ["Families became larger", "Families moved together to farms", "Work and home life became separated", "Children stopped working"], correctAnswer: "Work and home life became separated", explanation: "In the industrial age, family members left the home to work in separate factories." },
+  { id: 40, stimulusId: 8, question: "What was a positive outcome of urbanization over time?", options: ["Less pollution", "Better access to education and culture", "The end of poverty", "More land for farming"], correctAnswer: "Better access to education and culture", explanation: "Cities eventually became centers for new ideas, education, and social movements." },
+
+  // Stimulus 9: Second Industrial Revolution (41-45)
+  { id: 41, stimulusId: 9, question: "The Second Industrial Revolution is most associated with which material?", options: ["Iron", "Steel", "Bronze", "Wood"], correctAnswer: "Steel", explanation: "The Bessemer process made steel cheap and abundant, allowing for skyscrapers and better rails." },
+  { id: 42, stimulusId: 9, question: "Which invention revolutionized long-distance communication?", options: ["The Printing Press", "The Telegraph", "The Steam Engine", "The Compass"], correctAnswer: "The Telegraph", explanation: "The telegraph allowed for near-instant communication across continents." },
+  { id: 43, stimulusId: 9, question: "What was the impact of the Trans-Siberian Railroad?", options: ["It isolated Russia", "It connected European Russia to the Pacific", "It ended trade with China", "It led to the fall of the Tsar"], correctAnswer: "It connected European Russia to the Pacific", explanation: "The railroad allowed Russia to expand its influence and trade into Asia." },
+  { id: 44, stimulusId: 9, question: "How did electricity change factory work?", options: ["It made it more dangerous", "It allowed factories to run 24/7", "It ended the use of machines", "It required more human labor"], correctAnswer: "It allowed factories to run 24/7", explanation: "Electric lighting and power meant production was no longer limited by daylight." },
+  { id: 45, stimulusId: 9, question: "The internal combustion engine relied on which fuel?", options: ["Coal", "Wood", "Petroleum (Oil)", "Water"], correctAnswer: "Petroleum (Oil)", explanation: "The development of the engine drove the global demand for oil." },
+
+  // Stimulus 10: Feminism (46-50)
+  { id: 46, stimulusId: 10, question: "Mary Wollstonecraft's 'A Vindication of the Rights of Woman' focused on what?", options: ["The right to vote", "The importance of education", "The right to own property", "The end of slavery"], correctAnswer: "The importance of education", explanation: "Wollstonecraft argued that women only appeared inferior because they lacked access to education." },
+  { id: 47, stimulusId: 10, question: "Olympe de Gouges wrote a declaration for which group?", options: ["The Clergy", "The Nobility", "Women and Female Citizens", "The Military"], correctAnswer: "Women and Female Citizens", explanation: "She challenged the French Revolution's failure to include women in its new rights." },
+  { id: 48, stimulusId: 10, question: "What was the 'Cult of Domesticity'?", options: ["A religious sect", "The idealization of women as homemakers", "A political party", "A labor union"], correctAnswer: "The idealization of women as homemakers", explanation: "This middle-class value system restricted women to the private sphere of the home." },
+  { id: 49, stimulusId: 10, question: "When did most women in the West gain the right to vote?", options: ["1790s", "1840s", "Early 20th Century", "Late 20th Century"], correctAnswer: "Early 20th Century", explanation: "The suffrage movement achieved its main goals after decades of struggle, mostly after WWI." },
+  { id: 50, stimulusId: 10, question: "Feminism was a direct outgrowth of which movement?", options: ["The Crusades", "The Enlightenment", "The Black Death", "The Renaissance"], correctAnswer: "The Enlightenment", explanation: "The Enlightenment's focus on reason and individual rights provided the logical basis for women's equality." }
+];
+
+const QuizUnit5 = () => {
+  const navigate = useNavigate();
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [selectedOption, setSelectedOption] = useState<string | null>(null);
+  const [isAnswered, setIsAnswered] = useState(false);
+  const [score, setScore] = useState(0);
+  const [isFinished, setIsFinished] = useState(false);
+  const [showStimulus, setShowStimulus] = useState(true);
+
+  const currentQuestion = questions[currentIndex];
+  const currentStimulus = stimuli.find(s => s.id === currentQuestion.stimulusId);
+  const progress = (currentIndex / questions.length) * 100;
+
+  const handleOptionSelect = (option: string) => {
+    if (isAnswered) return;
+    setSelectedOption(option);
+    setIsAnswered(true);
+    
+    if (option === currentQuestion.correctAnswer) {
+      setScore(score + 1);
+      playSound('correct');
+    } else {
+      playSound('wrong');
+    }
+  };
+
+  const handleNext = () => {
+    if (currentIndex < questions.length - 1) {
+      const nextIndex = currentIndex + 1;
+      if (questions[nextIndex].stimulusId !== currentQuestion.stimulusId) {
+        setShowStimulus(true);
+      }
+      setCurrentIndex(nextIndex);
+      setSelectedOption(null);
+      setIsAnswered(false);
+    } else {
+      setIsFinished(true);
+    }
+  };
+
+  if (isFinished) {
+    return (
+      <Layout>
+        <motion.div 
+          initial={{ opacity: 0, scale: 0.95 }}
+          animate={{ opacity: 1, scale: 1 }}
+          className="max-w-md mx-auto text-center space-y-8 py-12"
+        >
+          <div className="space-y-2">
+            <h2 className="text-3xl font-bold">Unit 5 Mastery Complete!</h2>
+            <p className="text-muted-foreground">You scored {score} out of {questions.length}</p>
+          </div>
+          
+          <div className="p-8 rounded-3xl bg-primary/10 border border-primary/20">
+            <div className="text-5xl font-bold text-primary mb-2">{Math.round((score/questions.length)*100)}%</div>
+            <div className="text-sm font-bold uppercase tracking-widest text-primary/70">Final Score</div>
+          </div>
+
+          <div className="flex gap-4">
+            <Button onClick={() => window.location.reload()} className="flex-1 h-12 rounded-xl">
+              <RefreshCcw className="mr-2 h-4 w-4" /> Try Again
+            </Button>
+            <Button variant="outline" onClick={() => navigate("/units/ap-world")} className="flex-1 h-12 rounded-xl">
+              Back to Units
+            </Button>
+          </div>
+        </motion.div>
+      </Layout>
+    );
+  }
+
+  return (
+    <Layout>
+      <div className="max-w-4xl mx-auto space-y-8">
+        <div className="flex items-center justify-between">
+          <Button variant="ghost" onClick={() => navigate("/units/ap-world")} className="text-muted-foreground">
+            <ArrowLeft className="mr-2 h-4 w-4" /> Exit Quiz
+          </Button>
+          <div className="text-right">
+            <div className="text-sm font-bold text-primary">Question {currentIndex + 1} / {questions.length}</div>
+            <div className="text-[10px] font-bold text-muted-foreground uppercase tracking-tighter">Unit 5: Revolutions</div>
+          </div>
+        </div>
+
+        <Progress value={progress} className="h-1.5 bg-muted" />
+
+        <AnimatePresence mode="wait">
+          {showStimulus ? (
+            <motion.div
+              key={`stimulus-${currentStimulus?.id}`}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              className="space-y-6"
+            >
+              <Card className="overflow-hidden border-border shadow-xl shadow-primary/5 rounded-3xl">
+                <div className="aspect-video w-full overflow-hidden">
+                  <img 
+                    src={currentStimulus?.img} 
+                    alt="Stimulus" 
+                    className="w-full h-full object-cover hover:scale-105 transition-transform duration-700"
+                  />
+                </div>
+                <CardContent className="p-8 space-y-4">
+                  <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 text-primary text-[10px] font-bold uppercase tracking-widest">
+                    <Info size={12} />
+                    Stimulus Context
+                  </div>
+                  <p className="text-lg leading-relaxed font-medium italic text-foreground/90">
+                    "{currentStimulus?.text}"
+                  </p>
+                  <div className="pt-4 border-t border-border text-[10px] text-muted-foreground font-medium uppercase tracking-wider">
+                    Source: {currentStimulus?.source}
+                  </div>
+                </CardContent>
+              </Card>
+              <Button onClick={() => setShowStimulus(false)} className="w-full h-14 rounded-2xl text-lg font-bold shadow-xl shadow-primary/20">
+                Start Questions ({currentIndex + 1}-{currentIndex + 5})
+              </Button>
+            </motion.div>
+          ) : (
+            <motion.div
+              key={`question-${currentQuestion.id}`}
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: -20 }}
+              className="space-y-8"
+            >
+              <h2 className="text-2xl sm:text-3xl font-bold leading-tight text-center px-4">
+                {currentQuestion.question}
+              </h2>
+
+              <div className="grid gap-4">
+                {currentQuestion.options.map((option) => {
+                  const isCorrect = option === currentQuestion.correctAnswer;
+                  const isSelected = option === selectedOption;
+                  
+                  return (
+                    <button
+                      key={option}
+                      disabled={isAnswered}
+                      onClick={() => handleOptionSelect(option)}
+                      className={cn(
+                        "w-full text-left p-5 rounded-2xl border-2 transition-all duration-200 text-lg font-medium",
+                        !isAnswered && "border-border hover:border-primary hover:bg-primary/5",
+                        isAnswered && isCorrect && "border-green-500 bg-green-500/10 text-green-600",
+                        isAnswered && isSelected && !isCorrect && "border-destructive bg-destructive/10 text-destructive",
+                        isAnswered && !isCorrect && !isSelected && "border-border opacity-40"
+                      )}
+                    >
+                      <div className="flex items-center justify-between">
+                        <span>{option}</span>
+                        {isAnswered && isCorrect && <CheckCircle2 className="h-6 w-6 text-green-600" />}
+                        {isAnswered && isSelected && !isCorrect && <XCircle className="h-6 w-6 text-destructive" />}
+                      </div>
+                    </button>
+                  );
+                })}
+              </div>
+
+              {isAnswered && (
+                <motion.div
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="space-y-4"
+                >
+                  <Card className="border-none bg-muted/50 shadow-none rounded-2xl">
+                    <CardContent className="p-6 space-y-3">
+                      <div className="text-xs font-bold uppercase tracking-widest text-muted-foreground">Explanation</div>
+                      <p className="text-foreground leading-relaxed">{currentQuestion.explanation}</p>
+                    </CardContent>
+                  </Card>
+                  <Button onClick={handleNext} className="w-full h-14 rounded-2xl text-lg font-bold">
+                    {currentIndex < questions.length - 1 ? "Next Question" : "Finish Quiz"}
+                  </Button>
+                </motion.div>
+              )}
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </div>
+    </Layout>
+  );
+};
+
+export default QuizUnit5;

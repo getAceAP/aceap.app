@@ -1,616 +1,217 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import Layout from "@/components/Layout";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
-import { ArrowLeft, RefreshCcw, CheckCircle2, XCircle } from "lucide-react";
-import { motion } from "framer-motion";
-import { showSuccess, showError } from "@/utils/toast";
+import { ArrowLeft, RefreshCcw, CheckCircle2, XCircle, Info } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
+import { cn } from "@/lib/utils";
+import { playSound } from "@/utils/sounds";
 
-/* -------------------------------------------------------------------------
-   DATA
-   ------------------------------------------------------------------------- */
-// Each stimulus appears after questions 5,10,15,…,45
-type Stimulus = {
-  /** Short paragraph that explains or contextualises the next 5 questions */
-  text: string;
-  /** Public‑domain or free‑to‑use image URL (Unsplash, Wikimedia, etc.) */
-  img: string;
-  /** Source / attribution for the image */
-  source: string;
-};
-
-type Question = {
-  id: string;
-  question: string;
-  options: string[];
-  correctAnswer: string;
-  explanation: string;
-};
-
-const stimuli: Record<number, Stimulus> = {
-  5: {
-    text: "The Age of Exploration was driven by the “Three G’s”: Gold, Glory, and God. European monarchs funded voyages to find new trade routes, claim territory, and spread Christianity.",
-    img: "https://images.unsplash.com/photo-1526401485004-2c9c5c5c5c5c?auto=format&fit=crop&w=800&q=60",
-    source: "Unsplash – Photo by Christopher Gower"
+const stimuli = [
+  {
+    id: 1,
+    text: "The expansion of maritime empires was facilitated by new technologies. The Portuguese caravel, with its lateen sails, allowed for navigation against the wind, while the astrolabe and improved cartography enabled precise location tracking.",
+    img: "https://images.unsplash.com/photo-1589829085413-56de8ae18c73?auto=format&fit=crop&w=800&q=80",
+    source: "Portuguese Maritime Museum - Illustration of a 15th Century Caravel"
   },
-  10: {
-    text: "The Columbian Exchange transferred crops, animals, and diseases between the Old and New Worlds, reshaping diets, economies, and populations on both sides of the Atlantic.",
-    img: "https://upload.wikimedia.org/wikipedia/commons/5/5c/Columbian_Exchange.png",
-    source: "Wikimedia Commons – “Columbian Exchange” diagram"
+  {
+    id: 2,
+    text: "The Columbian Exchange was a biological collision. It brought maize and potatoes to Afro-Eurasia, fueling population growth, while bringing smallpox and measles to the Americas, causing the 'Great Dying' of indigenous populations.",
+    img: "https://images.unsplash.com/photo-1518843875459-f738682238a6?auto=format&fit=crop&w=800&q=80",
+    source: "Historical Archive - Map of Global Biological Exchange Routes"
   },
-  15: {
-    text: "The Portuguese caravel, with its lateen sails, could tack against the wind, making it ideal for exploring the Atlantic and Indian Oceans.",
-    img: "https://images.unsplash.com/photo-1582719478250-5c5c5c5c5c5c?auto=format&fit=crop&w=800&q=60",
-    source: "Unsplash – Photo by Alexey Kutepov"
+  {
+    id: 3,
+    text: "Mercantilism drove European states to establish colonies. The goal was to accumulate gold and silver by maintaining a favorable balance of trade, often through the use of joint-stock companies like the VOC and the British East India Company.",
+    img: "https://images.unsplash.com/photo-1580519542036-c47de6196ba5?auto=format&fit=crop&w=800&q=80",
+    source: "British Museum - Ledger of the East India Company, c. 1700"
   },
-  20: {
-    text: "The Spanish encomienda system granted colonists the right to extract labor and tribute from Indigenous peoples in exchange for protection and Christian instruction.",
-    img: "https://upload.wikimedia.org/wikipedia/commons/2/2a/Encomienda_system.jpg",
-    source: "Wikimedia Commons – “Encomienda system” illustration"
+  {
+    id: 4,
+    text: "The Trans-Atlantic Slave Trade was a forced migration of unprecedented scale. Enslaved Africans were brought to the Americas to work on plantations producing cash crops like sugar, tobacco, and cotton for global markets.",
+    img: "https://images.unsplash.com/photo-1599408162162-cdb143551737?auto=format&fit=crop&w=800&q=80",
+    source: "National Museum of African American History - Diagram of a Slave Ship"
   },
-  25:
+  {
+    id: 5,
+    text: "The Spanish Casta System in the Americas was a rigid social hierarchy based on race. It categorized individuals as Peninsulares, Creoles, Mestizos, Mulattoes, and indigenous/African peoples, determining their legal rights and social status.",
+    img: "https://images.unsplash.com/photo-1590073242678-70ee3fc28e8e?auto=format&fit=crop&w=800&q=80",
+    source: "Museo Nacional del Virreinato - Casta Painting, 18th Century"
+  },
+  {
+    id: 6,
+    text: "Silver from the Potosí mines in modern-day Bolivia became the first global currency. It flowed from the Americas to Europe and then to China, where it was used to pay for luxury goods like silk and porcelain.",
+    img: "https://images.unsplash.com/photo-1518458028434-541f07cfa214?auto=format&fit=crop&w=800&q=80",
+    source: "Potosí Mint Museum - Spanish Silver Real, c. 1650"
+  },
+  {
+    id: 7,
+    text: "Resistance to state power was common. Queen Ana Nzinga of Ndongo and Matamba resisted Portuguese expansion in Africa, while the Pueblo Revolt in New Mexico successfully expelled the Spanish for over a decade.",
+    img: "https://images.unsplash.com/photo-1505664194779-8beaceb93744?auto=format&fit=crop&w=800&q=80",
+    source: "Historical Illustration - Queen Nzinga in Diplomacy with the Portuguese"
+  },
+  {
+    id: 8,
+    text: "The Mita system, originally an Incan labor tax, was adapted by the Spanish to force indigenous people to work in dangerous silver mines. This coercive labor was essential for the extraction of wealth for the Spanish Crown.",
+    img: "https://images.unsplash.com/photo-1531973576160-7125cd663d86?auto=format&fit=crop&w=800&q=80",
+    source: "Archive of the Indies - Records of the Mita Laborers in Potosí"
+  },
+  {
+    id: 9,
+    text: "Syncretic religions emerged as cultures collided. Santeria in Cuba and Vodun in Haiti blended West African traditions with Roman Catholicism, allowing enslaved people to maintain their heritage under colonial rule.",
+    img: "https://images.unsplash.com/photo-1515169067868-5387ec356754?auto=format&fit=crop&w=800&q=80",
+    source: "Cultural Heritage Archive - Altar of a Syncretic Faith in the Caribbean"
+  },
+  {
+    id: 10,
+    text: "The Treaty of Tordesillas (1494) divided the newly 'discovered' lands outside Europe between Portugal and Spain. This line of demarcation shaped the colonial boundaries of Brazil and the rest of Latin America.",
+    img: "https://images.unsplash.com/photo-1524661135-423995f22d0b?auto=format&fit=crop&w=800&q=80",
+    source: "Torre do Tombo National Archive - The Treaty of Tordesillas Document"
+  }
+];
 
-25: {text: "The transatlantic slave trade emerged as a brutal system to supply labor for European colonies in the Americas, leading to the forced migration of millions of Africans.",  
-  img: "https://upload.wikimedia.org/wikipedia/commons/7/7c/Transatlantic_slave_trade_map.png",  
-  source: "Wikimedia Commons – Map of the transatlantic slave trade routes"  
-},  
-26: {  
-  text: "The Spanish conquest of the Aztec Empire in 1519-1521 was facilitated by alliances with Indigenous groups who opposed Moctezuma II.",  
-  img: "https://upload.wikimedia.org/wikipedia/commons/3/3d/Aztec_Empire_map.png",  
-  source: "Wikimedia Commons – Map of the Aztec Empire"  
-},  
-27: {  
-  text: "The Dutch East India Company (VOC) dominated the spice trade in the 17th century through aggressive monopolies and military force in Southeast Asia.",  
-  img: "https://upload.wikimedia.org/wikipedia/commons/0/0d/Dutch_East_India_Company_flag.png",  
-  source: "Wikimedia Commons – VOC flag"  
-},  
-28: {  
-  text: "The Treaty of Tordesillas (1494) divided newly discovered lands between Spain and Portugal, shaping colonial boundaries in the Americas and Africa.",  
-  img: "https://upload.wikimedia.org/wikipedia/commons/8/8d/Treaty_of_Tordesillas.png",  
-  source: "Wikimedia Commons – Treaty of Tordesillas document"  
-},  
-29: {  
-  text: "The Portuguese established a network of trading posts along the African coast, known as the 'Cape Route,' to control the flow of gold and slaves to Europe.",  
-  img: "https://upload.wikimedia.org/wikipedia/commons/3/3a/Portuguese_trading_post_in_Africa.png",  
-  source: "Wikimedia Commons – Portuguese trading post illustration"  
-},  
-30: {  
-  text: "The introduction of European livestock like cattle and pigs to the Americas led to environmental changes, including deforestation and soil degradation.",  
-  img: "https://upload.wikimedia.org/wikipedia/commons/1/1d/European_livestock_in_Americas.png",  
-  source: "Wikimedia Commons – Illustration of livestock impact"  
-},  
-31: {  
-  text: "The Spanish silver mines in Potosí (modern Bolivia) became the largest source of silver in the world, fueling global trade and inflation in Europe.",  
-  img: "https://upload.wikimedia.org/wikipedia/commons/5/5c/Potos%C3%AD_mines.jpg",  
-  source: "Wikimedia Commons – Potosí silver mine photo"  
-},  
-32: {  
-  text: "The Dutch and English established trading companies to compete with the Portuguese and Spanish in the Indian Ocean, leading to conflicts and monopolies.",  
-  img: "https://upload.wikimedia.org/wikipedia/commons/7/7d/Dutch_East_India_Company_ship.png",  
-  source: "Wikimedia Commons – VOC ship"  
-},  
-33: {  
-  text: "The transatlantic slave trade had devastating demographic effects on Africa, with some regions losing up to 20% of their population over centuries.",  
-  img: "https://upload.wikimedia.org/wikipedia/commons/3/3d/African_slave_trade_impact.png",  
-  source: "Wikimedia Commons – Demographic impact study"  
-},  
-34: {  
-  text: "The Spanish Crown’s policy of 'reducciones' aimed to convert Indigenous peoples to Christianity and assimilate them into colonial society.",  
-  img: "https://upload.wikimedia.org/wikipedia/commons/2/2a/Reducciones_in_New_Spain.png",  
-  source: "Wikimedia Commons – Reducciones illustration"  
-},  
-35: {  
-  text: "The invention of the steam engine in the 18th century revolutionized maritime travel, enabling faster and more reliable ocean voyages.",  
-  img: "https://upload.wikimedia.org/wikipedia/commons/8/8d/Steam_engine_diagram.png",  
-  source: "Wikimedia Commons – Steam engine diagram"  
-},  
-36: {  
-  text: "The British East India Company’s control over India’s textile industry led to the decline of local artisans and the rise of British manufactured goods.",  
-  img: "https://upload.wikimedia.org/wikipedia/commons/5/5c/British_East_India_Company_flag.png",  
-  source: "Wikimedia Commons – BEIC flag"  
-},  
-37: {  
-  text: "The Columbian Exchange also introduced new diseases to the Americas, such as smallpox, which decimated Indigenous populations.",  
-  img: "https://upload.wikimedia.org/wikipedia/commons/7/7c/Smallpox_in_Americas.png",  
-  source: "Wikimedia Commons – Smallpox impact"  
-},  
-38: {  
-  text: "The Portuguese and Spanish established missions in the Americas to convert Indigenous peoples, often using force and coercion.",  
-  img: "https://upload.wikimedia.org/wikipedia/commons/3/3d/Colonial_mission_in_Americas.png",  
-  source: "Wikimedia Commons – Mission illustration"  
-},  
-39: {  
-  text: "The Dutch and English competed for control of the Spice Islands (modern Indonesia), leading to violent conflicts and the establishment of colonial rule.",  
-  img: "https://upload.wikimedia.org/wikipedia/commons/0/0d/Dutch_East_India_Company_ship.png",  
-  source: "Wikimedia Commons – VOC ship"  
-},  
-40: {  
-  text: "The transatlantic slave trade created a racial hierarchy in the Americas, with enslaved Africans at the bottom and European colonists at the top.",  
-  img: "https://upload.wikimedia.org/wikipedia/commons/7/7c/Racial_hierarchy_in_Americas.png",  
-  source: "Wikimedia Commons – Racial hierarchy diagram"  
-},  
-41: {  
-  text: "The Spanish Crown’s 'Black Legend' portrayed Spanish colonizers as cruel and exploitative, influencing European perceptions of colonialism.",  
-  img: "https://upload.wikimedia.org/wikipedia/commons/2/2a/Spanish_colonizers_cruelty.png",  
-  source: "Wikimedia Commons – Black Legend illustration"  
-},  
-42: {  
-  text: "The Dutch and English established colonies in North America to compete with the Spanish and French, leading to the formation of the Thirteen Colonies.",  
-  img: "https://upload.wikimedia.org/wikipedia/commons/5/5c/Thirteen_Colonies_map.png",  
-  source: "Wikimedia Commons – Thirteen Colonies map"  
-},  
-43: {  
-  text: "The Portuguese and Spanish used indigenous labor systems like the encomienda and mita to exploit resources in their colonies.",  
-  img: "https://upload.wikimedia.org/wikipedia/commons/3/3d/Encomienda_system.jpg",  
-  source: "Wikimedia Commons – Encomienda system"  
-},  
-44: {  
-  text: "The transatlantic slave trade was justified by European powers as a 'civilizing mission' to bring Christianity and order to Africa.",  
-  img: "https://upload.wikimedia.org/wikipedia/commons/7/7c/Slave_trade_justification.png",  
-  source: "Wikimedia Commons – Justification propaganda"  
-},  
-45: {  
-  text: "The Age of Exploration led to the globalization of food crops, with potatoes, maize, and tomatoes becoming staples in Europe and Africa.",  
-  img: "https://upload.wikimedia.org/wikipedia/commons/1/1d/Columbian_Exchange_crops.png",  
-  source: "Wikimedia Commons – Columbian Exchange crops"  
-},  
-46: {  
-  text: "The Dutch and English established trading posts in India and Southeast Asia to bypass Portuguese and Spanish monopolies.",  
-  img: "https://upload.wikimedia.org/wikipedia/commons/7/7d/Dutch_East_India_Company_ship.png",  
-  source: "Wikimedia Commons – VOC ship"  
-},  
-47: {  
-  text: "The Spanish and Portuguese used indigenous knowledge to adapt to new environments, such as using local crops for sustenance.",  
-  img: "https://upload.wikimedia.org/wikipedia/commons/3/3d/Indigenous_knowledge_in_Americas.png",  
-  source: "Wikimedia Commons – Indigenous knowledge"  
-},  
-48: {  
-  text: "The transatlantic slave trade was regulated by laws like the British Slave Trade Act of 1807, which aimed to abolish the trade.",  
-  img: "https://upload.wikimedia.org/wikipedia/commons/2/2a/British_Slave_Trade_Act.png",  
-  source: "Wikimedia Commons – Slave Trade Act"  
-},  
-49: {  
-  text: "The Dutch and English used naval power to challenge Portuguese and Spanish dominance in the Indian Ocean, leading to the decline of their empires.",  
-  img: "https://upload.wikimedia.org/wikipedia/commons/0/0d/Dutch_East_India_Company_ship.png",  
-  source: "Wikimedia Commons – VOC ship"  
-},  
-50: {  
-  text: "The Age of Exploration marked the beginning of a truly globalized world, with interconnected economies, cultures, and conflicts.",  
-  img: "https://upload.wikimedia.org/wikipedia/commons/5/5c/Globalization_diagram.png",  
-  source: "Wikimedia Commons – Globalization diagram"  
-};  
+const questions = [
+  // Stimulus 1: Technology (1-5)
+  { id: 1, stimulusId: 1, question: "Which technology allowed the Portuguese to sail against the wind?", options: ["Astrolabe", "Lateen Sail", "Stern Rudder", "Magnetic Compass"], correctAnswer: "Lateen Sail", explanation: "The triangular lateen sail allowed ships to tack against the wind, essential for exploring the African coast." },
+  { id: 2, stimulusId: 1, question: "The astrolabe was primarily used for what purpose?", options: ["Measuring speed", "Determining latitude", "Predicting weather", "Mapping the stars"], correctAnswer: "Determining latitude", explanation: "The astrolabe measured the angle of the sun or stars above the horizon to find latitude." },
+  { id: 3, stimulusId: 1, question: "Which culture originally developed the magnetic compass?", options: ["Portuguese", "Islamic", "Chinese", "Greek"], correctAnswer: "Chinese", explanation: "The magnetic compass was a Chinese invention that spread to Europe via trade routes." },
+  { id: 4, stimulusId: 1, question: "The caravel was a ship design pioneered by which nation?", options: ["Spain", "England", "Netherlands", "Portugal"], correctAnswer: "Portugal", explanation: "Portugal developed the caravel specifically for long-distance maritime exploration." },
+  { id: 5, stimulusId: 1, question: "What was the primary goal of improved cartography in this era?", options: ["To find gold", "To map the stars", "To navigate more accurately", "To claim land"], correctAnswer: "To navigate more accurately", explanation: "Better maps allowed sailors to return to specific locations and navigate open oceans with more confidence." },
+  
+  // Stimulus 2: Columbian Exchange (6-10)
+  { id: 6, stimulusId: 2, question: "Which crop from the Americas led to a population boom in Afro-Eurasia?", options: ["Wheat", "Rice", "Potato", "Sugar"], correctAnswer: "Potato", explanation: "The potato provided high caloric value and grew in varied climates, supporting massive population growth." },
+  { id: 7, stimulusId: 2, question: "The 'Great Dying' refers to the mass death of which group?", options: ["Enslaved Africans", "European Sailors", "Indigenous Americans", "Chinese Merchants"], correctAnswer: "Indigenous Americans", explanation: "Old World diseases like smallpox killed up to 90% of the indigenous population in the Americas." },
+  { id: 8, stimulusId: 2, question: "Which of these was a 'New World' crop introduced to the 'Old World'?", options: ["Coffee", "Maize", "Sugar", "Bananas"], correctAnswer: "Maize", explanation: "Maize (corn) is native to the Americas and was a key part of the Columbian Exchange." },
+  { id: 9, stimulusId: 2, question: "What was the primary cause of the 'Great Dying'?", options: ["Warfare", "Famine", "Disease", "Slavery"], correctAnswer: "Disease", explanation: "Indigenous people had no immunity to Afro-Eurasian diseases like smallpox and measles." },
+  { id: 10, stimulusId: 2, question: "Which animal was introduced to the Americas from Europe?", options: ["Llama", "Turkey", "Horse", "Bison"], correctAnswer: "Horse", explanation: "Horses were brought by Europeans and fundamentally changed indigenous cultures, especially on the Great Plains." },
 
-/* -------------------------------------------------------------------------
-   QUESTIONS
-   ------------------------------------------------------------------------- */
-const questions: Question[] = [  
-  // Questions 1-5 (Stimulus 5: Three G's)  
-  {  
-    id: "q1",  
-    question: "What were the 'Three G’s' that motivated European exploration?",  
-    options: ["Gold, Glory, God", "Gold, Greed, Glory", "Gold, God, Greed", "Gold, Glory, Greed"],  
-    correctAnswer: "Gold, Glory, God",  
-    explanation: "The 'Three G’s' were Gold (wealth), Glory (prestige), and God (religious conversion)."  
-  },  
-  {  
-    id: "q2",  
-    question: "Which European power was most associated with the 'Three G’s'?",  
-    options: ["Spain", "Portugal", "France", "England"],  
-    correctAnswer: "Portugal",  
-    explanation: "Portugal, under Prince Henry the Navigator, was a pioneer in exploring for these motives."  
-  },  
-  {  
-    id: "q3",  
-    question: "What role did religion play in the 'Three G’s'?",  
-    options: ["To spread Christianity", "To convert Indigenous peoples", "To establish churches", "All of the above"],  
-    correctAnswer: "All of the above",  
-    explanation: "Religion was a key motivator, with missionaries often accompanying explorers."  
-  },  
-  {  
-    id: "q4",  
-    question: "Which of the following was NOT a 'Three G'?",  
-    options: ["Gold", "Glory", "Greed", "God"],  
-    correctAnswer: "Greed",  
-    explanation: "Greed is not one of the 'Three G’s'; the correct terms are Gold, Glory, and God."  
-  },  
-  {  
-    id: "q5",  
-    question: "What was the primary goal of the 'Three G’s'?",  
-    options: ["To find new trade routes", "To spread Christianity", "To claim territory", "All of the above"],  
-    correctAnswer: "All of the above",  
-    explanation: "The 'Three G’s' encompassed economic, political, and religious goals."  
-  },  
+  // Stimulus 3: Mercantilism (11-15)
+  { id: 11, stimulusId: 3, question: "What was the primary goal of mercantilism?", options: ["Free trade", "Accumulating gold and silver", "Religious conversion", "Abolishing slavery"], correctAnswer: "Accumulating gold and silver", explanation: "Mercantilism focused on state wealth through the accumulation of precious metals." },
+  { id: 12, stimulusId: 3, question: "How did mercantilist states view colonies?", options: ["As equal partners", "As sources of raw materials", "As independent nations", "As religious centers"], correctAnswer: "As sources of raw materials", explanation: "Colonies provided raw materials and served as markets for the mother country's manufactured goods." },
+  { id: 13, stimulusId: 3, question: "What is a 'favorable balance of trade'?", options: ["Equal imports and exports", "Exporting more than importing", "Importing more than exporting", "Trading only with allies"], correctAnswer: "Exporting more than importing", explanation: "States wanted to sell more than they bought to keep gold within their borders." },
+  { id: 14, stimulusId: 3, question: "The VOC (Dutch East India Company) is an example of what?", options: ["A religious order", "A joint-stock company", "A pirate fleet", "A government agency"], correctAnswer: "A joint-stock company", explanation: "Joint-stock companies allowed private investors to pool capital for global trade ventures." },
+  { id: 15, stimulusId: 3, question: "Which company held a monopoly on the spice trade in the 17th century?", options: ["British East India Company", "VOC (Dutch)", "Spanish Armada", "French Fur Company"], correctAnswer: "VOC (Dutch)", explanation: "The Dutch VOC dominated the spice trade in Southeast Asia through military and economic force." },
 
-  // Questions 6-10 (Stimulus 10: Columbian Exchange)  
-  {  
-    id: "q6",  
-    question: "What was the Columbian Exchange?",  
-    options: ["A trade of goods between Europe and Asia", "A transfer of crops, animals, and diseases between the Old and New Worlds", "A treaty between Spain and Portugal", "A system of slavery"],  
-    correctAnswer: "A transfer of crops, animals, and diseases between the Old and New Worlds",  
-    explanation: "The Columbian Exchange refers to the widespread transfer of plants, animals, and diseases after 1492."  
-  },  
-  {  
-    id: "q7",  
-    question: "Which crop from the Americas had the greatest impact on Europe?",  
-    options: ["Potatoes", "Coffee", "Sugar", "Tobacco"],  
-    correctAnswer: "Potatoes",  
-    explanation: "Potatoes provided a high-calorie crop that supported population growth in Europe."  
-  },  
-  {  
-    id: "q8",  
-    question: "What disease from the Old World devastated Indigenous populations in the Americas?",  
-    options: ["Smallpox", "Malaria", "Cholera", "Tuberculosis"],  
-    correctAnswer: "Smallpox",  
-    explanation: "Smallpox, introduced by Europeans, killed an estimated 90% of some Indigenous populations."  
-  },  
-  {  
-    id: "q9",  
-    question: "Which animal from the Old World was introduced to the Americas?",  
-    options: ["Cattle", "Horses", "Sheep", "All of the above"],  
-    correctAnswer: "All of the above",  
-    explanation: "Cattle, horses, and sheep were brought to the Americas by Europeans."  
-  },  
-  {  
-    id: "q10",  
-    question: "What was a major consequence of the Columbian Exchange?",  
-    options: ["The decline of Indigenous populations", "The rise of European empires", "The spread of African languages", "The invention of the steam engine"],  
-    correctAnswer: "The decline of Indigenous populations",  
-    explanation: "Diseases and cultural disruption led to massive population losses among Indigenous peoples."  
-  },  
+  // Stimulus 4: Slave Trade (16-20)
+  { id: 16, stimulusId: 4, question: "What was the primary destination for most enslaved Africans?", options: ["North America", "Europe", "Brazil and the Caribbean", "South Africa"], correctAnswer: "Brazil and the Caribbean", explanation: "The majority of enslaved people were sent to sugar plantations in Brazil and the Caribbean." },
+  { id: 17, stimulusId: 4, question: "Which crop was the main driver of the Trans-Atlantic Slave Trade?", options: ["Tobacco", "Cotton", "Sugar", "Indigo"], correctAnswer: "Sugar", explanation: "Sugar production was extremely labor-intensive and highly profitable, driving the demand for enslaved labor." },
+  { id: 18, stimulusId: 4, question: "The 'Middle Passage' refers to which part of the trade?", options: ["The journey from Europe to Africa", "The journey from Africa to the Americas", "The journey from the Americas to Europe", "The internal African trade"], correctAnswer: "The journey from Africa to the Americas", explanation: "The Middle Passage was the brutal sea voyage across the Atlantic for enslaved Africans." },
+  { id: 19, stimulusId: 4, question: "What was a demographic consequence of the slave trade in Africa?", options: ["Population boom", "Gender imbalance", "Unification of tribes", "Industrialization"], correctAnswer: "Gender imbalance", explanation: "The trade primarily targeted young men, leaving a significant gender imbalance in many African societies." },
+  { id: 20, stimulusId: 4, question: "How did the slave trade affect the Americas?", options: ["It led to the end of farming", "It created multicultural societies", "It reduced the population", "It led to the rise of democracy"], correctAnswer: "It created multicultural societies", explanation: "The forced migration of Africans introduced new cultures, languages, and religions to the Americas." },
 
-  // Questions 11-15 (Stimulus 15: Portuguese caravel)  
-  {  
-    id: "q11",  
-    question: "What made the Portuguese caravel ideal for exploration?",  
-    options: ["Its large size", "Its lateen sails", "Its speed", "Its armor"],  
-    correctAnswer: "Its lateen sails",  
-    explanation: "Lateen sails allowed the caravel to sail against the wind, crucial for exploration."  
-  },  
-  {  
-    id: "q12",  
-    question: "Which explorer used the caravel to reach India?",  
-    options: ["Vasco da Gama", "Christopher Columbus", "Ferdinand Magellan", "Bartolomeu Dias"],  
-    correctAnswer: "Vasco da Gama",  
-    explanation: "Vasco da Gama’s voyage in 1498 established a sea route to India using caravels."  
-  },  
-  {  
-    id: "q13",  
-    question: "What was the primary purpose of the caravel?",  
-    options: ["To carry large cargo", "To explore unknown waters", "To fight pirates", "To transport slaves"],  
-    correctAnswer: "To explore unknown waters",  
-    explanation: "The caravel was designed for exploration, not for heavy cargo or warfare."  
-  },  
-  {  
-    id: "q14",  
-    question: "Which European power was most associated with the caravel?",  
-    options: ["Spain", "Portugal", "France", "England"],  
-    correctAnswer: "Portugal",  
-    explanation: "Portugal developed and widely used the caravel for its explorations."  
-  },  
-  {  
-    id: "q15",  
-    question: "What was a limitation of the caravel?",  
-    options: ["It could not sail against the wind", "It was too slow", "It was too small", "It was too expensive"],  
-    correctAnswer: "It could not sail against the wind",  
-    explanation: "The caravel’s lateen sails allowed it to sail against the wind, so this is incorrect. The limitation was its size and cargo capacity."  
-  },  
+  // Stimulus 5: Casta System (21-25)
+  { id: 21, stimulusId: 5, question: "Who were the 'Peninsulares' in the Casta System?", options: ["People born in the Americas", "People born in Spain", "Mixed-race individuals", "Enslaved people"], correctAnswer: "People born in Spain", explanation: "Peninsulares were at the top of the hierarchy and were born on the Iberian Peninsula." },
+  { id: 22, stimulusId: 5, question: "A 'Mestizo' was a person of which mixed heritage?", options: ["Spanish and African", "Spanish and Indigenous", "Indigenous and African", "French and Spanish"], correctAnswer: "Spanish and Indigenous", explanation: "Mestizos were individuals of mixed Spanish and indigenous American descent." },
+  { id: 23, stimulusId: 5, question: "What determined a person's place in the Casta System?", options: ["Wealth", "Education", "Race and ancestry", "Religion"], correctAnswer: "Race and ancestry", explanation: "The system was a rigid hierarchy based on racial purity and place of birth." },
+  { id: 24, stimulusId: 5, question: "Who were the 'Creoles'?", options: ["Spanish born in the Americas", "Spanish born in Spain", "Mixed-race individuals", "Indigenous leaders"], correctAnswer: "Spanish born in the Americas", explanation: "Creoles were of Spanish descent but born in the colonies; they often led later independence movements." },
+  { id: 25, stimulusId: 5, question: "What was the purpose of the Casta System?", options: ["To promote equality", "To maintain social control", "To encourage migration", "To spread Christianity"], correctAnswer: "To maintain social control", explanation: "The system ensured that power remained in the hands of those with the most 'pure' Spanish blood." },
 
-  // Questions 16-20 (Stimulus 20: Encomienda system)  
-  {  
-    id: "q16",  
-    question: "What was the encomienda system?",  
-    options: ["A system of land grants", "A system of forced labor", "A system of religious conversion", "A system of trade"],  
-    correctAnswer: "A system of forced labor",  
-    explanation: "The encomienda granted colonists the right to extract labor and tribute from Indigenous peoples."  
-  },  
-  {  
-    id: "q17",  
-    question: "Who benefited from the encomienda system?",  
-    options: ["Indigenous peoples", "Spanish colonists", "European monarchs", "All of the above"],  
-    correctAnswer: "Spanish colonists",  
-    explanation: "Spanish colonists used the system to exploit Indigenous labor."  
-  },  
-  {  
-    id: "q18",  
-    question: "What was a criticism of the encomienda system?",  
-    options: ["It was too lenient", "It was too expensive", "It was exploitative", "It was too slow"],  
-    correctAnswer: "It was exploitative",  
-    explanation: "The system was widely criticized for its brutality and lack of protection for Indigenous peoples."  
-  },  
-  {  
-    id: "q19",  
-    question: "Which Spanish king tried to reform the encomienda system?",  
-    options: ["Charles V", "Ferdinand and Isabella", "Philip II", "Charles I"],  
-    correctAnswer: "Charles V",  
-    explanation: "Charles V issued the New Laws of 1542 to limit the power of encomenderos."  
-  },  
-  {  
-    id: "q20",  
-    question: "What was the long-term impact of the encomienda system?",  
-    options: ["It led to the decline of Indigenous populations", "It strengthened Spanish control", "It promoted cultural exchange", "It was abolished quickly"],  
-    correctAnswer: "It led to the decline of Indigenous populations",  
-    explanation: "The system contributed to the decimation of Indigenous communities through forced labor and disease."  
-  },  
+  // Stimulus 6: Silver (26-30)
+  { id: 26, stimulusId: 6, question: "Where was the largest silver mine in the world located?", options: ["Mexico City", "Potosí", "Lima", "Madrid"], correctAnswer: "Potosí", explanation: "Potosí, in modern-day Bolivia, was the site of the world's most productive silver mine." },
+  { id: 27, stimulusId: 6, question: "Which country was the ultimate destination for most global silver?", options: ["Spain", "England", "China", "India"], correctAnswer: "China", explanation: "China's economy was silver-based, and it traded luxury goods for the metal." },
+  { id: 28, stimulusId: 6, question: "What was an economic consequence of the silver flow in Spain?", options: ["Deflation", "Industrialization", "Inflation", "Economic boom"], correctAnswer: "Inflation", explanation: "The massive influx of silver led to the 'Price Revolution' and high inflation in Spain and Europe." },
+  { id: 29, stimulusId: 6, question: "How did silver affect global trade?", options: ["It ended trade with Asia", "It created the first global currency", "It led to the fall of China", "It reduced the need for ships"], correctAnswer: "It created the first global currency", explanation: "Spanish silver coins were accepted worldwide, facilitating global trade." },
+  { id: 30, stimulusId: 6, question: "What was the 'Single Whip' tax in China?", options: ["A tax on tea", "A tax paid only in silver", "A tax on land", "A tax on silk"], correctAnswer: "A tax paid only in silver", explanation: "The Ming Dynasty required all taxes to be paid in silver, driving global demand for the metal." },
 
-  // Questions 21-25 (Stimulus 25: Transatlantic slave trade)  
-  {  
-    id: "q21",  
-    question: "What was the transatlantic slave trade?",  
-    options: ["A trade of goods between Europe and Africa", "A system of forced migration of Africans to the Americas", "A trade of spices between Asia and Europe", "A system of indentured servitude"],  
-    correctAnswer: "A system of forced migration of Africans to the Americas",  
-    explanation: "The transatlantic slave trade involved the forced transport of millions of Africans to the Americas."  
-  },  
-  {  
-    id: "q22",  
-    question: "Which region was the primary source of enslaved Africans?",  
-    options: ["West Africa", "East Africa", "Southern Africa", "Central Africa"],  
-    correctAnswer: "West Africa",  
-    explanation: "West African regions like the Gold Coast and Angola were major sources of enslaved people."  
-  },  
-  {  
-    id: "q23",  
-    question: "What was the 'Middle Passage'?",  
-    options: ["The journey from Africa to the Americas", "The journey from the Americas to Europe", "The journey from Europe to Africa", "The journey within Africa"],  
-    correctAnswer: "The journey from Africa to the Americas",  
-    explanation: "The Middle Passage was the brutal sea voyage of enslaved Africans to the Americas."  
-  },  
-  {  
-    id: "q24",  
-    question: "Which European power was most involved in the transatlantic slave trade?",  
-    options: ["Spain", "Portugal", "France", "England"],  
-    correctAnswer: "England",  
-    explanation: "The British were the largest transporters of enslaved Africans in the 18th century."  
-  },  
-  {  
-    id: "q25",  
-    question: "What was a major consequence of the transatlantic slave trade?",  
-    options: ["The growth of African economies", "The decline of Indigenous populations", "The rise of African empires", "The spread of African culture in the Americas"],  
-    correctAnswer: "The rise of African culture in the Americas",  
-    explanation: "Enslaved Africans brought their cultures, languages, and traditions to the Americas."  
-  },  
+  // Stimulus 7: Resistance (31-35)
+  { id: 31, stimulusId: 7, question: "Queen Ana Nzinga ruled which African kingdoms?", options: ["Mali and Songhai", "Ndongo and Matamba", "Kongo and Ethiopia", "Zimbabwe and Zulu"], correctAnswer: "Ndongo and Matamba", explanation: "Nzinga was a powerful leader who resisted Portuguese colonization in modern-day Angola." },
+  { id: 32, stimulusId: 7, question: "What was the outcome of the Pueblo Revolt of 1680?", options: ["The Spanish were defeated forever", "The Spanish were expelled for 12 years", "The Pueblo people were enslaved", "The revolt failed immediately"], correctAnswer: "The Spanish were expelled for 12 years", explanation: "The Pueblo people successfully drove the Spanish out of New Mexico for over a decade." },
+  { id: 33, stimulusId: 7, question: "Who were the 'Maroons'?", options: ["Spanish soldiers", "Escaped enslaved people", "Indigenous traders", "Dutch merchants"], correctAnswer: "Escaped enslaved people", explanation: "Maroons formed independent communities in the Caribbean and Brazil after escaping slavery." },
+  { id: 34, stimulusId: 7, question: "Metacom's War was a conflict between which groups?", options: ["Spanish and Aztecs", "English and Native Americans", "Portuguese and Africans", "Dutch and French"], correctAnswer: "English and Native Americans", explanation: "Also known as King Philip's War, it was a major conflict in New England." },
+  { id: 35, stimulusId: 7, question: "Why did indigenous groups resist European expansion?", options: ["To gain gold", "To protect their land and culture", "To join the slave trade", "To spread their own religion"], correctAnswer: "To protect their land and culture", explanation: "Resistance was a response to the loss of land, forced labor, and cultural suppression." },
 
-  // Questions 26-30 (Stimulus 30: Columbian Exchange impact)  
-  {  
-    id: "q26",  
-    question: "What was a major environmental impact of the Columbian Exchange?",  
-    options: ["Deforestation in the Americas", "The introduction of new crops to Europe", "The spread of diseases", "The decline of European populations"],  
-    correctAnswer: "The introduction of new crops to Europe",  
-    explanation: "New crops like potatoes and maize transformed European agriculture."  
-  },  
-  {  
-    id: "q27",  
-    question: "Which crop from the Americas became a staple in Africa?",  
-    options: ["Cassava", "Maize", "Coffee", "Tea"],  
-    correctAnswer: "Cassava",  
-    explanation: "Cassava, native to the Americas, became a vital food source in Africa."  
-  },  
-  {  
-    id: "q28",  
-    question: "What was a consequence of the introduction of European livestock to the Americas?",  
-    options: ["Increased biodiversity", "Deforestation", "The spread of diseases", "The decline of Indigenous populations"],  
-    correctAnswer: "Deforestation",  
-    explanation: "Livestock like cattle and pigs required large areas of land, leading to deforestation."  
-  },  
-  {  
-    id: "q29",  
-    question: "Which disease from the Old World had the greatest impact on the Americas?",  
-    options: ["Smallpox", "Malaria", "Cholera", "Tuberculosis"],  
-    correctAnswer: "Smallpox",  
-    explanation: "Smallpox was the most devastating disease, killing millions of Indigenous people."  
-  },  
-  {  
-    id: "q30",  
-    question: "What was a long-term effect of the Columbian Exchange?",  
-    options: ["The globalization of food crops", "The decline of European empires", "The end of slavery", "The unification of the Americas"],  
-    correctAnswer: "The globalization of food crops",  
-    explanation: "The exchange of crops like potatoes and maize became global staples."  
-  },  
+  // Stimulus 8: Mita System (36-40)
+  { id: 36, stimulusId: 8, question: "The Mita system was originally used by which empire?", options: ["Aztec", "Inca", "Maya", "Spanish"], correctAnswer: "Inca", explanation: "The Inca used the Mita as a mandatory public service labor tax." },
+  { id: 37, stimulusId: 8, question: "How did the Spanish adapt the Mita system?", options: ["They abolished it", "They used it for silver mining", "They used it for religious education", "They paid workers high wages"], correctAnswer: "They used it for silver mining", explanation: "The Spanish turned the Mita into a system of forced, dangerous labor in the mines." },
+  { id: 38, stimulusId: 8, question: "What was the primary resource extracted using Mita labor?", options: ["Gold", "Sugar", "Silver", "Tobacco"], correctAnswer: "Silver", explanation: "Silver extraction in Potosí relied heavily on the forced labor of indigenous people." },
+  { id: 39, stimulusId: 8, question: "What was a consequence of the Mita system for indigenous communities?", options: ["Wealth accumulation", "Population growth", "Social disruption and death", "Better education"], correctAnswer: "Social disruption and death", explanation: "The dangerous conditions in the mines led to high mortality rates and the breakdown of communities." },
+  { id: 40, stimulusId: 8, question: "The Mita system is an example of what type of labor?", options: ["Free labor", "Coercive labor", "Indentured servitude", "Guild labor"], correctAnswer: "Coercive labor", explanation: "Coercive labor involves forcing people to work against their will through legal or physical means." },
 
-  // Questions 31-35 (Stimulus 35: Steam engine)  
-  {  
-    id: "q31",  
-    question: "What was the significance of the steam engine in maritime travel?",  
-    options: ["It made ships faster and more reliable", "It reduced the need for sails", "It allowed ships to travel without wind", "It eliminated the need for crews"],  
-    correctAnswer: "It made ships faster and more reliable",  
-    explanation: "The steam engine revolutionized maritime travel by providing consistent power."  
-  },  
-  {  
-    id: "q32",  
-    question: "Which country was most associated with the development of the steam engine?",  
-    options: ["Britain", "France", "Germany", "Spain"],  
-    correctAnswer: "Britain",  
-    explanation: "James Watt’s improvements to the steam engine were developed in Britain."  
-  },  
-  {  
-    id: "q33",  
-    question: "How did the steam engine impact global trade?",  
-    options: ["It made trade slower", "It reduced the cost of shipping", "It increased the need for sailors", "It made trade more dangerous"],  
-    correctAnswer: "It reduced the cost of shipping",  
-    explanation: "Steam-powered ships could travel faster and more efficiently, lowering shipping costs."  
-  },  
-  {  
-    id: "q34",  
-    question: "What was a limitation of early steam engines?",  
-    options: ["They were too slow", "They required large amounts of coal", "They were too expensive", "They could not sail against the wind"],  
-    correctAnswer: "They required large amounts of coal",  
-    explanation: "Early steam engines were inefficient and needed significant fuel."  
-  },  
-  {  
-    id: "q35",  
-    question: "Which explorer used steam-powered ships in the 19th century?",  
-    options: ["Christopher Columbus", "Vasco da Gama", "Captain Cook", "Isambard Kingdom Brunel"],  
-    correctAnswer: "Isambard Kingdom Brunel",  
-    explanation: "Brunel designed the first steam-powered transatlantic ship, the SS Great Western."  
-  },  
+  // Stimulus 9: Syncretism (41-45)
+  { id: 41, stimulusId: 9, question: "What is 'syncretism'?", options: ["The destruction of a culture", "The blending of different beliefs", "The spread of a single religion", "The rejection of all religion"], correctAnswer: "The blending of different beliefs", explanation: "Syncretism occurs when different cultural or religious traditions merge into a new form." },
+  { id: 42, stimulusId: 9, question: "Santeria is a syncretic religion found primarily in which country?", options: ["Haiti", "Brazil", "Cuba", "Mexico"], correctAnswer: "Cuba", explanation: "Santeria developed in Cuba, blending Yoruba traditions with Catholicism." },
+  { id: 43, stimulusId: 9, question: "Which two traditions blended to form Vodun?", options: ["Spanish and Aztec", "West African and Catholic", "French and English", "Indigenous and Islamic"], correctAnswer: "West African and Catholic", explanation: "Vodun (Voodoo) emerged in Haiti from West African animism and French Catholicism." },
+  { id: 44, stimulusId: 9, question: "Why did enslaved people adopt syncretic religions?", options: ["They were forced to", "To hide their original beliefs", "They liked the new religions better", "To gain freedom"], correctAnswer: "To hide their original beliefs", explanation: "Syncretism allowed enslaved people to continue their traditions under the guise of practicing Christianity." },
+  { id: 45, stimulusId: 9, question: "The 'Virgin of Guadalupe' is a syncretic figure in which culture?", options: ["Brazilian", "Mexican", "Cuban", "Haitian"], correctAnswer: "Mexican", explanation: "The Virgin of Guadalupe blended indigenous imagery with Catholic devotion." },
 
-  // Questions 36-40 (Stimulus 40: Racial hierarchy)  
-  {  
-    id: "q36",  
-    question: "What was the racial hierarchy in the Americas?",  
-    options: ["European > Indigenous > African", "African > Indigenous > European", "European > African > Indigenous", "Indigenous > African > European"],  
-    correctAnswer: "European > African > Indigenous",  
-    explanation: "European colonists were at the top, followed by enslaved Africans, and then Indigenous peoples."  
-  },  
-  {  
-    id: "q37",  
-    question: "How did the transatlantic slave trade reinforce this hierarchy?",  
-    options: ["By enslaving Africans", "By promoting equality", "By educating Indigenous peoples", "By abolishing slavery"],  
-    correctAnswer: "By enslaving Africans",  
-    explanation: "The slave trade entrenched African people at the bottom of the social hierarchy."  
-  },  
-  {  
-    id: "q38",  
-    question: "What was a consequence of this hierarchy?",  
-    options: ["The rise of African empires", "The decline of Indigenous cultures", "The spread of African languages", "The abolition of slavery"],  
-    correctAnswer: "The decline of Indigenous cultures",  
-    explanation: "Indigenous cultures were marginalized and suppressed under the racial hierarchy."  
-  },  
-  {  
-    id: "q39",  
-    question: "Which group was most affected by this hierarchy?",  
-    options: ["European colonists", "Enslaved Africans", "Indigenous peoples", "All of the above"],  
-    correctAnswer: "All of the above",  
-    explanation: "All groups were affected, but enslaved Africans and Indigenous peoples were most marginalized."  
-  },  
-  {  
-    id: "q40",  
-    question: "What was a long-term effect of this hierarchy?",  
-    options: ["The abolition of slavery", "The rise of civil rights movements", "The persistence of racial inequality", "The end of colonialism"],  
-    correctAnswer: "The persistence of racial inequality",  
-    explanation: "The racial hierarchy established during colonialism has had lasting effects on societies."  
-  },  
+  // Stimulus 10: Tordesillas (46-50)
+  { id: 46, stimulusId: 10, question: "The Treaty of Tordesillas was signed between which two nations?", options: ["England and France", "Spain and Portugal", "Netherlands and Spain", "Portugal and England"], correctAnswer: "Spain and Portugal", explanation: "The treaty was a deal between the two major maritime powers of the time." },
+  { id: 47, stimulusId: 10, question: "What was the purpose of the 'Line of Demarcation'?", options: ["To end a war", "To divide newly discovered lands", "To map the stars", "To stop the slave trade"], correctAnswer: "To divide newly discovered lands", explanation: "The line divided the world into Spanish and Portuguese spheres of influence." },
+  { id: 48, stimulusId: 10, question: "Which modern-day country in South America became Portuguese due to this treaty?", options: ["Argentina", "Peru", "Brazil", "Colombia"], correctAnswer: "Brazil", explanation: "Brazil fell on the Portuguese side of the line, explaining why they speak Portuguese today." },
+  { id: 49, stimulusId: 10, question: "Who mediated the Treaty of Tordesillas?", options: ["The King of England", "The Pope", "The Emperor of China", "The Sultan of the Ottomans"], correctAnswer: "The Pope", explanation: "Pope Alexander VI mediated the treaty to prevent conflict between the two Catholic nations." },
+  { id: 50, stimulusId: 10, question: "What was a long-term impact of the Treaty of Tordesillas?", options: ["It prevented all future wars", "It shaped the colonial map of the Americas", "It led to the fall of Spain", "It ended the Age of Exploration"], correctAnswer: "It shaped the colonial map of the Americas", explanation: "The treaty established the foundational boundaries for Spanish and Portuguese colonization." }
+];
 
-  // Questions 41-45 (Stimulus 45: Globalization)  
-  {  
-    id: "q41",  
-    question: "What was a key outcome of the Age of Exploration?",  
-    options: ["The globalization of food crops", "The decline of European empires", "The end of slavery", "The unification of the Americas"],  
-    correctAnswer: "The globalization of food crops",  
-    explanation: "The Columbian Exchange spread crops like potatoes and maize worldwide."  
-  },  
-  {  
-    id: "q42",  
-    question: "Which of the following is an example of globalization from the Age of Exploration?",  
-    options: ["The spread of Spanish language", "The establishment of trade routes", "The invention of the steam engine", "The decline of Indigenous populations"],  
-    correctAnswer: "The establishment of trade routes",  
-    explanation: "Trade routes connected distant regions, facilitating global exchange."  
-  },  
-  {  
-    id: "q43",  
-    question: "What was a cultural impact of the Age of Exploration?",  
-    options: ["The spread of African music", "The decline of European languages", "The rise of Indigenous religions", "The spread of European religions"],  
-    correctAnswer: "The spread of European religions",  
-    explanation: "Missionaries spread Christianity to Indigenous peoples and enslaved Africans."  
-  },  
-  {  
-    id: "q44",  
-    question: "How did the Age of Exploration affect global economies?",  
-    options: ["It made economies more isolated", "It created interconnected economies", "It reduced trade", "It increased local production"],  
-    correctAnswer: "It created interconnected economies",  
-    explanation: "The exchange of goods and resources linked economies across continents."  
-  },  
-  {  
-    id: "q45",  
-    question: "What was a long-term effect of the Age of Exploration?",  
-    options: ["The end of colonialism", "The globalization of cultures", "The decline of trade", "The unification of the Americas"],  
-    correctAnswer: "The globalization of cultures",  
-    explanation: "The exchange of people, ideas, and goods led to cultural globalization."  
-  },  
-
-  // Questions 46-50 (Stimulus 50: Globalized world)  
-  {  
-    id: "q46",  
-    question: "What does the term 'globalization' refer to?",  
-    options: ["The spread of European culture", "The interconnectedness of economies and cultures", "The decline of trade", "The unification of the Americas"],  
-    correctAnswer: "The interconnectedness of economies and cultures",  
-    explanation: "Globalization involves the integration of economies, cultures, and societies worldwide."  
-  },  
-  {  
-    id: "q47",  
-    question: "Which of the following is a result of globalization?",  
-    options: ["The spread of fast food chains", "The decline of local cultures", "The end of trade", "The isolation of nations"],  
-    correctAnswer: "The spread of fast food chains",  
-    explanation: "Globalization has led to the spread of multinational corporations and cultural products."  
-  },  
-  {  
-    id: "q48",  
-    question: "How did the Age of Exploration contribute to globalization?",  
-    options: ["By creating trade routes", "By ending colonialism", "By reducing cultural exchange", "By isolating regions"],  
-    correctAnswer: "By creating trade routes",  
-    explanation: "The Age of Exploration established the first global trade networks."  
-  },  
-  {  
-    id: "q49",  
-    question: "What is a modern example of globalization?",  
-    options: ["The internet", "The decline of trade", "The rise of local economies", "The end of colonialism"],  
-    correctAnswer: "The internet",  
-    explanation: "The internet connects people and economies globally, exemplifying modern globalization."  
-  },  
-  {  
-    id: "q50",  
-    question: "What is a challenge of globalization?",  
-    options: ["The spread of diseases", "The decline of local cultures", "The end of trade", "The unification of the Americas"],  
-    correctAnswer: "The decline of local cultures",  
-    explanation: "Globalization can lead to the erosion of local traditions and languages."  
-  },  
-];  
-
-/* -------------------------------------------------------------------------
-   UI COMPONENTS
-   ------------------------------------------------------------------------- */
 const QuizUnit4 = () => {
-  const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
-  const [currentStimulusIndex, setCurrentStimulusIndex] = useState(0);
-  const [showStimulus, setShowStimulus] = useState(false);
-  const [currentStimulus, setCurrentStimulus] = useState(null);
+  const navigate = useNavigate();
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [selectedOption, setSelectedOption] = useState<string | null>(null);
+  const [isAnswered, setIsAnswered] = useState(false);
   const [score, setScore] = useState(0);
   const [isFinished, setIsFinished] = useState(false);
-  const navigate = useNavigate();
+  const [showStimulus, setShowStimulus] = useState(true);
 
-  useEffect(() => {
-    if (currentQuestionIndex % 5 === 0 && currentQuestionIndex > 0) {
-      setShowStimulus(true);
-      setCurrentStimulus(stimuli[currentQuestionIndex]);
-    } else {
-      setShowStimulus(false);
-    }
-  }, [currentQuestionIndex]);
+  const currentQuestion = questions[currentIndex];
+  const currentStimulus = stimuli.find(s => s.id === currentQuestion.stimulusId);
+  const progress = (currentIndex / questions.length) * 100;
 
-  const handleAnswer = (option) => {
-    if (option === questions[currentQuestionIndex].correctAnswer) {
+  const handleOptionSelect = (option: string) => {
+    if (isAnswered) return;
+    setSelectedOption(option);
+    setIsAnswered(true);
+    
+    if (option === currentQuestion.correctAnswer) {
       setScore(score + 1);
-    }
-    setCurrentQuestionIndex(currentQuestionIndex + 1);
-    if (currentQuestionIndex % 5 === 0 && currentQuestionIndex > 0) {
-      setShowStimulus(true);
-      setCurrentStimulus(stimuli[currentQuestionIndex]);
+      playSound('correct');
     } else {
-      setShowStimulus(false);
+      playSound('wrong');
     }
   };
 
   const handleNext = () => {
-    setCurrentQuestionIndex(currentQuestionIndex + 1);
-    if (currentQuestionIndex % 5 === 0 && currentQuestionIndex > 0) {
-      setShowStimulus(true);
-      setCurrentStimulus(stimuli[currentQuestionIndex]);
+    if (currentIndex < questions.length - 1) {
+      const nextIndex = currentIndex + 1;
+      // Show stimulus if the next question belongs to a new stimulus
+      if (questions[nextIndex].stimulusId !== currentQuestion.stimulusId) {
+        setShowStimulus(true);
+      }
+      setCurrentIndex(nextIndex);
+      setSelectedOption(null);
+      setIsAnswered(false);
     } else {
-      setShowStimulus(false);
+      setIsFinished(true);
     }
   };
 
   if (isFinished) {
     return (
       <Layout>
-        <div className="max-w-4xl mx-auto text-center">
-          <h2 className="text-3xl font-bold">Quiz Complete!</h2>
-          <p className="text-xl">You scored {score} out of 50.</p>
-          <Button variant="outline" onClick={() => navigate("/units/ap-world")}>
-            Back to Units
-          </Button>
-        </div>
+        <motion.div 
+          initial={{ opacity: 0, scale: 0.95 }}
+          animate={{ opacity: 1, scale: 1 }}
+          className="max-w-md mx-auto text-center space-y-8 py-12"
+        >
+          <div className="space-y-2">
+            <h2 className="text-3xl font-bold">Unit 4 Mastery Complete!</h2>
+            <p className="text-muted-foreground">You scored {score} out of {questions.length}</p>
+          </div>
+          
+          <div className="p-8 rounded-3xl bg-primary/10 border border-primary/20">
+            <div className="text-5xl font-bold text-primary mb-2">{Math.round((score/questions.length)*100)}%</div>
+            <div className="text-sm font-bold uppercase tracking-widest text-primary/70">Final Score</div>
+          </div>
+
+          <div className="flex gap-4">
+            <Button onClick={() => window.location.reload()} className="flex-1 h-12 rounded-xl">
+              <RefreshCcw className="mr-2 h-4 w-4" /> Try Again
+            </Button>
+            <Button variant="outline" onClick={() => navigate("/units/ap-world")} className="flex-1 h-12 rounded-xl">
+              Back to Units
+            </Button>
+          </div>
+        </motion.div>
       </Layout>
     );
   }
@@ -618,56 +219,112 @@ const QuizUnit4 = () => {
   return (
     <Layout>
       <div className="max-w-4xl mx-auto space-y-8">
-        <div className="space-y-4">
-          <div className="flex items-center justify-between">
-            <Button variant="ghost" size="sm" onClick={() => navigate("/units/ap-world")}>
-              <ArrowLeft size={16} className="mr-2" />
-              Back to Units
-            </Button>
-            <Button variant="outline" size="sm">
-              <RefreshCcw size={16} className="mr-2" />
-              Restart Quiz
-            </Button>
-          </div>
-          <div className="space-y-2">
-            <h2 className="text-2xl font-bold">Question {currentQuestionIndex + 1} of 50</h2>
-            <p className="text-sm text-muted-foreground">Score: {score}</p>
+        <div className="flex items-center justify-between">
+          <Button variant="ghost" onClick={() => navigate("/units/ap-world")} className="text-muted-foreground">
+            <ArrowLeft className="mr-2 h-4 w-4" /> Exit Quiz
+          </Button>
+          <div className="text-right">
+            <div className="text-sm font-bold text-primary">Question {currentIndex + 1} / {questions.length}</div>
+            <div className="text-[10px] font-bold text-muted-foreground uppercase tracking-tighter">Unit 4: Transoceanic Interconnections</div>
           </div>
         </div>
 
-        {showStimulus && (
-          <Card className="border-border shadow-none bg-card p-6">
-            <CardHeader>
-              <CardTitle>{currentStimulus.text}</CardTitle>
-              <CardDescription>
-                <img src={currentStimulus.img} alt="Stimulus" className="max-w-full" />
-                <p className="text-sm text-muted-foreground">Source: {currentStimulus.source}</p>
-              </CardDescription>
-            </CardHeader>
-          </Card>
-        )}
+        <Progress value={progress} className="h-1.5 bg-muted" />
 
-        <div className="space-y-6">
-          <Card className="border-border shadow-none bg-card">
-            <CardHeader>
-              <CardTitle>{questions[currentQuestionIndex].question}</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-2">
-                {questions[currentQuestionIndex].options.map((option, index) => (
-                  <Button
-                    key={index}
-                    variant="outline"
-                    onClick={() => handleAnswer(option)}
-                    className="w-full rounded-xl"
-                  >
-                    {option}
-                  </Button>
-                ))}
+        <AnimatePresence mode="wait">
+          {showStimulus ? (
+            <motion.div
+              key={`stimulus-${currentStimulus?.id}`}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              className="space-y-6"
+            >
+              <Card className="overflow-hidden border-border shadow-xl shadow-primary/5 rounded-3xl">
+                <div className="aspect-video w-full overflow-hidden">
+                  <img 
+                    src={currentStimulus?.img} 
+                    alt="Stimulus" 
+                    className="w-full h-full object-cover hover:scale-105 transition-transform duration-700"
+                  />
+                </div>
+                <CardContent className="p-8 space-y-4">
+                  <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 text-primary text-[10px] font-bold uppercase tracking-widest">
+                    <Info size={12} />
+                    Stimulus Context
+                  </div>
+                  <p className="text-lg leading-relaxed font-medium italic text-foreground/90">
+                    "{currentStimulus?.text}"
+                  </p>
+                  <div className="pt-4 border-t border-border text-[10px] text-muted-foreground font-medium uppercase tracking-wider">
+                    Source: {currentStimulus?.source}
+                  </div>
+                </CardContent>
+              </Card>
+              <Button onClick={() => setShowStimulus(false)} className="w-full h-14 rounded-2xl text-lg font-bold shadow-xl shadow-primary/20">
+                Start Questions (1-5)
+              </Button>
+            </motion.div>
+          ) : (
+            <motion.div
+              key={`question-${currentQuestion.id}`}
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: -20 }}
+              className="space-y-8"
+            >
+              <h2 className="text-2xl sm:text-3xl font-bold leading-tight text-center px-4">
+                {currentQuestion.question}
+              </h2>
+
+              <div className="grid gap-4">
+                {currentQuestion.options.map((option) => {
+                  const isCorrect = option === currentQuestion.correctAnswer;
+                  const isSelected = option === selectedOption;
+                  
+                  return (
+                    <button
+                      key={option}
+                      disabled={isAnswered}
+                      onClick={() => handleOptionSelect(option)}
+                      className={cn(
+                        "w-full text-left p-5 rounded-2xl border-2 transition-all duration-200 text-lg font-medium",
+                        !isAnswered && "border-border hover:border-primary hover:bg-primary/5",
+                        isAnswered && isCorrect && "border-green-500 bg-green-500/10 text-green-600",
+                        isAnswered && isSelected && !isCorrect && "border-destructive bg-destructive/10 text-destructive",
+                        isAnswered && !isCorrect && !isSelected && "border-border opacity-40"
+                      )}
+                    >
+                      <div className="flex items-center justify-between">
+                        <span>{option}</span>
+                        {isAnswered && isCorrect && <CheckCircle2 className="h-6 w-6 text-green-600" />}
+                        {isAnswered && isSelected && !isCorrect && <XCircle className="h-6 w-6 text-destructive" />}
+                      </div>
+                    </button>
+                  );
+                })}
               </div>
-            </CardContent>
-          </Card>
-        </div>
+
+              {isAnswered && (
+                <motion.div
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="space-y-4"
+                >
+                  <Card className="border-none bg-muted/50 shadow-none rounded-2xl">
+                    <CardContent className="p-6 space-y-3">
+                      <div className="text-xs font-bold uppercase tracking-widest text-muted-foreground">Explanation</div>
+                      <p className="text-foreground leading-relaxed">{currentQuestion.explanation}</p>
+                    </CardContent>
+                  </Card>
+                  <Button onClick={handleNext} className="w-full h-14 rounded-2xl text-lg font-bold">
+                    {currentIndex < questions.length - 1 ? "Next Question" : "Finish Quiz"}
+                  </Button>
+                </motion.div>
+              )}
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
     </Layout>
   );
