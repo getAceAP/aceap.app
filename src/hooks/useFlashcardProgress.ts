@@ -21,24 +21,31 @@ export const useFlashcardProgress = (unitId: number) => {
       return;
     }
 
-    const { data, error } = await supabase
-      .from('flashcard_progress')
-      .select('flashcard_id, correct_count')
-      .eq('user_id', user.id);
+    try {
+      const { data, error } = await supabase
+        .from('flashcard_progress')
+        .select('flashcard_id, correct_count')
+        .eq('user_id', user.id);
 
-    if (!error && data) {
-      const progressMap: Record<string, Progress> = {};
-      data.forEach((item) => {
-        const status: MasteryStatus = item.correct_count >= 3 ? 'learned' : item.correct_count >= 1 ? 'learning' : 'new';
-        progressMap[item.flashcard_id] = {
-          flashcard_id: item.flashcard_id,
-          correct_count: item.correct_count,
-          status,
-        };
-      });
-      setProgress(progressMap);
+      if (error) throw error;
+
+      if (data) {
+        const progressMap: Record<string, Progress> = {};
+        data.forEach((item) => {
+          const status: MasteryStatus = item.correct_count >= 3 ? 'learned' : item.correct_count >= 1 ? 'learning' : 'new';
+          progressMap[item.flashcard_id] = {
+            flashcard_id: item.flashcard_id,
+            correct_count: item.correct_count,
+            status,
+          };
+        });
+        setProgress(progressMap);
+      }
+    } catch (err) {
+      console.error("Error fetching progress:", err);
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
   };
 
   const updateProgress = async (flashcardId: string, wasCorrect: boolean) => {
@@ -47,21 +54,28 @@ export const useFlashcardProgress = (unitId: number) => {
     const current = progress[flashcardId] || { correct_count: 0 };
     const newCount = current.correct_count + 1;
 
-    const { error } = await supabase
-      .from('flashcard_progress')
-      .upsert({
-        user_id: user.id,
-        flashcard_id: flashcardId,
-        correct_count: newCount,
-        updated_at: new Date().toISOString(),
-      }, { onConflict: 'user_id,flashcard_id' });
+    try {
+      const { error } = await supabase
+        .from('flashcard_progress')
+        .upsert({
+          user_id: user.id,
+          flashcard_id: flashcardId,
+          correct_count: newCount,
+          updated_at: new Date().toISOString(),
+        }, { 
+          onConflict: 'user_id,flashcard_id' 
+        });
 
-    if (!error) {
+      if (error) throw error;
+
+      // Update local state immediately for UI responsiveness
       const status: MasteryStatus = newCount >= 3 ? 'learned' : 'learning';
       setProgress((prev) => ({
         ...prev,
         [flashcardId]: { flashcard_id: flashcardId, correct_count: newCount, status },
       }));
+    } catch (err) {
+      console.error("Error updating progress:", err);
     }
   };
 
@@ -69,5 +83,5 @@ export const useFlashcardProgress = (unitId: number) => {
     fetchProgress();
   }, [user, unitId]);
 
-  return { progress, updateProgress, loading };
+  return { progress, updateProgress, loading, refresh: fetchProgress };
 };
