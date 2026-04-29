@@ -2,7 +2,7 @@
 
 import React from "react";
 import { Link, useLocation } from "react-router-dom";
-import { BookOpen, LayoutDashboard, LogOut, User } from "lucide-react";
+import { BookOpen, LayoutDashboard, LogOut, User, Mail } from "lucide-react";
 import { ThemeToggle } from "./ThemeToggle";
 import { SoundToggle } from "./SoundToggle";
 import { Button } from "./ui/button";
@@ -87,7 +87,16 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
 
       <footer className="max-w-5xl mx-auto px-4 sm:px-6 py-12 pb-32 md:pb-12 border-t border-border">
         <div className="flex flex-col md:flex-row justify-between items-center gap-6 text-center md:text-left text-sm text-muted-foreground">
-          <p>© {new Date().getFullYear()} AceAP.app — The Ultimate AP Revision Tool</p>
+          <div className="space-y-2">
+            <p>© {new Date().getFullYear()} AceAP.app — The Ultimate AP Revision Tool</p>
+            <a 
+              href="mailto:hello@aceap.app" 
+              className="inline-flex items-center gap-2 text-xs hover:text-primary transition-colors"
+            >
+              <Mail size={12} />
+              hello@aceap.app
+            </a>
+          </div>
           <div className="flex gap-6">
             <Link to="/privacy" className="hover:text-primary transition-colors">Privacy Policy</Link>
             <Link to="/terms" className="hover:text-primary transition-colors">Terms of Service</Link>
