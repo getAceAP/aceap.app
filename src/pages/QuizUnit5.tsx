@@ -1,10 +1,10 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Layout from "@/components/Layout";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
-import { ArrowLeft, RefreshCcw, CheckCircle2, XCircle, Info } from "lucide-react";
+import { ArrowLeft, RefreshCcw, CheckCircle2, XCircle, Info, BookOpen } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "@/lib/utils";
 import { playSound } from "@/utils/sounds";
@@ -13,8 +13,7 @@ const stimuli = [
   {
     id: 1,
     text: "The Enlightenment applied new ways of understanding and empiricism to human relationships and politics. Thinkers like John Locke argued for natural rights—life, liberty, and property—and the social contract between the governed and the government.",
-    img: "https://images.unsplash.com/photo-1524995997946-a1c2e315a42f?auto=format&fit=crop&w=800&q=80",
-    source: "National Portrait Gallery - Portrait of John Locke, c. 1697"
+    source: "National Portrait Gallery - Portrait of John Locke Records"
   },
   {
     id: 2,
@@ -25,8 +24,7 @@ const stimuli = [
   {
     id: 3,
     text: "The Haitian Revolution (1791-1804) was the only successful slave revolt in history. Led by Toussaint L'Ouverture, it resulted in the creation of the first independent black republic and the abolition of slavery in the colony of Saint-Domingue.",
-    img: "https://images.unsplash.com/photo-1599408162162-cdb143551737?auto=format&fit=crop&w=800&q=80",
-    source: "Historical Archive - Portrait of Toussaint L'Ouverture"
+    source: "Historical Archive - Portrait of Toussaint L'Ouverture Records"
   },
   {
     id: 4,
@@ -37,20 +35,17 @@ const stimuli = [
   {
     id: 5,
     text: "The Meiji Restoration in Japan (1868) was a state-sponsored industrialization effort. To avoid Western colonization, Japan rapidly modernized its military, economy, and education system, becoming a major global power by 1900.",
-    img: "https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?auto=format&fit=crop&w=800&q=80",
-    source: "Tokyo National Museum - Emperor Meiji in Western Military Uniform"
+    source: "Tokyo National Museum - Emperor Meiji Records"
   },
   {
     id: 6,
     text: "Adam Smith's 'The Wealth of Nations' (1776) laid the foundation for modern capitalism. He advocated for free markets, the 'invisible hand,' and laissez-faire policies, arguing that individual self-interest leads to collective prosperity.",
-    img: "https://images.unsplash.com/photo-1554224155-6726b3ff858f?auto=format&fit=crop&w=800&q=80",
-    source: "University of Glasgow - First Edition of The Wealth of Nations"
+    source: "University of Glasgow - First Edition of The Wealth of Nations Records"
   },
   {
     id: 7,
     text: "Karl Marx and Friedrich Engels published 'The Communist Manifesto' (1848) as a reaction to the hardships of industrial capitalism. They argued that history is a series of class struggles and predicted a proletariat revolution.",
-    img: "https://images.unsplash.com/photo-1589829085413-56de8ae18c73?auto=format&fit=crop&w=800&q=80",
-    source: "International Institute of Social History - Original Manuscript of the Manifesto"
+    source: "International Institute of Social History - Original Manuscript Records"
   },
   {
     id: 8,
@@ -61,14 +56,12 @@ const stimuli = [
   {
     id: 9,
     text: "The Second Industrial Revolution (late 19th century) focused on steel, chemicals, electricity, and precision machinery. The telegraph and telephone revolutionized communication, while railroads and steamships integrated global markets.",
-    img: "https://images.unsplash.com/photo-1474487022152-5217965b3b9e?auto=format&fit=crop&w=800&q=80",
-    source: "Smithsonian Institution - Early Telegraph Machine, c. 1880"
+    source: "Smithsonian Institution - Early Telegraph Machine Records"
   },
   {
     id: 10,
     text: "Feminism emerged during the Enlightenment. Mary Wollstonecraft and Olympe de Gouges argued that the principles of liberty and equality should apply to women, calling for better education and political rights.",
-    img: "https://images.unsplash.com/photo-1573164713988-8665fc963095?auto=format&fit=crop&w=800&q=80",
-    source: "National Portrait Gallery - Portrait of Mary Wollstonecraft, 1797"
+    source: "National Portrait Gallery - Portrait of Mary Wollstonecraft Records"
   }
 ];
 
@@ -151,7 +144,6 @@ const QuizUnit5 = () => {
   const [isAnswered, setIsAnswered] = useState(false);
   const [score, setScore] = useState(0);
   const [isFinished, setIsFinished] = useState(false);
-  const [showStimulus, setShowStimulus] = useState(true);
 
   const currentQuestion = questions[currentIndex];
   const currentStimulus = stimuli.find(s => s.id === currentQuestion.stimulusId);
@@ -172,11 +164,7 @@ const QuizUnit5 = () => {
 
   const handleNext = () => {
     if (currentIndex < questions.length - 1) {
-      const nextIndex = currentIndex + 1;
-      if (questions[nextIndex].stimulusId !== currentQuestion.stimulusId) {
-        setShowStimulus(true);
-      }
-      setCurrentIndex(nextIndex);
+      setCurrentIndex(currentIndex + 1);
       setSelectedOption(null);
       setIsAnswered(false);
     } else {
@@ -217,7 +205,7 @@ const QuizUnit5 = () => {
 
   return (
     <Layout>
-      <div className="max-w-4xl mx-auto space-y-8">
+      <div className="max-w-5xl mx-auto space-y-8">
         <div className="flex items-center justify-between">
           <Button variant="ghost" onClick={() => navigate("/units/ap-world")} className="text-muted-foreground">
             <ArrowLeft className="mr-2 h-4 w-4" /> Exit Quiz
@@ -230,100 +218,98 @@ const QuizUnit5 = () => {
 
         <Progress value={progress} className="h-1.5 bg-muted" />
 
-        <AnimatePresence mode="wait">
-          {showStimulus ? (
-            <motion.div
-              key={`stimulus-${currentStimulus?.id}`}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -20 }}
-              className="space-y-6"
-            >
-              <Card className="overflow-hidden border-border shadow-xl shadow-primary/5 rounded-3xl">
-                <div className="aspect-video w-full overflow-hidden">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
+          {/* Stimulus Section - Always Visible */}
+          <div className="space-y-6 lg:sticky lg:top-24">
+            <Card className="overflow-hidden border-border shadow-xl shadow-primary/5 rounded-3xl">
+              {currentStimulus?.img && (
+                <div className="aspect-video w-full overflow-hidden border-b border-border">
                   <img 
-                    src={currentStimulus?.img} 
+                    src={currentStimulus.img} 
                     alt="Stimulus" 
-                    className="w-full h-full object-cover hover:scale-105 transition-transform duration-700"
+                    className="w-full h-full object-cover"
                   />
                 </div>
-                <CardContent className="p-8 space-y-4">
-                  <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 text-primary text-[10px] font-bold uppercase tracking-widest">
-                    <Info size={12} />
-                    Stimulus Context
-                  </div>
-                  <p className="text-lg leading-relaxed font-medium italic text-foreground/90">
-                    "{currentStimulus?.text}"
-                  </p>
-                  <div className="pt-4 border-t border-border text-[10px] text-muted-foreground font-medium uppercase tracking-wider">
-                    Source: {currentStimulus?.source}
-                  </div>
-                </CardContent>
-              </Card>
-              <Button onClick={() => setShowStimulus(false)} className="w-full h-14 rounded-2xl text-lg font-bold shadow-xl shadow-primary/20">
-                Start Questions ({currentIndex + 1}-{currentIndex + 5})
-              </Button>
-            </motion.div>
-          ) : (
-            <motion.div
-              key={`question-${currentQuestion.id}`}
-              initial={{ opacity: 0, x: 20 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: -20 }}
-              className="space-y-8"
-            >
-              <h2 className="text-2xl sm:text-3xl font-bold leading-tight text-center px-4">
-                {currentQuestion.question}
-              </h2>
-
-              <div className="grid gap-4">
-                {currentQuestion.options.map((option) => {
-                  const isCorrect = option === currentQuestion.correctAnswer;
-                  const isSelected = option === selectedOption;
-                  
-                  return (
-                    <button
-                      key={option}
-                      disabled={isAnswered}
-                      onClick={() => handleOptionSelect(option)}
-                      className={cn(
-                        "w-full text-left p-5 rounded-2xl border-2 transition-all duration-200 text-lg font-medium",
-                        !isAnswered && "border-border hover:border-primary hover:bg-primary/5",
-                        isAnswered && isCorrect && "border-green-500 bg-green-500/10 text-green-600",
-                        isAnswered && isSelected && !isCorrect && "border-destructive bg-destructive/10 text-destructive",
-                        isAnswered && !isCorrect && !isSelected && "border-border opacity-40"
-                      )}
-                    >
-                      <div className="flex items-center justify-between">
-                        <span>{option}</span>
-                        {isAnswered && isCorrect && <CheckCircle2 className="h-6 w-6 text-green-600" />}
-                        {isAnswered && isSelected && !isCorrect && <XCircle className="h-6 w-6 text-destructive" />}
-                      </div>
-                    </button>
-                  );
-                })}
-              </div>
-
-              {isAnswered && (
-                <motion.div
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  className="space-y-4"
-                >
-                  <Card className="border-none bg-muted/50 shadow-none rounded-2xl">
-                    <CardContent className="p-6 space-y-3">
-                      <div className="text-xs font-bold uppercase tracking-widest text-muted-foreground">Explanation</div>
-                      <p className="text-foreground leading-relaxed">{currentQuestion.explanation}</p>
-                    </CardContent>
-                  </Card>
-                  <Button onClick={handleNext} className="w-full h-14 rounded-2xl text-lg font-bold">
-                    {currentIndex < questions.length - 1 ? "Next Question" : "Finish Quiz"}
-                  </Button>
-                </motion.div>
               )}
-            </motion.div>
-          )}
-        </AnimatePresence>
+              <CardContent className="p-6 sm:p-8 space-y-4">
+                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 text-primary text-[10px] font-bold uppercase tracking-widest">
+                  <BookOpen size={12} />
+                  Stimulus Prompt
+                </div>
+                <p className="text-base sm:text-lg leading-relaxed font-medium italic text-foreground/90">
+                  "{currentStimulus?.text}"
+                </p>
+                <div className="pt-4 border-t border-border text-[10px] text-muted-foreground font-medium uppercase tracking-wider">
+                  Source: {currentStimulus?.source}
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+
+          {/* Question Section */}
+          <div className="space-y-8">
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={`question-${currentQuestion.id}`}
+                initial={{ opacity: 0, x: 20 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: -20 }}
+                className="space-y-8"
+              >
+                <h2 className="text-2xl sm:text-3xl font-bold leading-tight">
+                  {currentQuestion.question}
+                </h2>
+
+                <div className="grid gap-3">
+                  {currentQuestion.options.map((option) => {
+                    const isCorrect = option === currentQuestion.correctAnswer;
+                    const isSelected = option === selectedOption;
+                    
+                    return (
+                      <button
+                        key={option}
+                        disabled={isAnswered}
+                        onClick={() => handleOptionSelect(option)}
+                        className={cn(
+                          "w-full text-left p-5 rounded-2xl border-2 transition-all duration-200 text-lg font-medium",
+                          !isAnswered && "border-border hover:border-primary hover:bg-primary/5",
+                          isAnswered && isCorrect && "border-green-500 bg-green-500/10 text-green-600",
+                          isAnswered && isSelected && !isCorrect && "border-destructive bg-destructive/10 text-destructive",
+                          isAnswered && !isCorrect && !isSelected && "border-border opacity-40"
+                        )}
+                      >
+                        <div className="flex items-center justify-between">
+                          <span>{option}</span>
+                          {isAnswered && isCorrect && <CheckCircle2 className="h-6 w-6 text-green-600" />}
+                          {isAnswered && isSelected && !isCorrect && <XCircle className="h-6 w-6 text-destructive" />}
+                        </div>
+                      </button>
+                    );
+                  })}
+                </div>
+
+                {isAnswered && (
+                  <motion.div
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="space-y-4"
+                  >
+                    <div className="p-6 rounded-2xl bg-muted/50 border border-border/50 space-y-3">
+                      <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-muted-foreground">
+                        <Info size={14} />
+                        Explanation
+                      </div>
+                      <p className="text-foreground leading-relaxed">{currentQuestion.explanation}</p>
+                    </div>
+                    <Button onClick={handleNext} className="w-full h-14 rounded-2xl text-lg font-bold shadow-lg shadow-primary/20">
+                      {currentIndex < questions.length - 1 ? "Next Question" : "Finish Quiz"}
+                    </Button>
+                  </motion.div>
+                )}
+              </motion.div>
+            </AnimatePresence>
+          </div>
+        </div>
       </div>
     </Layout>
   );

@@ -1,10 +1,10 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Layout from "@/components/Layout";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
-import { ArrowLeft, RefreshCcw, CheckCircle2, XCircle, Info } from "lucide-react";
+import { ArrowLeft, RefreshCcw, CheckCircle2, XCircle, Info, BookOpen } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "@/lib/utils";
 import { playSound } from "@/utils/sounds";
@@ -19,13 +19,11 @@ const stimuli = [
   {
     id: 2,
     text: "The Columbian Exchange was a biological collision. It brought maize and potatoes to Afro-Eurasia, fueling population growth, while bringing smallpox and measles to the Americas, causing the 'Great Dying' of indigenous populations.",
-    img: "https://images.unsplash.com/photo-1518843875459-f738682238a6?auto=format&fit=crop&w=800&q=80",
-    source: "Historical Archive - Map of Global Biological Exchange Routes"
+    source: "Historical Archive - Global Biological Exchange Records"
   },
   {
     id: 3,
     text: "Mercantilism drove European states to establish colonies. The goal was to accumulate gold and silver by maintaining a favorable balance of trade, often through the use of joint-stock companies like the VOC and the British East India Company.",
-    img: "https://images.unsplash.com/photo-1580519542036-c47de6196ba5?auto=format&fit=crop&w=800&q=80",
     source: "British Museum - Ledger of the East India Company, c. 1700"
   },
   {
@@ -43,31 +41,26 @@ const stimuli = [
   {
     id: 6,
     text: "Silver from the Potosí mines in modern-day Bolivia became the first global currency. It flowed from the Americas to Europe and then to China, where it was used to pay for luxury goods like silk and porcelain.",
-    img: "https://images.unsplash.com/photo-1518458028434-541f07cfa214?auto=format&fit=crop&w=800&q=80",
-    source: "Potosí Mint Museum - Spanish Silver Real, c. 1650"
+    source: "Potosí Mint Museum - Spanish Silver Real Records"
   },
   {
     id: 7,
     text: "Resistance to state power was common. Queen Ana Nzinga of Ndongo and Matamba resisted Portuguese expansion in Africa, while the Pueblo Revolt in New Mexico successfully expelled the Spanish for over a decade.",
-    img: "https://images.unsplash.com/photo-1505664194779-8beaceb93744?auto=format&fit=crop&w=800&q=80",
-    source: "Historical Illustration - Queen Nzinga in Diplomacy with the Portuguese"
+    source: "Historical Illustration - Queen Nzinga Diplomacy Records"
   },
   {
     id: 8,
     text: "The Mita system, originally an Incan labor tax, was adapted by the Spanish to force indigenous people to work in dangerous silver mines. This coercive labor was essential for the extraction of wealth for the Spanish Crown.",
-    img: "https://images.unsplash.com/photo-1531973576160-7125cd663d86?auto=format&fit=crop&w=800&q=80",
     source: "Archive of the Indies - Records of the Mita Laborers in Potosí"
   },
   {
     id: 9,
     text: "Syncretic religions emerged as cultures collided. Santeria in Cuba and Vodun in Haiti blended West African traditions with Roman Catholicism, allowing enslaved people to maintain their heritage under colonial rule.",
-    img: "https://images.unsplash.com/photo-1515169067868-5387ec356754?auto=format&fit=crop&w=800&q=80",
-    source: "Cultural Heritage Archive - Altar of a Syncretic Faith in the Caribbean"
+    source: "Cultural Heritage Archive - Altar of a Syncretic Faith Records"
   },
   {
     id: 10,
     text: "The Treaty of Tordesillas (1494) divided the newly 'discovered' lands outside Europe between Portugal and Spain. This line of demarcation shaped the colonial boundaries of Brazil and the rest of Latin America.",
-    img: "https://images.unsplash.com/photo-1524661135-423995f22d0b?auto=format&fit=crop&w=800&q=80",
     source: "Torre do Tombo National Archive - The Treaty of Tordesillas Document"
   }
 ];
@@ -151,7 +144,6 @@ const QuizUnit4 = () => {
   const [isAnswered, setIsAnswered] = useState(false);
   const [score, setScore] = useState(0);
   const [isFinished, setIsFinished] = useState(false);
-  const [showStimulus, setShowStimulus] = useState(true);
 
   const currentQuestion = questions[currentIndex];
   const currentStimulus = stimuli.find(s => s.id === currentQuestion.stimulusId);
@@ -172,12 +164,7 @@ const QuizUnit4 = () => {
 
   const handleNext = () => {
     if (currentIndex < questions.length - 1) {
-      const nextIndex = currentIndex + 1;
-      // Show stimulus if the next question belongs to a new stimulus
-      if (questions[nextIndex].stimulusId !== currentQuestion.stimulusId) {
-        setShowStimulus(true);
-      }
-      setCurrentIndex(nextIndex);
+      setCurrentIndex(currentIndex + 1);
       setSelectedOption(null);
       setIsAnswered(false);
     } else {
@@ -218,7 +205,7 @@ const QuizUnit4 = () => {
 
   return (
     <Layout>
-      <div className="max-w-4xl mx-auto space-y-8">
+      <div className="max-w-5xl mx-auto space-y-8">
         <div className="flex items-center justify-between">
           <Button variant="ghost" onClick={() => navigate("/units/ap-world")} className="text-muted-foreground">
             <ArrowLeft className="mr-2 h-4 w-4" /> Exit Quiz
@@ -231,100 +218,98 @@ const QuizUnit4 = () => {
 
         <Progress value={progress} className="h-1.5 bg-muted" />
 
-        <AnimatePresence mode="wait">
-          {showStimulus ? (
-            <motion.div
-              key={`stimulus-${currentStimulus?.id}`}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -20 }}
-              className="space-y-6"
-            >
-              <Card className="overflow-hidden border-border shadow-xl shadow-primary/5 rounded-3xl">
-                <div className="aspect-video w-full overflow-hidden">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
+          {/* Stimulus Section - Always Visible */}
+          <div className="space-y-6 sticky top-24">
+            <Card className="overflow-hidden border-border shadow-xl shadow-primary/5 rounded-3xl">
+              {currentStimulus?.img && (
+                <div className="aspect-video w-full overflow-hidden border-b border-border">
                   <img 
-                    src={currentStimulus?.img} 
+                    src={currentStimulus.img} 
                     alt="Stimulus" 
-                    className="w-full h-full object-cover hover:scale-105 transition-transform duration-700"
+                    className="w-full h-full object-cover"
                   />
                 </div>
-                <CardContent className="p-8 space-y-4">
-                  <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 text-primary text-[10px] font-bold uppercase tracking-widest">
-                    <Info size={12} />
-                    Stimulus Context
-                  </div>
-                  <p className="text-lg leading-relaxed font-medium italic text-foreground/90">
-                    "{currentStimulus?.text}"
-                  </p>
-                  <div className="pt-4 border-t border-border text-[10px] text-muted-foreground font-medium uppercase tracking-wider">
-                    Source: {currentStimulus?.source}
-                  </div>
-                </CardContent>
-              </Card>
-              <Button onClick={() => setShowStimulus(false)} className="w-full h-14 rounded-2xl text-lg font-bold shadow-xl shadow-primary/20">
-                Start Questions (1-5)
-              </Button>
-            </motion.div>
-          ) : (
-            <motion.div
-              key={`question-${currentQuestion.id}`}
-              initial={{ opacity: 0, x: 20 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: -20 }}
-              className="space-y-8"
-            >
-              <h2 className="text-2xl sm:text-3xl font-bold leading-tight text-center px-4">
-                {currentQuestion.question}
-              </h2>
-
-              <div className="grid gap-4">
-                {currentQuestion.options.map((option) => {
-                  const isCorrect = option === currentQuestion.correctAnswer;
-                  const isSelected = option === selectedOption;
-                  
-                  return (
-                    <button
-                      key={option}
-                      disabled={isAnswered}
-                      onClick={() => handleOptionSelect(option)}
-                      className={cn(
-                        "w-full text-left p-5 rounded-2xl border-2 transition-all duration-200 text-lg font-medium",
-                        !isAnswered && "border-border hover:border-primary hover:bg-primary/5",
-                        isAnswered && isCorrect && "border-green-500 bg-green-500/10 text-green-600",
-                        isAnswered && isSelected && !isCorrect && "border-destructive bg-destructive/10 text-destructive",
-                        isAnswered && !isCorrect && !isSelected && "border-border opacity-40"
-                      )}
-                    >
-                      <div className="flex items-center justify-between">
-                        <span>{option}</span>
-                        {isAnswered && isCorrect && <CheckCircle2 className="h-6 w-6 text-green-600" />}
-                        {isAnswered && isSelected && !isCorrect && <XCircle className="h-6 w-6 text-destructive" />}
-                      </div>
-                    </button>
-                  );
-                })}
-              </div>
-
-              {isAnswered && (
-                <motion.div
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  className="space-y-4"
-                >
-                  <Card className="border-none bg-muted/50 shadow-none rounded-2xl">
-                    <CardContent className="p-6 space-y-3">
-                      <div className="text-xs font-bold uppercase tracking-widest text-muted-foreground">Explanation</div>
-                      <p className="text-foreground leading-relaxed">{currentQuestion.explanation}</p>
-                    </CardContent>
-                  </Card>
-                  <Button onClick={handleNext} className="w-full h-14 rounded-2xl text-lg font-bold">
-                    {currentIndex < questions.length - 1 ? "Next Question" : "Finish Quiz"}
-                  </Button>
-                </motion.div>
               )}
-            </motion.div>
-          )}
-        </AnimatePresence>
+              <CardContent className="p-6 sm:p-8 space-y-4">
+                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 text-primary text-[10px] font-bold uppercase tracking-widest">
+                  <BookOpen size={12} />
+                  Stimulus Prompt
+                </div>
+                <p className="text-base sm:text-lg leading-relaxed font-medium italic text-foreground/90">
+                  "{currentStimulus?.text}"
+                </p>
+                <div className="pt-4 border-t border-border text-[10px] text-muted-foreground font-medium uppercase tracking-wider">
+                  Source: {currentStimulus?.source}
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+
+          {/* Question Section */}
+          <div className="space-y-8">
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={`question-${currentQuestion.id}`}
+                initial={{ opacity: 0, x: 20 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: -20 }}
+                className="space-y-8"
+              >
+                <h2 className="text-2xl sm:text-3xl font-bold leading-tight">
+                  {currentQuestion.question}
+                </h2>
+
+                <div className="grid gap-3">
+                  {currentQuestion.options.map((option) => {
+                    const isCorrect = option === currentQuestion.correctAnswer;
+                    const isSelected = option === selectedOption;
+                    
+                    return (
+                      <button
+                        key={option}
+                        disabled={isAnswered}
+                        onClick={() => handleOptionSelect(option)}
+                        className={cn(
+                          "w-full text-left p-5 rounded-2xl border-2 transition-all duration-200 text-lg font-medium",
+                          !isAnswered && "border-border hover:border-primary hover:bg-primary/5",
+                          isAnswered && isCorrect && "border-green-500 bg-green-500/10 text-green-600",
+                          isAnswered && isSelected && !isCorrect && "border-destructive bg-destructive/10 text-destructive",
+                          isAnswered && !isCorrect && !isSelected && "border-border opacity-40"
+                        )}
+                      >
+                        <div className="flex items-center justify-between">
+                          <span>{option}</span>
+                          {isAnswered && isCorrect && <CheckCircle2 className="h-6 w-6 text-green-600" />}
+                          {isAnswered && isSelected && !isCorrect && <XCircle className="h-6 w-6 text-destructive" />}
+                        </div>
+                      </button>
+                    );
+                  })}
+                </div>
+
+                {isAnswered && (
+                  <motion.div
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="space-y-4"
+                  >
+                    <div className="p-6 rounded-2xl bg-muted/50 border border-border/50 space-y-3">
+                      <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-muted-foreground">
+                        <Info size={14} />
+                        Explanation
+                      </div>
+                      <p className="text-foreground leading-relaxed">{currentQuestion.explanation}</p>
+                    </div>
+                    <Button onClick={handleNext} className="w-full h-14 rounded-2xl text-lg font-bold shadow-lg shadow-primary/20">
+                      {currentIndex < questions.length - 1 ? "Next Question" : "Finish Quiz"}
+                    </Button>
+                  </motion.div>
+                )}
+              </motion.div>
+            </AnimatePresence>
+          </div>
+        </div>
       </div>
     </Layout>
   );
