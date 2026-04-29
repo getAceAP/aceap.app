@@ -7,8 +7,7 @@ import Landing from "./pages/Landing";
 import Dashboard from "./pages/Dashboard";
 import Units from "./pages/Units";
 import Quiz from "./pages/Quiz";
-import QuizUnit4 from "./pages/QuizUnit4"; // Import the new quiz
-import Flashcards from "./pages/Flashcards";
+import QuizUnit4 from "./pages/QuizUnit4"; // Import the new quizimport Flashcards from "./pages/Flashcards";
 import StudyGuide from "./pages/StudyGuide";
 import Privacy from "./pages/Privacy";
 import Terms from "./pages/Terms";
