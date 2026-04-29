@@ -7,6 +7,8 @@ import Landing from "./pages/Landing";
 import Dashboard from "./pages/Dashboard";
 import Units from "./pages/Units";
 import Quiz from "./pages/Quiz";
+import QuizUnit2 from "./pages/QuizUnit2";
+import QuizUnit3 from "./pages/QuizUnit3";
 import QuizUnit4 from "./pages/QuizUnit4";
 import QuizUnit5 from "./pages/QuizUnit5";
 import Flashcards from "./pages/Flashcards";
@@ -31,6 +33,8 @@ const App = () => (
           <Route path="/" element={<Landing />} />
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/units/ap-world" element={<Units />} />
+          <Route path="/units/ap-world/quiz/2" element={<QuizUnit2 />} />
+          <Route path="/units/ap-world/quiz/3" element={<QuizUnit3 />} />
           <Route path="/units/ap-world/quiz/4" element={<QuizUnit4 />} />
           <Route path="/units/ap-world/quiz/5" element={<QuizUnit5 />} />
           <Route path="/units/ap-world/quiz/:unitId" element={<Quiz />} />

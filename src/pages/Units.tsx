@@ -28,6 +28,11 @@ const Units = () => {
           {units.map((unit) => {
             const unitStats = stats[unit.id] || { learned: 0, total: unit.flashcards.length, percentage: 0 };
             
+            // Determine the quiz path based on the unit ID
+            const quizPath = [2, 3, 4, 5].includes(unit.id) 
+              ? `/units/ap-world/quiz/${unit.id}` 
+              : `/units/ap-world/quiz/${unit.id}`;
+            
             return (
               <Card key={unit.id} className="border-border shadow-none hover:border-primary/50 transition-colors bg-card overflow-hidden">
                 <CardHeader className="pb-3">
@@ -58,7 +63,7 @@ const Units = () => {
 
                   <div className="flex flex-wrap gap-3">
                     <Button asChild variant="outline" className="flex-1 min-w-[100px] border-border hover:bg-muted h-10 rounded-xl">
-                      <Link to={`/units/ap-world/quiz/${unit.id}`} className="flex items-center gap-2">
+                      <Link to={quizPath} className="flex items-center gap-2">
                         <GraduationCap size={16} />
                         Quiz
                       </Link>
