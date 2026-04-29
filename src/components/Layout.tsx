@@ -2,12 +2,20 @@
 
 import React from "react";
 import { Link, useLocation } from "react-router-dom";
-import { BookOpen, LayoutDashboard, LogOut, User, Mail } from "lucide-react";
+import { BookOpen, LayoutDashboard, LogOut, User, Mail, Settings as SettingsIcon } from "lucide-react";
 import { ThemeToggle } from "./ThemeToggle";
 import { SoundToggle } from "./SoundToggle";
 import { Button } from "./ui/button";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/context/AuthContext";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 const Layout = ({ children }: { children: React.ReactNode }) => {
   const location = useLocation();
@@ -47,15 +55,38 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
             <div className="h-4 w-[1px] bg-border mx-1 hidden sm:block" />
             
             {user ? (
-              <div className="flex items-center gap-2">
-                <div className="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-full bg-accent text-xs font-medium">
-                  <User size={14} />
-                  <span className="max-w-[100px] truncate">{user.email}</span>
-                </div>
-                <Button variant="ghost" size="icon" onClick={signOut} className="rounded-full text-muted-foreground hover:text-destructive">
-                  <LogOut size={18} />
-                </Button>
-              </div>
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="ghost" className="relative h-9 w-9 rounded-full p-0">
+                    <div className="flex h-full w-full items-center justify-center rounded-full bg-accent text-xs font-medium">
+                      <User size={18} />
+                    </div>
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent className="w-56 rounded-xl" align="end" forceMount>
+                  <DropdownMenuLabel className="font-normal">
+                    <div className="flex flex-col space-y-1">
+                      <p className="text-sm font-medium leading-none">
+                        {user.user_metadata?.username || user.user_metadata?.first_name || "Student"}
+                      </p>
+                      <p className="text-xs leading-none text-muted-foreground">
+                        {user.email}
+                      </p>
+                    </div>
+                  </DropdownMenuLabel>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem asChild>
+                    <Link to="/settings" className="cursor-pointer flex items-center">
+                      <SettingsIcon className="mr-2 h-4 w-4" />
+                      <span>Settings</span>
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={signOut} className="cursor-pointer text-destructive focus:text-destructive">
+                    <LogOut className="mr-2 h-4 w-4" />
+                    <span>Log out</span>
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
             ) : (
               <>
                 <Button asChild variant="ghost" size="sm" className="flex font-semibold text-xs sm:text-sm px-2 sm:px-3">
