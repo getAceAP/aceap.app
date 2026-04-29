@@ -7,6 +7,7 @@ import Landing from "./pages/Landing";
 import Dashboard from "./pages/Dashboard";
 import Units from "./pages/Units";
 import Quiz from "./pages/Quiz";
+import QuizUnit4 from "./pages/QuizUnit4"; // Import the new quiz
 import Flashcards from "./pages/Flashcards";
 import StudyGuide from "./pages/StudyGuide";
 import Privacy from "./pages/Privacy";
@@ -29,6 +30,9 @@ const App = () => (
           <Route path="/" element={<Landing />} />
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/units/ap-world" element={<Units />} />
+          {/* Specific route for Unit 4 quiz */}
+          <Route path="/units/ap-world/quiz/4" element={<QuizUnit4 />} />
+          {/* Generic quiz route for other units */}
           <Route path="/units/ap-world/quiz/:unitId" element={<Quiz />} />
           <Route path="/units/ap-world/flashcards/:unitId" element={<Flashcards />} />
           <Route path="/units/ap-world/guide/:unitId" element={<StudyGuide />} />
