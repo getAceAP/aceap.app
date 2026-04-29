@@ -13,6 +13,7 @@ import { supabase } from "@/utils/supabase";
 import { useAuth } from "@/context/AuthContext";
 import { showError, showSuccess } from "@/utils/toast";
 import { motion } from "framer-motion";
+import { cn } from "@/lib/utils";
 
 const Settings = () => {
   const { user, loading: authLoading } = useAuth();
@@ -39,27 +40,25 @@ const Settings = () => {
       setFirstName(user.user_metadata?.first_name || "");
       setLastName(user.user_metadata?.last_name || "");
       setUsername(user.user_metadata?.username || "");
-      checkUsernameCooldown();
+      
+      // Check cooldown
+      if (user.user_metadata?.username_last_changed) {
+        const lastChanged = new Date(user.user_metadata.username_last_changed).getTime();
+        const now = new Date().getTime();
+        const threeDaysInMs = 3 * 24 * 60 * 60 * 1000;
+        const diff = now - lastChanged;
+
+        if (diff < threeDaysInMs) {
+          const remaining = threeDaysInMs - diff;
+          const days = Math.floor(remaining / (24 * 60 * 60 * 1000));
+          const hours = Math.floor((remaining % (24 * 60 * 60 * 1000)) / (60 * 60 * 1000));
+          setCooldownRemaining(`${days}d ${hours}h`);
+        } else {
+          setCooldownRemaining(null);
+        }
+      }
     }
   }, [user, authLoading, navigate]);
-
-  const checkUsernameCooldown = () => {
-    if (!user?.user_metadata?.username_last_changed) return;
-
-    const lastChanged = new Date(user.user_metadata.username_last_changed).getTime();
-    const now = new Date().getTime();
-    const threeDaysInMs = 3 * 24 * 60 * 60 * 1000;
-    const diff = now - lastChanged;
-
-    if (diff < threeDaysInMs) {
-      const remaining = threeDaysInMs - diff;
-      const days = Math.floor(remaining / (24 * 60 * 60 * 1000));
-      const hours = Math.floor((remaining % (24 * 60 * 60 * 1000)) / (60 * 60 * 1000));
-      setCooldownRemaining(`${days}d ${hours}h`);
-    } else {
-      setCooldownRemaining(null);
-    }
-  };
 
   const handleUpdateProfile = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -70,7 +69,6 @@ const Settings = () => {
       last_name: lastName,
     };
 
-    // Only update username if it changed and cooldown is over
     if (username !== user?.user_metadata?.username) {
       if (cooldownRemaining) {
         showError(`Username change is on cooldown. Wait ${cooldownRemaining}.`);
@@ -89,7 +87,6 @@ const Settings = () => {
       showError(error.message);
     } else {
       showSuccess("Profile updated successfully");
-      checkUsernameCooldown();
     }
     setUpdatingProfile(false);
   };
@@ -116,7 +113,15 @@ const Settings = () => {
     setUpdatingPassword(false);
   };
 
-  if (authLoading) return null;
+  if (authLoading) {
+    return (
+      <Layout>
+        <div className="flex items-center justify-center py-20">
+          <Loader2 className="h-8 w-8 animate-spin text-primary" />
+        </div>
+      </Layout>
+    );
+  }
 
   return (
     <Layout>
