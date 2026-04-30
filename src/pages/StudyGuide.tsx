@@ -8,6 +8,9 @@ import Unit3Content from "@/components/study-guides/Unit3Content";
 import Unit4Content from "@/components/study-guides/Unit4Content";
 import Unit5Content from "@/components/study-guides/Unit5Content";
 import Unit6Content from "@/components/study-guides/Unit6Content";
+import Unit7Content from "@/components/study-guides/Unit7Content";
+import Unit8Content from "@/components/study-guides/Unit8Content";
+import Unit9Content from "@/components/study-guides/Unit9Content";
 
 const StudyGuide = () => {
   const { unitId } = useParams();
@@ -26,6 +29,9 @@ const StudyGuide = () => {
       case 4: return <Unit4Content />;
       case 5: return <Unit5Content />;
       case 6: return <Unit6Content />;
+      case 7: return <Unit7Content />;
+      case 8: return <Unit8Content />;
+      case 9: return <Unit9Content />;
       default:
         return (
           <div className="text-center py-12 space-y-4">
