@@ -287,33 +287,8 @@ const QuizUnit8 = () => {
                       variant="outline" 
                       onClick={handleBack} 
                       disabled={currentIndex === 0}
-                      className="flex-1 h-14 rounded-2xl text-lg font-bold"think
-The previous response was cut off in the middle of `src/pages/QuizUnit8.tsx`. I need to complete that file and then proceed with the remaining tasks: updating `src/App.tsx` and `src/pages/Units.tsx`.
-
-1.  **Complete `src/pages/QuizUnit8.tsx`**:
-    *   Finish the `Button` group.
-    *   Close the `motion.div`, `AnimatePresence`, `div` (Question Section), `div` (Grid), `div` (Main Container), and `Layout`.
-    *   Export the component.
-
-2.  **Update `src/App.tsx`**:
-    *   Import `QuizUnit6`, `QuizUnit7`, and `QuizUnit8`.
-    *   Add routes for these new components.
-
-3.  **Update `src/pages/Units.tsx`**:
-    *   Update the `quizPath` logic to include units 6, 7, and 8.
-
-Let's finish `QuizUnit8.tsx` first.
-
-The cutoff point was:
-```tsx
-                    <Button 
-                      variant="outline" 
-                      onClick={handleBack} 
-                      disabled={currentIndex === 0}
                       className="flex-1 h-14 rounded-2xl text-lg font-bold"
-```
-
-I will continue from there.>
+                    >
                       Back
                     </Button>
                     
