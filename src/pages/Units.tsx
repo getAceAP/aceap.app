@@ -29,7 +29,8 @@ const Units = () => {
             const unitStats = stats[unit.id] || { learned: 0, total: unit.flashcards.length, percentage: 0 };
             
             // Determine the quiz path based on the unit ID
-            const quizPath = [2, 3, 4, 5].includes(unit.id) 
+            const specializedQuizzes = [2, 3, 4, 5, 6, 7, 8];
+            const quizPath = specializedQuizzes.includes(unit.id) 
               ? `/units/ap-world/quiz/${unit.id}` 
               : `/units/ap-world/quiz/${unit.id}`;
             

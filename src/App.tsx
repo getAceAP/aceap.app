@@ -11,6 +11,9 @@ import QuizUnit2 from "./pages/QuizUnit2";
 import QuizUnit3 from "./pages/QuizUnit3";
 import QuizUnit4 from "./pages/QuizUnit4";
 import QuizUnit5 from "./pages/QuizUnit5";
+import QuizUnit6 from "./pages/QuizUnit6";
+import QuizUnit7 from "./pages/QuizUnit7";
+import QuizUnit8 from "./pages/QuizUnit8";
 import Flashcards from "./pages/Flashcards";
 import StudyGuide from "./pages/StudyGuide";
 import Privacy from "./pages/Privacy";
@@ -37,6 +40,9 @@ const App = () => (
           <Route path="/units/ap-world/quiz/3" element={<QuizUnit3 />} />
           <Route path="/units/ap-world/quiz/4" element={<QuizUnit4 />} />
           <Route path="/units/ap-world/quiz/5" element={<QuizUnit5 />} />
+          <Route path="/units/ap-world/quiz/6" element={<QuizUnit6 />} />
+          <Route path="/units/ap-world/quiz/7" element={<QuizUnit7 />} />
+          <Route path="/units/ap-world/quiz/8" element={<QuizUnit8 />} />
           <Route path="/units/ap-world/quiz/:unitId" element={<Quiz />} />
           <Route path="/units/ap-world/flashcards/:unitId" element={<Flashcards />} />
           <Route path="/units/ap-world/guide/:unitId" element={<StudyGuide />} />
