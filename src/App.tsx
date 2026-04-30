@@ -23,8 +23,6 @@ import Signup from "./pages/Signup";
 import Settings from "./pages/Settings";
 import Predictions from "./pages/Predictions";
 import NotFound from "./pages/NotFound";
-import WorldGrader from "./pages/WorldGrader";
-import ApushPlaceholder from "./pages/ApushPlaceholder";
 
 const queryClient = new QueryClient();
 
@@ -54,8 +52,6 @@ const App = () => (
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<Signup />} />
           <Route path="/settings" element={<Settings />} />
-          <Route path="/grade/world" element={<WorldGrader />} />
-          <Route path="/apush" element={<ApushPlaceholder />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
