@@ -5,12 +5,10 @@ import { Button } from "@/components/ui/button";
 import { ArrowLeft, BookOpen, Clock, MapPin, Download, ChevronLeft, ChevronRight } from "lucide-react";
 import { motion } from "framer-motion";
 import Unit3Content from "@/components/study-guides/Unit3Content";
-import Unit4Content from "@/components/study-guides/Unit4Content";
-import Unit5Content from "@/components/study-guides/Unit5Content";
-import Unit6Content from "@/components/study-guides/Unit6Content";
-import Unit7Content from "@/components/study-guides/Unit7Content";
-import Unit8Content from "@/components/study-guides/Unit8Content";
-import Unit9Content from "@/components/study-guides/Unit9Content";
+import Unit2Content from "@/components/study-guides/Unit2Content";
+import Unit1Content from "@/components/study-guides/Unit1Content";
+import { Prose } from "@/components/ui/prose";
+import { cn } from "@/lib/utils";
 
 const StudyGuide = () => {
   const { unitId } = useParams();
@@ -25,21 +23,22 @@ const StudyGuide = () => {
 
   const renderContent = () => {
     switch (unit.id) {
+      case 1: return <Unit1Content />;
+      case 2: return <Unit2Content />;
       case 3: return <Unit3Content />;
       case 4: return <Unit4Content />;
       case 5: return <Unit5Content />;
       case 6: return <Unit6Content />;
       case 7: return <Unit7Content />;
       case 8: return <Unit8Content />;
-      case 9: return <Unit9Content />;
       default:
         return (
           <div className="text-center py-12 space-y-4">
             <div className="bg-accent w-16 h-16 rounded-full flex items-center justify-center mx-auto">
-              <Clock className="text-primary" size={32} />
+              <BookOpen size={24} />
             </div>
             <h2 className="text-2xl font-bold">Coming Soon</h2>
-            <p className="text-muted-foreground">The study guide for Unit {unit.id} is currently being drafted. Check back soon!</p>
+            <p className="text-muted-foreground">The study guide for Unit {unit.id} is currently being drafted.</p>
             <Button asChild variant="outline" className="rounded-xl">
               <Link to="/units/ap-world">Back to Units</Link>
             </Button>
@@ -53,29 +52,21 @@ const StudyGuide = () => {
       <div className="max-w-4xl mx-auto space-y-8">
         <header className="space-y-4">
           <div className="flex items-center justify-between">
-            <Button 
-              variant="ghost" 
-              size="sm" 
-              onClick={() => navigate("/units/ap-world")} 
-              className="text-muted-foreground -ml-2"
-            >
+            <Link to="/units/ap-world" className="inline-flex items-center text-sm font-medium text-muted-foreground hover:text-primary transition-colors">
               <ArrowLeft size={16} className="mr-2" />
               Back to Units
-            </Button>
-            <Button variant="outline" size="sm" className="rounded-lg">
-              <Download className="mr-2 h-4 w-4" />
-              Export PDF
-            </Button>
-          </div>
-          
-          <div className="space-y-2">
-            <div className="flex items-center gap-2 text-primary font-bold uppercase tracking-widest text-xs">
+            </Link>
+            <div className="flex items-center gap-2">
               <div className="bg-primary/10 p-1 rounded">
                 <BookOpen size={14} className="text-primary" />
               </div>
-              Comprehensive Study Guide
+              <span className="tracking-tight text-xs font-bold uppercase text-primary">Study Guide</span>
             </div>
-            <h1 className="text-4xl font-bold tracking-tight">Unit {unit.id}: {unit.title}</h1>
+          </div>
+          <div className="space-y-2">
+            <h1 className="text-4xl font-bold tracking-tight">
+              Unit {unit.id}: {unit.title}
+            </h1>
             <div className="flex flex-wrap gap-4 text-sm text-muted-foreground">
               <div className="flex items-center gap-1.5">
                 <Clock size={14} />
@@ -98,11 +89,10 @@ const StudyGuide = () => {
         </motion.div>
 
         {/* Navigation between units */}
-        <div className="grid grid-cols-2 gap-4 pt-8 border-t border-border">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 pt-8 border-t border-border">
           {prevUnit ? (
             <Link 
-              to={`/units/ap-world/guide/${prevUnit.id}`}
-              className="flex flex-col items-start p-4 rounded-2xl border border-border hover:border-primary/50 hover:bg-muted/50 transition-all group"
+              to={`/units/ap-world/guide/${prevUnit.id}`}               className="flex flex-col items-start p-4 rounded-2xl border border-border hover:border-primary/50 hover:bg-muted/50 transition-all group"
             >
               <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest flex items-center gap-1">
                 <ChevronLeft size={12} /> Previous Unit
@@ -111,21 +101,20 @@ const StudyGuide = () => {
                 {prevUnit.title}
               </span>
             </Link>
-          ) : <div />}
+          ) : <div />
 
           {nextUnit ? (
-            <Link 
-              to={`/units/ap-world/guide/${nextUnit.id}`}
+            <Link               to={`/units/ap-world/guide/${nextUnit.id}`} 
               className="flex flex-col items-end p-4 rounded-2xl border border-border hover:border-primary/50 hover:bg-muted/50 transition-all group text-right"
             >
-              <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest flex items-center gap-1">
+              <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">
                 Next Unit <ChevronRight size={12} />
               </span>
               <span className="font-bold text-sm line-clamp-1 group-hover:text-primary transition-colors">
                 {nextUnit.title}
               </span>
             </Link>
-          ) : <div />}
+          ) : <div />
         </div>
 
         <footer className="flex flex-col sm:flex-row justify-between items-center gap-4 pt-8">
