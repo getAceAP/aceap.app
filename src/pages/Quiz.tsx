@@ -5,7 +5,7 @@ import { units, Question } from "@/data/content";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { Card, CardContent } from "@/components/ui/card";
-import { CheckCircle2, XCircle, ArrowLeft, RefreshCcw, Timer, AlertCircle } from "lucide-react";
+import { CheckCircle2, XCircle, ArrowLeft, RefreshCcw, Timer, AlertCircle, Shuffle } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { motion } from "framer-motion";
 import { playSound } from "@/utils/sounds";
@@ -25,26 +25,33 @@ const Quiz = () => {
   const [isAnswered, setIsAnswered] = useState(false);
   const [score, setScore] = useState(0);
   const [isFinished, setIsFinished] = useState(false);
-  const [timeLeft, setTimeLeft] = useState(50 * 60); // 50 minutes in seconds
+  const [timeLeft, setTimeLeft] = useState(50 * 60);
 
   useEffect(() => {
     if (unit) {
       const shuffled = [...unit.questions].sort(() => 0.5 - Math.random());
-      setSessionQuestions(shuffled.slice(0, 15)); // Standard quiz length
+      setSessionQuestions(shuffled.slice(0, 15));
     }
   }, [unit]);
 
-  // Timer logic for Exam Mode
   useEffect(() => {
     if (mode === 'exam' && !isFinished && timeLeft > 0) {
-      const timer = setInterval(() => {
-        setTimeLeft((prev) => prev - 1);
-      }, 1000);
+      const timer = setInterval(() => setTimeLeft((prev) => prev - 1), 1000);
       return () => clearInterval(timer);
     } else if (timeLeft === 0 && !isFinished) {
-      setIsFinished(true);
+      finishQuiz();
     }
   }, [mode, isFinished, timeLeft]);
+
+  const handleShuffle = () => {
+    const shuffled = [...sessionQuestions].sort(() => 0.5 - Math.random());
+    setSessionQuestions(shuffled);
+    setCurrentIndex(0);
+    setUserAnswers({});
+    setIsAnswered(false);
+    setScore(0);
+    setTimeLeft(50 * 60);
+  };
 
   if (!unit || sessionQuestions.length === 0) return null;
 
@@ -56,9 +63,7 @@ const Quiz = () => {
 
   const handleOptionSelect = (option: string) => {
     if (mode === 'study' && isAnswered) return;
-    
     setUserAnswers(prev => ({ ...prev, [currentIndex]: option }));
-
     if (mode === 'study') {
       setIsAnswered(true);
       if (option === sessionQuestions[currentIndex].correctAnswer) {
@@ -82,13 +87,11 @@ const Quiz = () => {
   const finishQuiz = () => {
     let finalScore = score;
     if (mode === 'exam') {
-      // Calculate score at the end for exam mode
       finalScore = sessionQuestions.reduce((acc, q, idx) => {
         return acc + (userAnswers[idx] === q.correctAnswer ? 1 : 0);
       }, 0);
       setScore(finalScore);
     }
-    
     setIsFinished(true);
     saveQuizResult(unit.id, finalScore, sessionQuestions.length, mode!);
   };
@@ -114,12 +117,10 @@ const Quiz = () => {
             <p className="text-muted-foreground">Mode: <span className="capitalize font-bold text-foreground">{mode}</span></p>
             <p className="text-muted-foreground">You scored {score} out of {sessionQuestions.length}</p>
           </div>
-          
           <div className="p-8 rounded-3xl bg-primary/10 border border-primary/20">
             <div className="text-5xl font-bold text-primary mb-2">{Math.round((score/sessionQuestions.length)*100)}%</div>
             <div className="text-sm font-bold uppercase tracking-widest text-primary/70">Final Score</div>
           </div>
-          
           <div className="flex gap-4">
             <Button onClick={() => window.location.reload()} className="flex-1 h-12 rounded-xl">
               <RefreshCcw className="mr-2 h-4 w-4" /> Try Again
@@ -140,10 +141,14 @@ const Quiz = () => {
     <Layout>
       <div className="space-y-6 sm:space-y-8">
         <div className="flex items-center justify-between">
-          <Button variant="ghost" onClick={() => navigate("/units/ap-world")} className="text-muted-foreground">
-            <ArrowLeft className="mr-2 h-4 w-4" /> Exit
-          </Button>
-          
+          <div className="flex items-center gap-2">
+            <Button variant="ghost" onClick={() => navigate("/units/ap-world")} className="text-muted-foreground">
+              <ArrowLeft className="mr-2 h-4 w-4" /> Exit
+            </Button>
+            <Button variant="outline" size="sm" onClick={handleShuffle} className="rounded-lg h-8 px-3 text-[10px] font-bold uppercase tracking-wider">
+              <Shuffle className="mr-1.5 h-3 w-3" /> Shuffle
+            </Button>
+          </div>
           <div className="flex items-center gap-4">
             {mode === 'exam' && (
               <div className={cn(
@@ -159,19 +164,13 @@ const Quiz = () => {
             </span>
           </div>
         </div>
-
         <Progress value={progress} className="h-1.5 bg-muted" />
-
         <div className="space-y-6">
-          <h2 className="text-2xl font-semibold leading-tight">
-            {currentQuestion.question}
-          </h2>
-
+          <h2 className="text-2xl font-semibold leading-tight">{currentQuestion.question}</h2>
           <div className="grid gap-3">
             {currentQuestion.options.map((option) => {
               const isCorrect = option === currentQuestion.correctAnswer;
               const isSelected = userAnswers[currentIndex] === option;
-              
               return (
                 <button
                   key={option}
@@ -195,7 +194,6 @@ const Quiz = () => {
               );
             })}
           </div>
-
           <div className="pt-4">
             {mode === 'study' && isAnswered ? (
               <Card className="border-none bg-muted shadow-none rounded-2xl">
@@ -210,11 +208,7 @@ const Quiz = () => {
                 </CardContent>
               </Card>
             ) : (
-              <Button 
-                onClick={handleNext} 
-                disabled={!userAnswers[currentIndex]}
-                className="w-full h-14 rounded-2xl text-lg font-bold shadow-lg shadow-primary/20"
-              >
+              <Button onClick={handleNext} disabled={!userAnswers[currentIndex]} className="w-full h-14 rounded-2xl text-lg font-bold shadow-lg shadow-primary/20">
                 {currentIndex < sessionQuestions.length - 1 ? "Next Question" : "Submit Quiz"}
               </Button>
             )}

@@ -4,7 +4,7 @@ import Layout from "@/components/Layout";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
-import { ArrowLeft, ArrowRight, RefreshCcw, CheckCircle2, XCircle, Info, BookOpen, X, Timer } from "lucide-react";
+import { ArrowLeft, ArrowRight, RefreshCcw, CheckCircle2, XCircle, Info, BookOpen, X, Timer, Shuffle } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "@/lib/utils";
 import { playSound } from "@/utils/sounds";
@@ -24,7 +24,7 @@ const stimuli = [
   { id: 10, text: "Mansa Musa's pilgrimage to Mecca was so grand that he gave away so much gold in Cairo that the value of the metal dropped for over a decade.", source: "Al-Umari, describing the visit of the King of Mali, 1324" }
 ];
 
-const questions = [
+const initialQuestions = [
   { id: 1, stimulusId: 1, question: "The 'paper money' described by Marco Polo was an innovation of which dynasty?", options: ["Tang", "Song", "Yuan", "Ming"], correctAnswer: "Yuan", explanation: "The Yuan Dynasty, under Mongol rule, widely implemented paper currency (chao) to facilitate trade." },
   { id: 2, stimulusId: 1, question: "Which empire's collapse originally disrupted the Silk Road before its Mongol revival?", options: ["Roman", "Han", "Abbasid", "Gupta"], correctAnswer: "Han", explanation: "The fall of the Han and Roman empires led to a decline in Silk Road trade until the Tang and Mongols revived it." },
   { id: 3, stimulusId: 1, question: "The 'costly wares' mentioned most likely included which Chinese export?", options: ["Cotton", "Porcelain", "Spices", "Gold"], correctAnswer: "Porcelain", explanation: "Silk and porcelain were the primary high-value luxury exports from China during this period." },
@@ -82,6 +82,7 @@ const QuizUnit2 = () => {
   const { saveQuizResult } = useQuizProgress();
   
   const [mode, setMode] = useState<'study' | 'exam' | null>(null);
+  const [questions, setQuestions] = useState(initialQuestions);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [userAnswers, setUserAnswers] = useState<Record<number, string>>({});
   const [checkedIndices, setCheckedIndices] = useState<Set<number>>(new Set());
@@ -101,6 +102,16 @@ const QuizUnit2 = () => {
       finishQuiz();
     }
   }, [mode, isFinished, timeLeft]);
+
+  const handleShuffle = () => {
+    const shuffled = [...questions].sort(() => 0.5 - Math.random());
+    setQuestions(shuffled);
+    setCurrentIndex(0);
+    setUserAnswers({});
+    setCheckedIndices(new Set());
+    setCrossedOut({});
+    setTimeLeft(50 * 60);
+  };
 
   const handleOptionSelect = (option: string) => {
     if (mode === 'study' && checkedIndices.has(currentIndex)) return;
@@ -122,7 +133,6 @@ const QuizUnit2 = () => {
   const handleCheck = () => {
     if (!userAnswers[currentIndex]) return;
     setCheckedIndices(prev => new Set(prev).add(currentIndex));
-    
     if (userAnswers[currentIndex] === currentQuestion.correctAnswer) {
       playSound('correct');
     } else {
@@ -178,12 +188,10 @@ const QuizUnit2 = () => {
             <p className="text-muted-foreground">Mode: <span className="capitalize font-bold text-foreground">{mode}</span></p>
             <p className="text-muted-foreground">You scored {finalScore} out of {questions.length}</p>
           </div>
-          
           <div className="p-8 rounded-3xl bg-primary/10 border border-primary/20">
             <div className="text-5xl font-bold text-primary mb-2">{Math.round((finalScore/questions.length)*100)}%</div>
             <div className="text-sm font-bold uppercase tracking-widest text-primary/70">Final Score</div>
           </div>
-
           <div className="flex gap-4">
             <Button onClick={() => window.location.reload()} className="flex-1 h-12 rounded-xl">
               <RefreshCcw className="mr-2 h-4 w-4" /> Try Again
@@ -201,9 +209,14 @@ const QuizUnit2 = () => {
     <Layout>
       <div className="max-w-5xl mx-auto space-y-8">
         <div className="flex items-center justify-between">
-          <Button variant="ghost" onClick={() => navigate("/units/ap-world")} className="text-muted-foreground">
-            <ArrowLeft className="mr-2 h-4 w-4" /> Exit
-          </Button>
+          <div className="flex items-center gap-2">
+            <Button variant="ghost" onClick={() => navigate("/units/ap-world")} className="text-muted-foreground">
+              <ArrowLeft className="mr-2 h-4 w-4" /> Exit
+            </Button>
+            <Button variant="outline" size="sm" onClick={handleShuffle} className="rounded-lg h-8 px-3 text-[10px] font-bold uppercase tracking-wider">
+              <Shuffle className="mr-1.5 h-3 w-3" /> Shuffle
+            </Button>
+          </div>
           <div className="flex items-center gap-4">
             {mode === 'exam' && (
               <div className={cn(
@@ -220,9 +233,7 @@ const QuizUnit2 = () => {
             </div>
           </div>
         </div>
-
         <Progress value={progress} className="h-1.5 bg-muted" />
-
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
           <div className="space-y-6 sticky top-24">
             <Card className="overflow-hidden border-border shadow-xl shadow-primary/5 rounded-3xl">
@@ -240,7 +251,6 @@ const QuizUnit2 = () => {
               </CardContent>
             </Card>
           </div>
-
           <div className="space-y-8">
             <AnimatePresence mode="wait">
               <motion.div
@@ -250,10 +260,7 @@ const QuizUnit2 = () => {
                 exit={{ opacity: 0, x: -20 }}
                 className="space-y-8"
               >
-                <h2 className="text-2xl sm:text-3xl font-bold leading-tight">
-                  {currentQuestion.question}
-                </h2>
-
+                <h2 className="text-2xl sm:text-3xl font-bold leading-tight">{currentQuestion.question}</h2>
                 <div className="grid gap-3">
                   {currentQuestion.options.map((option, idx) => {
                     const letter = String.fromCharCode(65 + idx);
@@ -261,7 +268,6 @@ const QuizUnit2 = () => {
                     const isCrossed = crossedOut[currentIndex]?.includes(option);
                     const isChecked = checkedIndices.has(currentIndex);
                     const isCorrect = option === currentQuestion.correctAnswer;
-                    
                     return (
                       <div key={option} className="relative group">
                         <button
@@ -280,30 +286,24 @@ const QuizUnit2 = () => {
                           <span className={cn(
                             "flex-shrink-0 w-8 h-8 rounded-lg flex items-center justify-center text-sm font-bold border",
                             isSelected ? "bg-primary text-primary-foreground border-primary" : "bg-muted text-muted-foreground border-border"
-                          )}>
-                            {letter}
-                          </span>
+                          )}>{letter}</span>
                           <span className={cn(isCrossed && "line-through")}>{option}</span>
                           <div className="ml-auto flex items-center gap-2">
                             {mode === 'study' && isChecked && isCorrect && <CheckCircle2 className="h-6 w-6 text-green-600" />}
                             {mode === 'study' && isChecked && isSelected && !isCorrect && <XCircle className="h-6 w-6 text-destructive" />}
                           </div>
                         </button>
-                        
                         {!isChecked && (
                           <button
                             onClick={(e) => toggleCrossOut(e, option)}
                             className="absolute -right-2 -top-2 w-6 h-6 rounded-full bg-muted border border-border flex items-center justify-center text-muted-foreground hover:bg-destructive hover:text-destructive-foreground transition-colors opacity-0 group-hover:opacity-100 z-10"
                             title="Cross out"
-                          >
-                            <X size={12} />
-                          </button>
+                          ><X size={12} /></button>
                         )}
                       </div>
                     );
                   })}
                 </div>
-
                 <div className="space-y-4">
                   {mode === 'study' && checkedIndices.has(currentIndex) && (
                     <motion.div
@@ -312,37 +312,17 @@ const QuizUnit2 = () => {
                       className="p-6 rounded-2xl bg-muted/50 border border-border/50 space-y-3"
                     >
                       <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-muted-foreground">
-                        <Info size={14} />
-                        Explanation
+                        <Info size={14} /> Explanation
                       </div>
                       <p className="text-foreground leading-relaxed">{currentQuestion.explanation}</p>
                     </motion.div>
                   )}
-
                   <div className="flex gap-3">
-                    <Button 
-                      variant="outline" 
-                      onClick={() => setCurrentIndex(prev => prev - 1)} 
-                      disabled={currentIndex === 0}
-                      className="flex-1 h-14 rounded-2xl text-lg font-bold"
-                    >
-                      Back
-                    </Button>
-                    
+                    <Button variant="outline" onClick={() => setCurrentIndex(prev => prev - 1)} disabled={currentIndex === 0} className="flex-1 h-14 rounded-2xl text-lg font-bold">Back</Button>
                     {mode === 'study' && !checkedIndices.has(currentIndex) ? (
-                      <Button 
-                        onClick={handleCheck} 
-                        disabled={!userAnswers[currentIndex]}
-                        className="flex-[2] h-14 rounded-2xl text-lg font-bold shadow-lg shadow-primary/20"
-                      >
-                        Check Answer
-                      </Button>
+                      <Button onClick={handleCheck} disabled={!userAnswers[currentIndex]} className="flex-[2] h-14 rounded-2xl text-lg font-bold shadow-lg shadow-primary/20">Check Answer</Button>
                     ) : (
-                      <Button 
-                        onClick={handleNext} 
-                        disabled={mode === 'exam' && !userAnswers[currentIndex]}
-                        className="flex-[2] h-14 rounded-2xl text-lg font-bold shadow-lg shadow-primary/20"
-                      >
+                      <Button onClick={handleNext} disabled={mode === 'exam' && !userAnswers[currentIndex]} className="flex-[2] h-14 rounded-2xl text-lg font-bold shadow-lg shadow-primary/20">
                         {currentIndex < questions.length - 1 ? "Next Question" : "Finish Quiz"}
                         <ArrowRight className="ml-2 h-5 w-5" />
                       </Button>
