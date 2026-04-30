@@ -2,7 +2,7 @@ import { useParams, useNavigate, Link } from "react-router-dom";
 import Layout from "@/components/Layout";
 import { units } from "@/data/content";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, BookOpen, Clock, MapPin, Download } from "lucide-react";
+import { ArrowLeft, BookOpen, Clock, MapPin, Download, ChevronLeft, ChevronRight } from "lucide-react";
 import { motion } from "framer-motion";
 import Unit3Content from "@/components/study-guides/Unit3Content";
 import Unit4Content from "@/components/study-guides/Unit4Content";
@@ -12,9 +12,13 @@ import Unit6Content from "@/components/study-guides/Unit6Content";
 const StudyGuide = () => {
   const { unitId } = useParams();
   const navigate = useNavigate();
-  const unit = units.find((u) => u.id === Number(unitId));
+  const unitIndex = units.findIndex((u) => u.id === Number(unitId));
+  const unit = units[unitIndex];
 
   if (!unit) return null;
+
+  const prevUnit = unitIndex > 0 ? units[unitIndex - 1] : null;
+  const nextUnit = unitIndex < units.length - 1 ? units[unitIndex + 1] : null;
 
   const renderContent = () => {
     switch (unit.id) {
@@ -87,15 +91,46 @@ const StudyGuide = () => {
           {renderContent()}
         </motion.div>
 
-        <footer className="flex justify-between items-center pt-8">
+        {/* Navigation between units */}
+        <div className="grid grid-cols-2 gap-4 pt-8 border-t border-border">
+          {prevUnit ? (
+            <Link 
+              to={`/units/ap-world/guide/${prevUnit.id}`}
+              className="flex flex-col items-start p-4 rounded-2xl border border-border hover:border-primary/50 hover:bg-muted/50 transition-all group"
+            >
+              <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest flex items-center gap-1">
+                <ChevronLeft size={12} /> Previous Unit
+              </span>
+              <span className="font-bold text-sm line-clamp-1 group-hover:text-primary transition-colors">
+                {prevUnit.title}
+              </span>
+            </Link>
+          ) : <div />}
+
+          {nextUnit ? (
+            <Link 
+              to={`/units/ap-world/guide/${nextUnit.id}`}
+              className="flex flex-col items-end p-4 rounded-2xl border border-border hover:border-primary/50 hover:bg-muted/50 transition-all group text-right"
+            >
+              <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest flex items-center gap-1">
+                Next Unit <ChevronRight size={12} />
+              </span>
+              <span className="font-bold text-sm line-clamp-1 group-hover:text-primary transition-colors">
+                {nextUnit.title}
+              </span>
+            </Link>
+          ) : <div />}
+        </div>
+
+        <footer className="flex flex-col sm:flex-row justify-between items-center gap-4 pt-8">
           <div className="text-sm text-muted-foreground">
-            Ready to test your knowledge?
+            Ready to test your knowledge on Unit {unit.id}?
           </div>
-          <div className="flex gap-3">
-            <Button asChild variant="outline" className="rounded-xl">
+          <div className="flex gap-3 w-full sm:w-auto">
+            <Button asChild variant="outline" className="flex-1 sm:flex-none rounded-xl">
               <Link to={`/units/ap-world/flashcards/${unit.id}`}>Practice Cards</Link>
             </Button>
-            <Button asChild className="rounded-xl">
+            <Button asChild className="flex-1 sm:flex-none rounded-xl">
               <Link to={`/units/ap-world/quiz/${unit.id}`}>Take Quiz</Link>
             </Button>
           </div>
