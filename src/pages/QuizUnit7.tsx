@@ -1,13 +1,15 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import Layout from "@/components/Layout";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
-import { ArrowLeft, ArrowRight, RefreshCcw, CheckCircle2, XCircle, Info, BookOpen, X } from "lucide-react";
+import {ArrowLeft, ArrowRight, RefreshCcw, CheckCircle2, XCircle, Info, BookOpen, X, Timer } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "@/lib/utils";
 import { playSound } from "@/utils/sounds";
+import QuizModeSelection from "@/components/QuizModeSelection";
+import { useQuizProgress } from "@/hooks/useQuizProgress";
 
 const stimuli = [
   { id: 1, text: "The lamps are going out all over Europe; we shall not see them lit again in our lifetime.", source: "Sir Edward Grey, British Foreign Secretary, August 3, 1914" },
@@ -77,18 +79,31 @@ const questions = [
 
 const QuizUnit7 = () => {
   const navigate = useNavigate();
+  const { saveQuizResult } = useQuizProgress();
+  
+  const [mode, setMode] = useState<'study' | 'exam' | null>(null);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [userAnswers, setUserAnswers] = useState<Record<number, string>>({});
   const [checkedIndices, setCheckedIndices] = useState<Set<number>>(new Set());
   const [crossedOut, setCrossedOut] = useState<Record<number, string[]>>({});
   const [isFinished, setIsFinished] = useState(false);
+  const [timeLeft, setTimeLeft] = useState(50 * 60);
 
   const currentQuestion = questions[currentIndex];
   const currentStimulus = stimuli.find(s => s.id === currentQuestion.stimulusId);
   const progress = (currentIndex / questions.length) * 100;
 
+  useEffect(() => {
+    if (mode === 'exam' && !isFinished && timeLeft > 0) {
+      const timer = setInterval(() => setTimeLeft(prev => prev - 1), 1000);
+      return () => clearInterval(timer);
+    } else if (timeLeft === 0 && !isFinished) {
+      finishQuiz();
+    }
+  }, [mode, isFinished, timeLeft]);
+
   const handleOptionSelect = (option: string) => {
-    if (checkedIndices.has(currentIndex)) return;
+    if (mode === 'study' && checkedIndices.has(currentIndex)) return;
     setUserAnswers(prev => ({ ...prev, [currentIndex]: option }));
   };
 
@@ -115,30 +130,42 @@ const QuizUnit7 = () => {
     }
   };
 
-  const handleNext = () => {
-    if (currentIndex < questions.length - 1) {
-      setCurrentIndex(currentIndex + 1);
-    } else {
-      setIsFinished(true);
-    }
-  };
-
-  const handleBack = () => {
-    if (currentIndex > 0) {
-      setCurrentIndex(currentIndex - 1);
-    }
-  };
-
-  const calculateScore = () => {
+  const finishQuiz = () => {
     let score = 0;
     questions.forEach((q, idx) => {
       if (userAnswers[idx] === q.correctAnswer) score++;
     });
-    return score;
+    setIsFinished(true);
+    saveQuizResult(7, score, questions.length, mode!);
   };
 
+  const handleNext = () => {
+    if (currentIndex < questions.length - 1) {
+      setCurrentIndex(currentIndex + 1);
+    } else {
+      finishQuiz();
+    }
+  };
+
+  const formatTime = (seconds: number) => {
+    const mins = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    return `${mins}:${secs.toString().padStart(2, '0')}`;
+  };
+
+  if (!mode) {
+    return (
+      <Layout>
+        <QuizModeSelection unitTitle="Unit 7: Global Conflict" onSelect={setMode} />
+      </Layout>
+    );
+  }
+
   if (isFinished) {
-    const finalScore = calculateScore();
+    let finalScore = 0;
+    questions.forEach((q, idx) => {
+      if (userAnswers[idx] === q.correctAnswer) finalScore++;
+    });
     return (
       <Layout>
         <motion.div 
@@ -148,6 +175,7 @@ const QuizUnit7 = () => {
         >
           <div className="space-y-2">
             <h2 className="text-3xl font-bold">Unit 7 Mastery Complete!</h2>
+            <p className="text-muted-foreground">Mode: <span className="capitalize font-bold text-foreground">{mode}</span></p>
             <p className="text-muted-foreground">You scored {finalScore} out of {questions.length}</p>
           </div>
           
@@ -174,18 +202,28 @@ const QuizUnit7 = () => {
       <div className="max-w-5xl mx-auto space-y-8">
         <div className="flex items-center justify-between">
           <Button variant="ghost" onClick={() => navigate("/units/ap-world")} className="text-muted-foreground">
-            <ArrowLeft className="mr-2 h-4 w-4" /> Exit Quiz
+            <ArrowLeft className="mr-2 h-4 w-4" /> Exit
           </Button>
-          <div className="text-right">
-            <div className="text-sm font-bold text-primary">Question {currentIndex + 1} / {questions.length}</div>
-            <div className="text-[10px] font-bold text-muted-foreground uppercase tracking-tighter">Unit 7: Global Conflict</div>
+          <div className="flex items-center gap-4">
+            {mode === 'exam' && (
+              <div className={cn(
+                "flex items-center gap-2 px-3 py-1 rounded-full font-mono font-bold border",
+                timeLeft < 300 ? "bg-destructive/10 text-destructive border-destructive/20 animate-pulse" : "bg-muted text-foreground border-border"
+              )}>
+                <Timer size={16} />
+                {formatTime(timeLeft)}
+              </div>
+            )}
+            <div className="text-right">
+              <div className="text-sm font-bold text-primary">Question {currentIndex + 1} / {questions.length}</div>
+              <div className="text-[10px] font-bold text-muted-foreground uppercase tracking-tighter">Unit 7: Global Conflict</div>
+            </div>
           </div>
         </div>
 
         <Progress value={progress} className="h-1.5 bg-muted" />
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
-          {/* Stimulus Section */}
           <div className="space-y-6 sticky top-24">
             <Card className="overflow-hidden border-border shadow-xl shadow-primary/5 rounded-3xl">
               <CardContent className="p-6 sm:p-8 space-y-4">
@@ -203,7 +241,6 @@ const QuizUnit7 = () => {
             </Card>
           </div>
 
-          {/* Question Section */}
           <div className="space-y-8">
             <AnimatePresence mode="wait">
               <motion.div
@@ -228,15 +265,15 @@ const QuizUnit7 = () => {
                     return (
                       <div key={option} className="relative group">
                         <button
-                          disabled={isChecked}
+                          disabled={mode === 'study' && isChecked}
                           onClick={() => handleOptionSelect(option)}
                           className={cn(
                             "w-full text-left p-5 rounded-2xl border-2 transition-all duration-200 text-lg font-medium flex items-center gap-4",
                             !isChecked && !isSelected && "border-border hover:border-primary/50",
                             !isChecked && isSelected && "border-primary bg-primary/5",
-                            isChecked && isCorrect && "border-green-500 bg-green-500/10 text-green-600",
-                            isChecked && isSelected && !isCorrect && "border-destructive bg-destructive/10 text-destructive",
-                            isChecked && !isCorrect && !isSelected && "border-border opacity-40",
+                            mode === 'study' && isChecked && isCorrect && "border-green-500 bg-green-500/10 text-green-600",
+                            mode === 'study' && isChecked && isSelected && !isCorrect && "border-destructive bg-destructive/10 text-destructive",
+                            mode === 'study' && isChecked && !isCorrect && !isSelected && "border-border opacity-40",
                             isCrossed && "opacity-30 grayscale"
                           )}
                         >
@@ -248,8 +285,8 @@ const QuizUnit7 = () => {
                           </span>
                           <span className={cn(isCrossed && "line-through")}>{option}</span>
                           <div className="ml-auto flex items-center gap-2">
-                            {isChecked && isCorrect && <CheckCircle2 className="h-6 w-6 text-green-600" />}
-                            {isChecked && isSelected && !isCorrect && <XCircle className="h-6 w-6 text-destructive" />}
+                            {mode === 'study' && isChecked && isCorrect && <CheckCircle2 className="h-6 w-6 text-green-600" />}
+                            {mode === 'study' && isChecked && isSelected && !isCorrect && <XCircle className="h-6 w-6 text-destructive" />}
                           </div>
                         </button>
                         
@@ -268,7 +305,7 @@ const QuizUnit7 = () => {
                 </div>
 
                 <div className="space-y-4">
-                  {checkedIndices.has(currentIndex) && (
+                  {mode === 'study' && checkedIndices.has(currentIndex) && (
                     <motion.div
                       initial={{ opacity: 0, y: 10 }}
                       animate={{ opacity: 1, y: 0 }}
@@ -285,14 +322,14 @@ const QuizUnit7 = () => {
                   <div className="flex gap-3">
                     <Button 
                       variant="outline" 
-                      onClick={handleBack} 
+                      onClick={() => setCurrentIndex(prev => prev - 1)} 
                       disabled={currentIndex === 0}
                       className="flex-1 h-14 rounded-2xl text-lg font-bold"
                     >
                       Back
                     </Button>
                     
-                    {!checkedIndices.has(currentIndex) ? (
+                    {mode === 'study' && !checkedIndices.has(currentIndex) ? (
                       <Button 
                         onClick={handleCheck} 
                         disabled={!userAnswers[currentIndex]}
@@ -303,6 +340,7 @@ const QuizUnit7 = () => {
                     ) : (
                       <Button 
                         onClick={handleNext} 
+                        disabled={mode === 'exam' && !userAnswers[currentIndex]}
                         className="flex-[2] h-14 rounded-2xl text-lg font-bold shadow-lg shadow-primary/20"
                       >
                         {currentIndex < questions.length - 1 ? "Next Question" : "Finish Quiz"}
