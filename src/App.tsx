@@ -23,7 +23,6 @@ import Signup from "./pages/Signup";
 import Settings from "./pages/Settings";
 import Predictions from "./pages/Predictions";
 import NotFound from "./pages/NotFound";
-import ComingSoon from "./pages/ComingSoon";
 
 const queryClient = new QueryClient();
 
@@ -37,19 +36,22 @@ const App = () => (
           <Route path="/" element={<Landing />} />
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/units/ap-world" element={<Units />} />
-          <Route path="/units/ap-world/quiz/*" element={<Quiz />} />
-          <Route path="/units/ap-world/guide/*" element={<StudyGuide />} />
-          <Route path="/units/ap-world/flashcards/*" element={<Flashcards />} />
-          <Route path="/exam-grader/*" element={<ExamGrader />} />
+          <Route path="/units/ap-world/quiz/2" element={<QuizUnit2 />} />
+          <Route path="/units/ap-world/quiz/3" element={<QuizUnit3 />} />
+          <Route path="/units/ap-world/quiz/4" element={<QuizUnit4 />} />
+          <Route path="/units/ap-world/quiz/5" element={<QuizUnit5 />} />
+          <Route path="/units/ap-world/quiz/6" element={<QuizUnit6 />} />
+          <Route path="/units/ap-world/quiz/7" element={<QuizUnit7 />} />
+          <Route path="/units/ap-world/quiz/8" element={<QuizUnit8 />} />
+          <Route path="/units/ap-world/quiz/:unitId" element={<Quiz />} />
+          <Route path="/units/ap-world/flashcards/:unitId" element={<Flashcards />} />
+          <Route path="/units/ap-world/guide/:unitId" element={<StudyGuide />} />
+          <Route path="/predictions" element={<Predictions />} />
           <Route path="/privacy" element={<Privacy />} />
           <Route path="/terms" element={<Terms />} />
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<Signup />} />
           <Route path="/settings" element={<Settings />} />
-          <Route path="/predictions" element={<Predictions />} />
-          <Route path="/apush" element={<ComingSoon />} />
-          <Route path="/ap-gov" element={<ComingSoon />} />
-          <Route path="/ap-hug" element={<ComingSoon />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
