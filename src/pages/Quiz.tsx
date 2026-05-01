@@ -27,10 +27,19 @@ const Quiz = () => {
   const [isFinished, setIsFinished] = useState(false);
   const [timeLeft, setTimeLeft] = useState(50 * 60);
 
+  const prepareQuestions = (qs: Question[]) => {
+    return [...qs]
+      .sort(() => 0.5 - Math.random())
+      .slice(0, 15)
+      .map(q => ({
+        ...q,
+        options: [...q.options].sort(() => 0.5 - Math.random())
+      }));
+  };
+
   useEffect(() => {
     if (unit) {
-      const shuffled = [...unit.questions].sort(() => 0.5 - Math.random());
-      setSessionQuestions(shuffled.slice(0, 15));
+      setSessionQuestions(prepareQuestions(unit.questions));
     }
   }, [unit]);
 
@@ -44,13 +53,14 @@ const Quiz = () => {
   }, [mode, isFinished, timeLeft]);
 
   const handleShuffle = () => {
-    const shuffled = [...sessionQuestions].sort(() => 0.5 - Math.random());
-    setSessionQuestions(shuffled);
-    setCurrentIndex(0);
-    setUserAnswers({});
-    setIsAnswered(false);
-    setScore(0);
-    setTimeLeft(50 * 60);
+    if (unit) {
+      setSessionQuestions(prepareQuestions(unit.questions));
+      setCurrentIndex(0);
+      setUserAnswers({});
+      setIsAnswered(false);
+      setScore(0);
+      setTimeLeft(50 * 60);
+    }
   };
 
   if (!unit || sessionQuestions.length === 0) return null;
