@@ -2,7 +2,7 @@ import Layout from "@/components/Layout";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
-import { BookOpen, Lock, ArrowRight, Sparkles, Trophy, Target, FileText, ChevronRight } from "lucide-react";
+import { BookOpen, Lock, ArrowRight, Sparkles, Trophy, Target, FileText, ChevronRight, Code, Beaker, Calculator, Variable } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { motion } from "framer-motion";
 import { useAllProgress } from "@/hooks/useAllProgress";
@@ -31,11 +31,39 @@ const subjects = [
     icon: <Lock className="text-muted-foreground/60" size={20} />
   },
   {
-    id: "ap-hug",
-    title: "AP Human Geography",
-    description: "Patterns and processes that have shaped human understanding.",
+    id: "ap-cs",
+    title: "AP Computer Science",
+    description: "Fundamental concepts of programming and computational thinking.",
     status: "soon",
-    icon: <Lock className="text-muted-foreground/60" size={20} />
+    icon: <Code className="text-muted-foreground/60" size={20} />
+  },
+  {
+    id: "ap-chem",
+    title: "AP Chemistry",
+    description: "Atomic structure, chemical reactions, and thermodynamics.",
+    status: "soon",
+    icon: <Beaker className="text-muted-foreground/60" size={20} />
+  },
+  {
+    id: "ap-precalc",
+    title: "AP Precalculus",
+    description: "Preparation for calculus through functions and trigonometry.",
+    status: "soon",
+    icon: <Calculator className="text-muted-foreground/60" size={20} />
+  },
+  {
+    id: "ap-calc-ab",
+    title: "AP Calculus AB",
+    description: "Limits, derivatives, and introductory integrals.",
+    status: "soon",
+    icon: <Variable className="text-muted-foreground/60" size={20} />
+  },
+  {
+    id: "ap-calc-bc",
+    title: "AP Calculus BC",
+    description: "Advanced integration, sequences, and series.",
+    status: "soon",
+    icon: <Variable className="text-muted-foreground/60" size={20} />
   }
 ];
 
@@ -104,7 +132,7 @@ const Dashboard = () => {
               </div>
               Your Courses
             </h3>
-            <div className="grid grid-cols-1 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {subjects.map((subject, i) => {
                 const isAPWorld = subject.id === 'ap-world';
                 return (
@@ -115,7 +143,7 @@ const Dashboard = () => {
                     transition={{ delay: 0.3 + (i * 0.1) }}
                   >
                     <Card 
-                      className={`border-border/50 shadow-sm transition-all duration-500 bg-card rounded-[2.5rem] overflow-hidden group ${
+                      className={`border-border/50 shadow-sm transition-all duration-500 bg-card rounded-[2.5rem] overflow-hidden group h-full flex flex-col ${
                         subject.status === 'active' ? 'hover:border-primary/30 hover:shadow-xl' : 'opacity-70'
                       }`}
                     >
@@ -125,34 +153,34 @@ const Dashboard = () => {
                             {subject.icon}
                           </div>
                           {subject.status === 'soon' && (
-                            <Badge variant="secondary" className="bg-muted text-muted-foreground border-none font-bold px-3 py-1 rounded-full">Coming Soon</Badge>
+                            <Badge variant="secondary" className="bg-muted text-muted-foreground border-none font-bold px-3 py-1 rounded-full">Soon</Badge>
                           )}
                         </div>
-                        <CardTitle className="text-2xl font-bold tracking-tight">{subject.title}</CardTitle>
-                        <CardDescription className="text-muted-foreground leading-relaxed text-lg font-medium">
+                        <CardTitle className="text-xl font-bold tracking-tight">{subject.title}</CardTitle>
+                        <CardDescription className="text-muted-foreground leading-relaxed text-sm font-medium line-clamp-2">
                           {subject.description}
                         </CardDescription>
                       </CardHeader>
-                      <CardContent className="p-8 pt-4 space-y-6">
+                      <CardContent className="p-8 pt-4 space-y-6 mt-auto">
                         {isAPWorld && (
                           <div className="space-y-3">
-                            <div className="flex justify-between text-xs font-bold uppercase tracking-widest text-muted-foreground">
+                            <div className="flex justify-between text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
                               <span>Course Mastery</span>
                               <span>{overallPercentage}%</span>
                             </div>
-                            <Progress value={overallPercentage} className="h-2 bg-muted" />
+                            <Progress value={overallPercentage} className="h-1.5 bg-muted" />
                           </div>
                         )}
                         
                         {subject.status === 'active' ? (
-                          <Button asChild className="w-full h-14 rounded-2xl text-lg font-bold shadow-lg shadow-primary/10 group-hover:shadow-primary/20 transition-all duration-500">
+                          <Button asChild className="w-full h-12 rounded-2xl text-base font-bold shadow-lg shadow-primary/10 group-hover:shadow-primary/20 transition-all duration-500">
                             <Link to="/units/ap-world">
                               Open Course
-                              <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
+                              <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
                             </Link>
                           </Button>
                         ) : (
-                          <Button disabled className="w-full h-14 bg-muted text-muted-foreground/60 rounded-2xl border-none font-bold">
+                          <Button disabled className="w-full h-12 bg-muted text-muted-foreground/60 rounded-2xl border-none font-bold">
                             Locked
                           </Button>
                         )}

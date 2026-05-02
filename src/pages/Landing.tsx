@@ -1,27 +1,11 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import { Link } from "react-router-dom";
 import Layout from "@/components/Layout";
 import { Button } from "@/components/ui/button";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import { ArrowRight, Zap, Brain, Target, Sparkles } from "lucide-react";
 
-const subjects = [
-  "AP World History",
-  "AP US History",
-  "AP US Government",
-  "AP Human Geography"
-];
-
 const Landing = () => {
-  const [subjectIndex, setSubjectIndex] = useState(0);
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setSubjectIndex((prev) => (prev + 1) % subjects.length);
-    }, 3000);
-    return () => clearInterval(interval);
-  }, []);
-
   return (
     <Layout>
       <div className="space-y-24 sm:space-y-32 py-4 sm:py-12">
@@ -40,21 +24,7 @@ const Landing = () => {
               Built for the 5
             </div>
             <h1 className="text-5xl sm:text-6xl md:text-8xl font-bold tracking-tight text-foreground leading-[1.05] sm:leading-[1.05]">
-              Master{" "}
-              <span className="relative inline-block">
-                <AnimatePresence mode="wait">
-                  <motion.span
-                    key={subjects[subjectIndex]}
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -20 }}
-                    transition={{ duration: 0.5, ease: "circOut" }}
-                    className="inline-block text-primary italic"
-                  >
-                    {subjects[subjectIndex]}
-                  </motion.span>
-                </AnimatePresence>
-              </span>
+              Master <span className="text-primary italic">AP Exams</span>
               <br />
               <span className="text-muted-foreground/80">with Active Recall.</span>
             </h1>
