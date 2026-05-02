@@ -1,20 +1,11 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import { Link } from "react-router-dom";
 import Layout from "@/components/Layout";
 import { Button } from "@/components/ui/button";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import { ArrowRight, Zap, Brain, Target, Sparkles } from "lucide-react";
 
 const Landing = () => {
-  const [subjectIndex, setSubjectIndex] = useState(0);
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setSubjectIndex((prev) => (prev + 1) % 3);
-    }, 3000);
-    return () => clearInterval(interval);
-  }, []);
-
   return (
     <Layout>
       <div className="space-y-24 sm:space-y-32 py-4 sm:py-12">
@@ -33,21 +24,7 @@ const Landing = () => {
               Built for the 5
             </div>
             <h1 className="text-5xl sm:text-6xl md:text-8xl font-bold tracking-tight text-foreground leading-[1.05] sm:leading-[1.05]">
-              Master{" "}
-              <span className="relative inline-block">
-                <AnimatePresence mode="wait">
-                  <motion.span
-                    key={subjectIndex}
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -20 }}
-                    transition={{ duration: 0.5, ease: "circOut" }}
-                    className="inline-block text-primary italic"
-                  >
-                    {["AP World History","AP US History","AP US Government"][subjectIndex]}
-                  </span>
-                </AnimatePresence>
-              </span>
+              Master <span className="text-primary italic">AP Exams</span>
               <br />
               <span className="text-muted-foreground/80">with Active Recall.</span>
             </h1>
@@ -64,7 +41,8 @@ const Landing = () => {
           >
             <Button asChild size="lg" className="w-full sm:w-auto h-16 px-10 text-xl rounded-2xl shadow-[0_20px_50px_rgba(139,92,246,0.3)] hover:shadow-[0_20px_50px_rgba(139,92,246,0.5)] transition-all duration-500 font-bold">
               <Link to="/dashboard">
-                Start Studying Now                <ArrowRight className="ml-2 h-6 w-6" />
+                Start Studying Now
+                <ArrowRight className="ml-2 h-6 w-6" />
               </Link>
             </Button>
           </motion.div>
@@ -121,11 +99,13 @@ const Landing = () => {
               { label: "Flashcards", value: "200+" },
               { label: "Success Rate", value: "98%" }
             ].map((stat, i) => (
-              <motion.div                 key={i} 
+              <motion.div 
+                key={i} 
                 initial={{ opacity: 0, scale: 0.9 }}
                 whileInView={{ opacity: 1, scale: 1 }}
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.1 }}
+                className="space-y-2"
               >
                 <div className="text-4xl sm:text-6xl font-bold text-foreground tracking-tighter">{stat.value}</div>
                 <div className="text-xs sm:text-sm font-bold text-muted-foreground uppercase tracking-[0.2em]">{stat.label}</div>
