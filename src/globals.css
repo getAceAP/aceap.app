@@ -48,11 +48,10 @@
     --input: 214.3 31.8% 91.4%;
     --ring: 262 83% 58%;
 
-    --radius: 1rem;
+    --radius: 1.25rem;
   }
 
   .dark {
-    /* Refined Dark Mode Palette */
     --background: 240 10% 3.9%;
     --foreground: 0 0% 98%;
 
@@ -88,9 +87,17 @@
     @apply border-border;
   }
 
+  html {
+    scroll-behavior: smooth;
+  }
+
   body {
-    @apply bg-background text-foreground transition-colors duration-300 font-sans;
+    @apply bg-background text-foreground transition-colors duration-500 font-sans antialiased;
     font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+  }
+
+  ::selection {
+    @apply bg-primary/20 text-primary;
   }
 }
 
@@ -101,5 +108,11 @@
   .backface-hidden {
     backface-visibility: hidden;
     -webkit-backface-visibility: hidden;
+  }
+  .glass {
+    @apply bg-background/60 backdrop-blur-xl border-white/10;
+  }
+  .text-gradient {
+    @apply bg-clip-text text-transparent bg-gradient-to-br from-foreground to-foreground/70;
   }
 }
