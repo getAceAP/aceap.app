@@ -2,9 +2,9 @@ import Layout from "@/components/Layout";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
-import { BookOpen, Lock, ArrowRight, Sparkles, Trophy, Target, Code, Beaker, Calculator, Variable } from "lucide-react";
+import { BookOpen, Lock, ArrowRight, Sparkles, Trophy, Target, FileText, ChevronRight } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { useAllProgress } from "@/hooks/useAllProgress";
 import { Progress } from "@/components/ui/progress";
 
@@ -77,18 +77,19 @@ const Dashboard = () => {
   return (
     <Layout>
       <div className="space-y-12 max-w-5xl mx-auto">
+        {/* Header */}
         <header className="space-y-3 text-center">
-          <motion.h1 
+          <motion.h1
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="text-4xl sm:text-5xl font-bold tracking-tight"
+            transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
           >
             Your Dashboard
           </motion.h1>
-          <motion.p 
+          <motion.p
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.1 }}
+            transition={{ delay: 0.1, duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
             className="text-xl text-muted-foreground font-medium"
           >
             Track your mastery and prepare for the 5.
@@ -106,7 +107,7 @@ const Dashboard = () => {
               key={i}
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
-              transition={{ delay: i * 0.1 }}
+              transition={{ delay: i * 0.1, duration: 0.5 }}
             >
               <Card className="border-border/50 shadow-sm bg-card hover:shadow-md transition-all duration-300 rounded-[2rem]">
                 <CardContent className="pt-8 pb-8 flex items-center gap-5">
@@ -123,6 +124,7 @@ const Dashboard = () => {
           ))}
         </div>
 
+        {/* Course Grid */}
         <div className="space-y-8">
           <h3 className="text-2xl font-bold flex items-center gap-3">
             <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center">
@@ -138,9 +140,9 @@ const Dashboard = () => {
                   key={subject.id}
                   initial={{ opacity: 0, x: -20 }}
                   animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: 0.3 + (i * 0.1) }}
+                  transition={{ delay: 0.3 + (i * 0.1), duration: 0.6 }}
                 >
-                  <Card 
+                  <Card
                     className={`border-border/50 shadow-sm transition-all duration-500 bg-card rounded-[2.5rem] overflow-hidden group h-full flex flex-col ${
                       subject.status === 'active' ? 'hover:border-primary/30 hover:shadow-xl' : 'opacity-70'
                     }`}
@@ -171,9 +173,9 @@ const Dashboard = () => {
                           </div>
                           
                           {/* Integrated Predictions Banner */}
-                          <Link 
+                          <Link
                             to="/predictions"
-                            className="block p-4 rounded-2xl bg-primary text-primary-foreground shadow-lg shadow-primary/20 hover:shadow-primary/30 transition-all group/pred relative overflow-hidden"
+                            className="block p-4 rounded-2xl bg-primary text-primary-foreground shadow-lg shadow-primary/20 hover:shadow-primary/30 transition-all group/pred"
                           >
                             <div className="relative z-10 flex items-center justify-between">
                               <div className="flex items-center gap-3">
