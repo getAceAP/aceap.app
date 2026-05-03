@@ -17,7 +17,7 @@ const Units = () => {
     <Layout>
       <div className="space-y-10 max-w-7xl mx-auto">
         <header className="space-y-6">
-          <Link to="/dashboard" className="inline-flex items-center text-sm font-medium text-muted-foreground hover:text-primary transition-colors">
+          <Link to="/home" className="inline-flex items-center text-sm font-medium text-muted-foreground hover:text-primary transition-colors">
             <ArrowLeft size={16} className="mr-1" />
             Back to Subjects
           </Link>
@@ -28,7 +28,7 @@ const Units = () => {
               <p className="text-xl text-muted-foreground">Select a unit to begin your active recall session.</p>
             </div>
 
-            {/* Predictions Banner moved here */}
+            {/* Predictions Banner */}
             <motion.div
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}

@@ -2,7 +2,7 @@
 
 import React from "react";
 import { Link, useLocation } from "react-router-dom";
-import { BookOpen, LayoutDashboard, LogOut, User, Mail, Settings as SettingsIcon } from "lucide-react";
+import { BookOpen, LayoutDashboard, LogOut, User, Mail, Settings as SettingsIcon, Home } from "lucide-react";
 import { ThemeToggle } from "./ThemeToggle";
 import { SoundToggle } from "./SoundToggle";
 import { Button } from "./ui/button";
@@ -21,7 +21,7 @@ import {
 
 const Layout = ({ children }: { children: React.ReactNode }) => {
   const location = useLocation();
-  const isDashboard = location.pathname === "/dashboard";
+  const isHome = location.pathname === "/home";
   const { user, signOut } = useAuth();
 
   return (
@@ -40,17 +40,17 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
             <span className="tracking-tight text-foreground">AceAP</span>
           </Link>
 
-          {/* Center: Dashboard */}
+          {/* Center: Home */}
           <div className="hidden md:flex absolute left-1/2 -translate-x-1/2 items-center justify-center">
             <Link 
-              to="/dashboard" 
+              to="/home" 
               className={cn(
                 "text-sm font-semibold transition-all flex items-center gap-1.5 px-4 py-2 rounded-full",
-                isDashboard ? "bg-primary/10 text-primary" : "text-muted-foreground hover:text-primary hover:bg-primary/5"
+                isHome ? "bg-primary/10 text-primary" : "text-muted-foreground hover:text-primary hover:bg-primary/5"
               )}
             >
-              <LayoutDashboard size={16} />
-              Dashboard
+              <Home size={16} />
+              Home
             </Link>
           </div>
           
@@ -107,9 +107,9 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
         </div>
       </nav>
       
-      {/* Mobile Dashboard Link */}
+      {/* Mobile Home Link */}
       <AnimatePresence>
-        {!isDashboard && (
+        {!isHome && (
           <motion.div 
             initial={{ y: 100, x: "-50%", opacity: 0 }}
             animate={{ y: 0, x: "-50%", opacity: 1 }}
@@ -117,11 +117,11 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
             className="md:hidden fixed bottom-8 left-1/2 z-50"
           >
             <Link 
-              to="/dashboard" 
+              to="/home" 
               className="flex items-center gap-2 bg-primary text-primary-foreground px-8 py-4 rounded-full shadow-[0_20px_50px_rgba(139,92,246,0.4)] font-bold text-sm active:scale-95 transition-all"
             >
-              <LayoutDashboard size={18} />
-              Dashboard
+              <Home size={18} />
+              Home
             </Link>
           </motion.div>
         )}

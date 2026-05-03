@@ -13,7 +13,7 @@ const Landing = () => {
   useEffect(() => {
     if (!loading) {
       if (user) {
-        navigate("/dashboard", { replace: true });
+        navigate("/home", { replace: true });
       } else {
         document.title = "AceAP | Master your AP Exams.";
       }
@@ -58,7 +58,7 @@ const Landing = () => {
             className="flex flex-col sm:flex-row items-center justify-center gap-4 px-4"
           >
             <Button asChild size="lg" className="w-full sm:w-auto h-16 px-10 text-xl rounded-2xl shadow-[0_20px_50px_rgba(139,92,246,0.3)] hover:shadow-[0_20px_50px_rgba(139,92,246,0.5)] transition-all duration-500 font-bold">
-              <Link to="/dashboard">
+              <Link to="/home">
                 Start Studying Now
                 <ArrowRight className="ml-2 h-6 w-6" />
               </Link>
@@ -145,7 +145,7 @@ const Landing = () => {
                 Join thousands of students using AceAP to simplify their AP World History revision.
               </p>
               <Button asChild size="lg" variant="secondary" className="w-full sm:w-auto h-16 rounded-2xl px-12 text-xl font-bold shadow-2xl">
-                <Link to="/dashboard">Get Started for Free</Link>
+                <Link to="/home">Get Started for Free</Link>
               </Button>
             </div>
           </motion.div>

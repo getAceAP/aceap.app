@@ -2,8 +2,8 @@ import Layout from "@/components/Layout";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
-import { BookOpen, Lock, ArrowRight, Code, Beaker, Calculator, Variable } from "lucide-react";
-import { Badge } from "@/components/ui/badge";
+import { BookOpen, Lock, ArrowRight, Code, Beaker, Calculator, Variable, Brain } from "lucide-react";
+import { Badge } from "@/badge";
 import { motion } from "framer-motion";
 import { useAllProgress } from "@/hooks/useAllProgress";
 import { Progress } from "@/components/ui/progress";
@@ -12,11 +12,25 @@ import { useAuth } from "@/context/AuthContext";
 
 const subjects = [
   {
+    id: "ap-psych",
+    title: "AP Psychology",
+    description: "Explore the human mind, behavior, and biological processes.",
+    status: "soon",
+    icon: <Brain className="text-muted-foreground/60" size={20} />
+  },
+  {
     id: "ap-world",
     title: "AP World History",
     description: "Master the global tapestry, trade networks, and modern conflicts.",
     status: "active",
     icon: <BookOpen className="text-primary" size={20} />
+  },
+  {
+    id: "ap-precalc",
+    title: "AP Precalculus",
+    description: "Preparation for calculus through functions and trigonometry.",
+    status: "active",
+    icon: <Calculator className="text-primary" size={20} />
   },
   {
     id: "apush",
@@ -47,13 +61,6 @@ const subjects = [
     icon: <Beaker className="text-muted-foreground/60" size={20} />
   },
   {
-    id: "ap-precalc",
-    title: "AP Precalculus",
-    description: "Preparation for calculus through functions and trigonometry.",
-    status: "soon",
-    icon: <Calculator className="text-muted-foreground/60" size={20} />
-  },
-  {
     id: "ap-calc-ab",
     title: "AP Calculus AB",
     description: "Limits, derivatives, and introductory integrals.",
@@ -70,7 +77,7 @@ const subjects = [
 ];
 
 const Dashboard = () => {
-  useTitle("Dashboard");
+  useTitle("Home");
   const { user } = useAuth();
   const { stats, loading } = useAllProgress();
 
@@ -144,7 +151,7 @@ const Dashboard = () => {
                       
                       {subject.status === 'active' ? (
                         <Button asChild className="w-full h-12 rounded-2xl text-base font-bold shadow-lg shadow-primary/10 group-hover:shadow-primary/20 transition-all duration-500">
-                          <Link to="/units/ap-world">
+                          <Link to={subject.id === 'ap-world' ? "/units/ap-world" : "#"}>
                             Open Course
                             <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
                           </Link>

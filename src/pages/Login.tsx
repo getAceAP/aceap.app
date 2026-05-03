@@ -33,7 +33,7 @@ const Login = () => {
       showError(error.message);
     } else {
       showSuccess("Welcome back!");
-      navigate("/dashboard");
+      navigate("/home");
     }
     setLoading(false);
   };

@@ -34,7 +34,7 @@ const App = () => (
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<Landing />} />
-          <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/home" element={<Dashboard />} />
           <Route path="/units/ap-world" element={<Units />} />
           <Route path="/units/ap-world/quiz/2" element={<QuizUnit2 />} />
           <Route path="/units/ap-world/quiz/3" element={<QuizUnit3 />} />
