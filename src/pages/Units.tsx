@@ -6,8 +6,10 @@ import { Link } from "react-router-dom";
 import { BrainCircuit, GraduationCap, ArrowLeft, FileText, CheckCircle2 } from "lucide-react";
 import { Progress } from "@/components/ui/progress";
 import { useAllProgress } from "@/hooks/useAllProgress";
+import { useTitle } from "@/hooks/useTitle";
 
 const Units = () => {
+  useTitle("AP World History Units");
   const { stats, loading } = useAllProgress();
 
   return (

@@ -37,7 +37,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
             >
               <BookOpen size={18} className="sm:w-5 sm:h-5" />
             </motion.div>
-            <span className="tracking-tight">AceAP<span className="text-primary">.app</span></span>
+            <span className="tracking-tight text-foreground">AceAP</span>
           </Link>
 
           {/* Center: Dashboard */}
@@ -139,7 +139,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
       <footer className="max-w-5xl mx-auto px-4 sm:px-6 py-12 pb-32 md:pb-12 border-t border-border/50">
         <div className="flex flex-col md:flex-row justify-between items-center gap-6 text-center md:text-left text-sm text-muted-foreground">
           <div className="space-y-2">
-            <p className="font-medium">© {new Date().getFullYear()} AceAP.app — The Ultimate AP Revision Tool</p>
+            <p className="font-medium">© {new Date().getFullYear()} AceAP — The Ultimate AP Revision Tool</p>
             <a 
               href="mailto:hello@aceap.app" 
               className="inline-flex items-center gap-2 text-xs hover:text-primary transition-colors"

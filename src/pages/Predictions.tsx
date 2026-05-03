@@ -4,8 +4,10 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Badge } from "@/components/ui/badge";
 import { Sparkles, AlertTriangle, TrendingUp, Target, Zap, Info } from "lucide-react";
 import { motion } from "framer-motion";
+import { useTitle } from "@/hooks/useTitle";
 
 const Predictions = () => {
+  useTitle("2026 DBQ Predictions");
   const predictions = [
     {
       rank: "1st MOST LIKELY",

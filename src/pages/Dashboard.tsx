@@ -7,6 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { motion } from "framer-motion";
 import { useAllProgress } from "@/hooks/useAllProgress";
 import { Progress } from "@/components/ui/progress";
+import { useTitle } from "@/hooks/useTitle";
 
 const subjects = [
   {
@@ -68,6 +69,7 @@ const subjects = [
 ];
 
 const Dashboard = () => {
+  useTitle("Dashboard");
   const { stats, loading } = useAllProgress();
 
   const totalLearned = Object.values(stats).reduce((acc, s) => acc + s.learned, 0);

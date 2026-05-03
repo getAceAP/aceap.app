@@ -4,8 +4,11 @@ import Layout from "@/components/Layout";
 import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
 import { ArrowRight, Zap, Brain, Target, Sparkles } from "lucide-react";
+import { useTitle } from "@/hooks/useTitle";
 
 const Landing = () => {
+  useTitle("Master Your AP Exams");
+
   return (
     <Layout>
       <div className="space-y-24 sm:space-y-32 py-4 sm:py-12">
