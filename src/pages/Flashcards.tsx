@@ -1,11 +1,11 @@
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import Layout from "@/components/Layout";
 import { units, Flashcard } from "@/data/content";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
-import { ArrowLeft, ArrowRight, CheckCircle2, XCircle, RefreshCcw, Brain, Eye, Shuffle, Settings2, GraduationCap, Sparkles, Gamepad2, List, X } from "lucide-react";
+import { ArrowLeft, ArrowRight, CheckCircle2, XCircle, RefreshCcw, Brain, Eye, Shuffle, Settings2, GraduationCap, Sparkles, Gamepad2, List, X, Timer } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { motion, AnimatePresence } from "framer-motion";
@@ -63,8 +63,11 @@ const Flashcards = () => {
   const [matchItems, setMatchItems] = useState<MatchItem[]>([]);
   const [selectedMatch, setSelectedMatch] = useState<MatchItem | null>(null);
   const [matchedIds, setMatchedIds] = useState<Set<string>>(new Set());
+  const [wrongMatchIds, setWrongMatchIds] = useState<Set<string>>(new Set());
   const [matchStartTime, setMatchStartTime] = useState<number | null>(null);
   const [matchTime, setMatchTime] = useState<number | null>(null);
+  const [liveTime, setLiveTime] = useState(0);
+  const timerRef = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
     if (unit) {
@@ -82,15 +85,27 @@ const Flashcards = () => {
     });
     setMatchItems(items.sort(() => Math.random() - 0.5));
     setMatchedIds(new Set());
+    setWrongMatchIds(new Set());
     setSelectedMatch(null);
     setMatchStartTime(Date.now());
     setMatchTime(null);
+    setLiveTime(0);
+    
+    if (timerRef.current) clearInterval(timerRef.current);
+    timerRef.current = setInterval(() => {
+      setLiveTime(prev => prev + 0.1);
+    }, 100);
   };
 
   useEffect(() => {
     if (mode === 'match') {
       initializeMatch();
+    } else {
+      if (timerRef.current) clearInterval(timerRef.current);
     }
+    return () => {
+      if (timerRef.current) clearInterval(timerRef.current);
+    };
   }, [mode]);
 
   if (!unit || shuffledCards.length === 0) return null;
@@ -200,7 +215,8 @@ const Flashcards = () => {
   };
 
   const handleMatchClick = (item: MatchItem) => {
-    if (matchedIds.has(item.id)) return;
+    if (matchedIds.has(item.id) || wrongMatchIds.has(item.id)) return;
+    
     if (selectedMatch?.id === item.id) {
       setSelectedMatch(null);
       return;
@@ -222,13 +238,26 @@ const Flashcards = () => {
       playSound('correct');
 
       if (newMatched.size === matchItems.length) {
+        if (timerRef.current) clearInterval(timerRef.current);
         const time = (Date.now() - (matchStartTime || 0)) / 1000;
         setMatchTime(time);
       }
     } else {
       // Wrong match
-      setSelectedMatch(item);
+      const firstId = selectedMatch.id;
+      const secondId = item.id;
+      setWrongMatchIds(new Set([firstId, secondId]));
+      setSelectedMatch(null);
       playSound('wrong');
+      
+      setTimeout(() => {
+        setWrongMatchIds(prev => {
+          const next = new Set(prev);
+          next.delete(firstId);
+          next.delete(secondId);
+          return next;
+        });
+      }, 600);
     }
   };
 
@@ -340,7 +369,12 @@ const Flashcards = () => {
               </DropdownMenu>
             </div>
             <div className="flex items-center gap-3 text-xs sm:text-sm font-bold">
-              {mode !== 'match' && (
+              {mode === 'match' ? (
+                <div className="flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 text-primary border border-primary/20">
+                  <Timer size={14} className="animate-pulse" />
+                  <span>{liveTime.toFixed(1)}s</span>
+                </div>
+              ) : (
                 <>
                   <span className="text-green-600 dark:text-green-400">{correctCount}</span>
                   <span className="text-muted-foreground">/</span>
@@ -380,12 +414,16 @@ const Flashcards = () => {
               >
                 {matchTime ? (
                   <div className="text-center space-y-6 py-12">
-                    <div className="w-20 h-20 bg-green-500/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <motion.div 
+                      initial={{ scale: 0 }}
+                      animate={{ scale: 1 }}
+                      className="w-20 h-20 bg-green-500/10 rounded-full flex items-center justify-center mx-auto mb-4"
+                    >
                       <CheckCircle2 className="text-green-500 w-10 h-10" />
-                    </div>
+                    </motion.div>
                     <div className="space-y-2">
                       <h3 className="text-3xl font-bold">All Matched!</h3>
-                      <p className="text-xl text-muted-foreground">Time: <span className="text-foreground font-bold">{matchTime.toFixed(2)}s</span></p>
+                      <p className="text-xl text-muted-foreground">Final Time: <span className="text-foreground font-bold">{matchTime.toFixed(2)}s</span></p>
                     </div>
                     <Button onClick={initializeMatch} className="rounded-xl h-12 px-8">
                       <RefreshCcw className="mr-2 h-4 w-4" /> Play Again
@@ -396,17 +434,30 @@ const Flashcards = () => {
                     {matchItems.map((item) => {
                       const isMatched = matchedIds.has(item.id);
                       const isSelected = selectedMatch?.id === item.id;
+                      const isWrong = wrongMatchIds.has(item.id);
                       
                       return (
                         <motion.button
                           key={item.id}
                           layout
+                          initial={{ opacity: 0, scale: 0.9 }}
+                          animate={{ 
+                            opacity: isMatched ? 0 : 1, 
+                            scale: isMatched ? 0.8 : 1,
+                            x: isWrong ? [0, -5, 5, -5, 5, 0] : 0
+                          }}
+                          transition={{ 
+                            duration: isWrong ? 0.4 : 0.2,
+                            opacity: { duration: 0.3 }
+                          }}
                           onClick={() => handleMatchClick(item)}
                           disabled={isMatched}
                           className={cn(
                             "p-4 sm:p-6 rounded-2xl border-2 text-xs sm:text-sm font-medium transition-all min-h-[100px] flex items-center justify-center text-center leading-relaxed",
-                            isMatched ? "opacity-0 pointer-events-none" : "hover:border-primary/50",
-                            isSelected ? "border-primary bg-primary/5 shadow-lg shadow-primary/10 scale-[1.02]" : "border-border bg-card"
+                            isMatched ? "pointer-events-none" : "hover:border-primary/50",
+                            isSelected && "border-primary bg-primary/5 shadow-lg shadow-primary/10 scale-[1.02]",
+                            isWrong && "border-destructive bg-destructive/10 text-destructive",
+                            !isSelected && !isWrong && "border-border bg-card"
                           )}
                         >
                           {item.content}
