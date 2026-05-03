@@ -63,6 +63,7 @@ const Flashcards = () => {
   const [matchItems, setMatchItems] = useState<MatchItem[]>([]);
   const [selectedMatch, setSelectedMatch] = useState<MatchItem | null>(null);
   const [matchedIds, setMatchedIds] = useState<Set<string>>(new Set());
+  const [correctMatchIds, setCorrectMatchIds] = useState<Set<string>>(new Set());
   const [wrongMatchIds, setWrongMatchIds] = useState<Set<string>>(new Set());
   const [matchStartTime, setMatchStartTime] = useState<number | null>(null);
   const [matchTime, setMatchTime] = useState<number | null>(null);
@@ -85,6 +86,7 @@ const Flashcards = () => {
     });
     setMatchItems(items.sort(() => Math.random() - 0.5));
     setMatchedIds(new Set());
+    setCorrectMatchIds(new Set());
     setWrongMatchIds(new Set());
     setSelectedMatch(null);
     setMatchStartTime(Date.now());
@@ -215,7 +217,7 @@ const Flashcards = () => {
   };
 
   const handleMatchClick = (item: MatchItem) => {
-    if (matchedIds.has(item.id) || wrongMatchIds.has(item.id)) return;
+    if (matchedIds.has(item.id) || wrongMatchIds.has(item.id) || correctMatchIds.has(item.id)) return;
     
     if (selectedMatch?.id === item.id) {
       setSelectedMatch(null);
@@ -230,18 +232,34 @@ const Flashcards = () => {
     // Check for match
     if (selectedMatch.originalId === item.originalId && selectedMatch.type !== item.type) {
       // Correct match
-      const newMatched = new Set(matchedIds);
-      newMatched.add(selectedMatch.id);
-      newMatched.add(item.id);
-      setMatchedIds(newMatched);
+      const firstId = selectedMatch.id;
+      const secondId = item.id;
+      
+      setCorrectMatchIds(new Set([firstId, secondId]));
       setSelectedMatch(null);
       playSound('correct');
 
-      if (newMatched.size === matchItems.length) {
-        if (timerRef.current) clearInterval(timerRef.current);
-        const time = (Date.now() - (matchStartTime || 0)) / 1000;
-        setMatchTime(time);
-      }
+      // Delay the removal so user sees the green state
+      setTimeout(() => {
+        setMatchedIds(prev => {
+          const next = new Set(prev);
+          next.add(firstId);
+          next.add(secondId);
+          
+          if (next.size === matchItems.length) {
+            if (timerRef.current) clearInterval(timerRef.current);
+            const time = (Date.now() - (matchStartTime || 0)) / 1000;
+            setMatchTime(time);
+          }
+          return next;
+        });
+        setCorrectMatchIds(prev => {
+          const next = new Set(prev);
+          next.delete(firstId);
+          next.delete(secondId);
+          return next;
+        });
+      }, 400);
     } else {
       // Wrong match
       const firstId = selectedMatch.id;
@@ -309,7 +327,7 @@ const Flashcards = () => {
             <Button onClick={resetSession} className="w-full h-12 rounded-xl">
               <RefreshCcw className="mr-2 h-4 w-4" /> Restart
             </Button>
-            <Button variant="outline" onClick={() => navigate("/units/ap-world")} className="w-full h-12 rounded-xl">
+            <Button variant="outline" onClick={() => navigate("/units/ap-world")} className="flex-1 h-12 rounded-xl">
               Back to Units
             </Button>
           </div>
@@ -435,6 +453,7 @@ const Flashcards = () => {
                       const isMatched = matchedIds.has(item.id);
                       const isSelected = selectedMatch?.id === item.id;
                       const isWrong = wrongMatchIds.has(item.id);
+                      const isCorrectPair = correctMatchIds.has(item.id);
                       
                       return (
                         <motion.button
@@ -451,13 +470,14 @@ const Flashcards = () => {
                             opacity: { duration: 0.3 }
                           }}
                           onClick={() => handleMatchClick(item)}
-                          disabled={isMatched}
+                          disabled={isMatched || isCorrectPair}
                           className={cn(
                             "p-4 sm:p-6 rounded-2xl border-2 text-xs sm:text-sm font-medium transition-all min-h-[100px] flex items-center justify-center text-center leading-relaxed",
                             isMatched ? "pointer-events-none" : "hover:border-primary/50",
                             isSelected && "border-primary bg-primary/5 shadow-lg shadow-primary/10 scale-[1.02]",
                             isWrong && "border-destructive bg-destructive/10 text-destructive",
-                            !isSelected && !isWrong && "border-border bg-card"
+                            isCorrectPair && "border-green-500 bg-green-500/10 text-green-600 scale-[1.02]",
+                            !isSelected && !isWrong && !isCorrectPair && "border-border bg-card"
                           )}
                         >
                           {item.content}
