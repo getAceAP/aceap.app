@@ -9,7 +9,7 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { User, Lock, Loader2, AlertCircle, Clock } from "lucide-react";
-import { supabase } from "@/utils/supabase";
+import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/context/AuthContext";
 import { showError, showSuccess } from "@/utils/toast";
 import { motion } from "framer-motion";

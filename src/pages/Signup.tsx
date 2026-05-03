@@ -8,7 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { BookOpen, Loader2 } from "lucide-react";
-import { supabase } from "@/utils/supabase";
+import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/context/AuthContext";
 import { showError, showSuccess } from "@/utils/toast";
 import { GoogleIcon } from "@/components/icons/GoogleIcon";
