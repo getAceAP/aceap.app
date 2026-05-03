@@ -4,21 +4,21 @@ import Layout from "@/components/Layout";
 import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
 import { ArrowRight, Zap, Brain, Target, Sparkles } from "lucide-react";
-import { useTitle } from "@/hooks/useTitle";
 import { useAuth } from "@/context/AuthContext";
 
 const Landing = () => {
   const { user, loading } = useAuth();
   const navigate = useNavigate();
 
-  // Redirect to dashboard if already logged in
   useEffect(() => {
-    if (!loading && user) {
-      navigate("/dashboard", { replace: true });
+    if (!loading) {
+      if (user) {
+        navigate("/dashboard", { replace: true });
+      } else {
+        document.title = "AceAP | Master your AP Exams.";
+      }
     }
   }, [user, loading, navigate]);
-
-  useTitle("Home");
 
   if (loading || user) {
     return null; // Prevent flash of landing content while redirecting
