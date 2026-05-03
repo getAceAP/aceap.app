@@ -64,6 +64,7 @@ const Flashcards = () => {
   const [selectedMatch, setSelectedMatch] = useState<MatchItem | null>(null);
   const [matchedIds, setMatchedIds] = useState<Set<string>>(new Set());
   const [wrongMatchIds, setWrongMatchIds] = useState<Set<string>>(new Set());
+  const [correctMatchIds, setCorrectMatchIds] = useState<Set<string>>(new Set());
   const [matchStartTime, setMatchStartTime] = useState<number | null>(null);
   const [matchTime, setMatchTime] = useState<number | null>(null);
   const [liveTime, setLiveTime] = useState(0);
@@ -86,6 +87,7 @@ const Flashcards = () => {
     setMatchItems(items.sort(() => Math.random() - 0.5));
     setMatchedIds(new Set());
     setWrongMatchIds(new Set());
+    setCorrectMatchIds(new Set());
     setSelectedMatch(null);
     setMatchStartTime(Date.now());
     setMatchTime(null);
@@ -215,7 +217,7 @@ const Flashcards = () => {
   };
 
   const handleMatchClick = (item: MatchItem) => {
-    if (matchedIds.has(item.id) || wrongMatchIds.has(item.id)) return;
+    if (matchedIds.has(item.id) || wrongMatchIds.has(item.id) || correctMatchIds.has(item.id)) return;
     
     if (selectedMatch?.id === item.id) {
       setSelectedMatch(null);
@@ -230,18 +232,28 @@ const Flashcards = () => {
     // Check for match
     if (selectedMatch.originalId === item.originalId && selectedMatch.type !== item.type) {
       // Correct match
-      const newMatched = new Set(matchedIds);
-      newMatched.add(selectedMatch.id);
-      newMatched.add(item.id);
-      setMatchedIds(newMatched);
+      const firstId = selectedMatch.id;
+      const secondId = item.id;
+      
+      setCorrectMatchIds(new Set([firstId, secondId]));
       setSelectedMatch(null);
       playSound('correct');
 
-      if (newMatched.size === matchItems.length) {
-        if (timerRef.current) clearInterval(timerRef.current);
-        const time = (Date.now() - (matchStartTime || 0)) / 1000;
-        setMatchTime(time);
-      }
+      setTimeout(() => {
+        setMatchedIds(prev => {
+          const next = new Set(prev);
+          next.add(firstId);
+          next.add(secondId);
+          return next;
+        });
+        setCorrectMatchIds(new Set());
+        
+        if (matchedIds.size + 2 === matchItems.length) {
+          if (timerRef.current) clearInterval(timerRef.current);
+          const time = (Date.now() - (matchStartTime || 0)) / 1000;
+          setMatchTime(time);
+        }
+      }, 400);
     } else {
       // Wrong match
       const firstId = selectedMatch.id;
@@ -370,9 +382,9 @@ const Flashcards = () => {
             </div>
             <div className="flex items-center gap-3 text-xs sm:text-sm font-bold">
               {mode === 'match' ? (
-                <div className="flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 text-primary border border-primary/20">
-                  <Timer size={14} className="animate-pulse" />
-                  <span>{liveTime.toFixed(1)}s</span>
+                <div className="flex items-center gap-2 px-4 py-1.5 rounded-full bg-primary text-primary-foreground shadow-lg shadow-primary/20 border border-primary/20">
+                  <Timer size={16} className="animate-pulse" />
+                  <span className="font-mono text-lg">{liveTime.toFixed(1)}s</span>
                 </div>
               ) : (
                 <>
@@ -435,6 +447,7 @@ const Flashcards = () => {
                       const isMatched = matchedIds.has(item.id);
                       const isSelected = selectedMatch?.id === item.id;
                       const isWrong = wrongMatchIds.has(item.id);
+                      const isCorrectMatch = correctMatchIds.has(item.id);
                       
                       return (
                         <motion.button
@@ -444,7 +457,7 @@ const Flashcards = () => {
                           animate={{ 
                             opacity: isMatched ? 0 : 1, 
                             scale: isMatched ? 0.8 : 1,
-                            x: isWrong ? [0, -5, 5, -5, 5, 0] : 0
+                            x: isWrong ? [0, -10, 10, -10, 10, 0] : 0
                           }}
                           transition={{ 
                             duration: isWrong ? 0.4 : 0.2,
@@ -456,8 +469,9 @@ const Flashcards = () => {
                             "p-4 sm:p-6 rounded-2xl border-2 text-xs sm:text-sm font-medium transition-all min-h-[100px] flex items-center justify-center text-center leading-relaxed",
                             isMatched ? "pointer-events-none" : "hover:border-primary/50",
                             isSelected && "border-primary bg-primary/5 shadow-lg shadow-primary/10 scale-[1.02]",
-                            isWrong && "border-destructive bg-destructive/10 text-destructive",
-                            !isSelected && !isWrong && "border-border bg-card"
+                            isWrong && "border-destructive bg-destructive/20 text-destructive shadow-[0_0_20px_rgba(239,68,68,0.2)]",
+                            isCorrectMatch && "border-green-500 bg-green-500/20 text-green-600 shadow-[0_0_20px_rgba(34,197,94,0.2)]",
+                            !isSelected && !isWrong && !isCorrectMatch && "border-border bg-card"
                           )}
                         >
                           {item.content}
