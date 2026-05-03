@@ -78,7 +78,7 @@ const Dashboard = () => {
 
   return (
     <Layout>
-      <div className="space-y-8 max-w-5xl mx-auto">
+      <div className="space-y-8 max-w-7xl mx-auto">
         <h3 className="text-2xl font-bold flex items-center gap-3">
           <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center">
             <BookOpen className="text-primary" size={20} />
@@ -86,7 +86,7 @@ const Dashboard = () => {
           Your Courses
         </h3>
         
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {subjects.map((subject, i) => {
             const isAPWorld = subject.id === 'ap-world';
             return (

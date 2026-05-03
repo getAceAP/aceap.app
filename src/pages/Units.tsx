@@ -14,7 +14,7 @@ const Units = () => {
 
   return (
     <Layout>
-      <div className="space-y-8">
+      <div className="space-y-8 max-w-7xl mx-auto">
         <header className="space-y-4">
           <Link to="/dashboard" className="inline-flex items-center text-sm font-medium text-muted-foreground hover:text-primary transition-colors">
             <ArrowLeft size={16} className="mr-1" />
@@ -26,7 +26,7 @@ const Units = () => {
           </div>
         </header>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {units.map((unit) => {
             const unitStats = stats[unit.id] || { learned: 0, total: unit.flashcards.length, percentage: 0 };
             

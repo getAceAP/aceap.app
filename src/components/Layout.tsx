@@ -27,8 +27,8 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
   return (
     <div className="min-h-screen bg-background text-foreground font-sans selection:bg-primary/20">
       <CursorGloss />
-      <nav className="sticky top-0 z-50 glass border-b border-border/50 px-4 sm:px-6 py-3 transition-all duration-300">
-        <div className="max-w-5xl mx-auto flex items-center justify-between relative">
+      <nav className="sticky top-0 z-50 glass border-b border-border/50 px-4 sm:px-8 py-3 transition-all duration-300">
+        <div className="max-w-7xl mx-auto flex items-center justify-between relative">
           {/* Left: Logo */}
           <Link to="/" className="flex items-center gap-2 font-bold text-lg sm:text-xl hover:opacity-80 transition-all shrink-0 group">
             <motion.div 
@@ -131,12 +131,12 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
-        className="max-w-5xl mx-auto px-4 sm:px-6 py-8 sm:py-12"
+        className="max-w-7xl mx-auto px-4 sm:px-8 py-8 sm:py-12"
       >
         {children}
       </motion.main>
 
-      <footer className="max-w-5xl mx-auto px-4 sm:px-6 py-12 pb-32 md:pb-12 border-t border-border/50">
+      <footer className="max-w-7xl mx-auto px-4 sm:px-8 py-12 pb-32 md:pb-12 border-t border-border/50">
         <div className="flex flex-col md:flex-row justify-between items-center gap-6 text-center md:text-left text-sm text-muted-foreground">
           <div className="space-y-2">
             <p className="font-medium">© {new Date().getFullYear()} AceAP — The Ultimate AP Revision Tool</p>
