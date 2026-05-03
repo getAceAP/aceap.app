@@ -1,13 +1,28 @@
-import React from "react";
-import { Link } from "react-router-dom";
+import React, { useEffect } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import Layout from "@/components/Layout";
 import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
 import { ArrowRight, Zap, Brain, Target, Sparkles } from "lucide-react";
 import { useTitle } from "@/hooks/useTitle";
+import { useAuth } from "@/context/AuthContext";
 
 const Landing = () => {
-  useTitle("Master Your AP Exams");
+  const { user, loading } = useAuth();
+  const navigate = useNavigate();
+
+  // Redirect to dashboard if already logged in
+  useEffect(() => {
+    if (!loading && user) {
+      navigate("/dashboard", { replace: true });
+    }
+  }, [user, loading, navigate]);
+
+  useTitle("Home");
+
+  if (loading || user) {
+    return null; // Prevent flash of landing content while redirecting
+  }
 
   return (
     <Layout>
