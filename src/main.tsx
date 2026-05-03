@@ -23,7 +23,7 @@ const updateSW = registerSW({
 });
 
 createRoot(document.getElementById("root")!).render(
-  <ThemeProvider attribute="class" defaultTheme="light" enableSystem>
+  <ThemeProvider attribute="class" defaultTheme="dark" enableSystem>
     <AuthProvider>
       <App />
     </AuthProvider>

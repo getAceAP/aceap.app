@@ -9,6 +9,7 @@ import { Button } from "./ui/button";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/context/AuthContext";
 import { motion, AnimatePresence } from "framer-motion";
+import { CursorGloss } from "./CursorGloss";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -25,6 +26,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
 
   return (
     <div className="min-h-screen bg-background text-foreground font-sans selection:bg-primary/20">
+      <CursorGloss />
       <nav className="sticky top-0 z-50 glass border-b border-border/50 px-4 sm:px-6 py-3 transition-all duration-300">
         <div className="max-w-5xl mx-auto flex items-center justify-between relative">
           {/* Left: Logo */}

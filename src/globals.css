@@ -96,6 +96,11 @@
     font-feature-settings: "cv02", "cv03", "cv04", "cv11";
   }
 
+  .dark body {
+    background-image: radial-gradient(circle at top center, hsl(263 70% 10% / 0.3) 0%, transparent 70%);
+    background-attachment: fixed;
+  }
+
   ::selection {
     @apply bg-primary/20 text-primary;
   }
