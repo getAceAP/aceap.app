@@ -1,11 +1,11 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import Layout from "@/components/Layout";
 import { units, Flashcard } from "@/data/content";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
-import { ArrowLeft, ArrowRight, CheckCircle2, XCircle, RefreshCcw, Brain, Eye, Shuffle, Settings2, GraduationCap, Sparkles } from "lucide-react";
+import { ArrowLeft, ArrowRight, CheckCircle2, XCircle, RefreshCcw, Brain, Eye, Shuffle, Settings2, GraduationCap, Sparkles, Gamepad2, List, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { motion, AnimatePresence } from "framer-motion";
@@ -22,6 +22,20 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+
+type MatchItem = {
+  id: string;
+  content: string;
+  type: 'term' | 'definition';
+  originalId: string;
+};
 
 const Flashcards = () => {
   const { unitId } = useParams();
@@ -30,7 +44,7 @@ const Flashcards = () => {
   const unit = units.find((u) => u.id === Number(unitId));
   const { progress, updateProgress } = useFlashcardProgress(Number(unitId));
   
-  const [mode, setMode] = useState<"active" | "normal">("active");
+  const [mode, setMode] = useState<"active" | "normal" | "match">("active");
   const [frontSide, setFrontSide] = useState<"term" | "definition">("definition");
   const [shuffledCards, setShuffledCards] = useState<Flashcard[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -45,11 +59,39 @@ const Flashcards = () => {
   const [incorrectCount, setIncorrectCount] = useState(0);
   const [overrideSet, setOverrideSet] = useState<boolean>(false);
 
+  // Match Mode State
+  const [matchItems, setMatchItems] = useState<MatchItem[]>([]);
+  const [selectedMatch, setSelectedMatch] = useState<MatchItem | null>(null);
+  const [matchedIds, setMatchedIds] = useState<Set<string>>(new Set());
+  const [matchStartTime, setMatchStartTime] = useState<number | null>(null);
+  const [matchTime, setMatchTime] = useState<number | null>(null);
+
   useEffect(() => {
     if (unit) {
       setShuffledCards([...unit.flashcards]);
     }
   }, [unit]);
+
+  const initializeMatch = () => {
+    if (!unit) return;
+    const selected = [...unit.flashcards].sort(() => Math.random() - 0.5).slice(0, 6);
+    const items: MatchItem[] = [];
+    selected.forEach(card => {
+      items.push({ id: `term-${card.id}`, content: card.prompt, type: 'term', originalId: card.id });
+      items.push({ id: `def-${card.id}`, content: card.answer, type: 'definition', originalId: card.id });
+    });
+    setMatchItems(items.sort(() => Math.random() - 0.5));
+    setMatchedIds(new Set());
+    setSelectedMatch(null);
+    setMatchStartTime(Date.now());
+    setMatchTime(null);
+  };
+
+  useEffect(() => {
+    if (mode === 'match') {
+      initializeMatch();
+    }
+  }, [mode]);
 
   if (!unit || shuffledCards.length === 0) return null;
 
@@ -131,6 +173,7 @@ const Flashcards = () => {
     setCorrectCount(0);
     setIncorrectCount(0);
     setOverrideSet(false);
+    if (mode === 'match') initializeMatch();
   };
 
   const overrideCorrect = () => {
@@ -154,6 +197,39 @@ const Flashcards = () => {
     }
     setIsCorrect(false);
     setOverrideSet(true);
+  };
+
+  const handleMatchClick = (item: MatchItem) => {
+    if (matchedIds.has(item.id)) return;
+    if (selectedMatch?.id === item.id) {
+      setSelectedMatch(null);
+      return;
+    }
+
+    if (!selectedMatch) {
+      setSelectedMatch(item);
+      return;
+    }
+
+    // Check for match
+    if (selectedMatch.originalId === item.originalId && selectedMatch.type !== item.type) {
+      // Correct match
+      const newMatched = new Set(matchedIds);
+      newMatched.add(selectedMatch.id);
+      newMatched.add(item.id);
+      setMatchedIds(newMatched);
+      setSelectedMatch(null);
+      playSound('correct');
+
+      if (newMatched.size === matchItems.length) {
+        const time = (Date.now() - (matchStartTime || 0)) / 1000;
+        setMatchTime(time);
+      }
+    } else {
+      // Wrong match
+      setSelectedMatch(item);
+      playSound('wrong');
+    }
   };
 
   const getStatusBadge = (status?: MasteryStatus) => {
@@ -226,6 +302,27 @@ const Flashcards = () => {
                 <Shuffle className="mr-1.5 h-3 w-3" /> Shuffle
               </Button>
               
+              <Dialog>
+                <DialogTrigger asChild>
+                  <Button variant="outline" size="sm" className="rounded-lg text-[10px] font-bold uppercase tracking-wider h-8">
+                    <List className="mr-1.5 h-3 w-3" /> List
+                  </Button>
+                </DialogTrigger>
+                <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto rounded-3xl">
+                  <DialogHeader>
+                    <DialogTitle className="text-2xl font-bold">Unit {unit.id} Vocabulary</DialogTitle>
+                  </DialogHeader>
+                  <div className="space-y-4 pt-4">
+                    {unit.flashcards.map((card) => (
+                      <div key={card.id} className="p-4 rounded-2xl bg-muted/30 border border-border space-y-1">
+                        <div className="font-bold text-primary">{card.prompt}</div>
+                        <div className="text-sm text-muted-foreground leading-relaxed">{card.answer}</div>
+                      </div>
+                    ))}
+                  </div>
+                </DialogContent>
+              </Dialog>
+
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <Button variant="outline" size="sm" className="rounded-lg h-8 px-2">
@@ -243,201 +340,260 @@ const Flashcards = () => {
               </DropdownMenu>
             </div>
             <div className="flex items-center gap-3 text-xs sm:text-sm font-bold">
-              <span className="text-green-600 dark:text-green-400">{correctCount}</span>
-              <span className="text-muted-foreground">/</span>
-              <span className="text-destructive">{incorrectCount}</span>
-              <span className="ml-1 text-muted-foreground font-medium">
-                {currentIndex + 1}/{shuffledCards.length}
-              </span>
+              {mode !== 'match' && (
+                <>
+                  <span className="text-green-600 dark:text-green-400">{correctCount}</span>
+                  <span className="text-muted-foreground">/</span>
+                  <span className="text-destructive">{incorrectCount}</span>
+                  <span className="ml-1 text-muted-foreground font-medium">
+                    {currentIndex + 1}/{shuffledCards.length}
+                  </span>
+                </>
+              )}
             </div>
           </div>
           
           <Tabs value={mode} onValueChange={(v) => { setMode(v as any); setIsFlipped(false); setUserInput(""); setIsSubmitted(false); setShowHint(false); setOverrideSet(false); }} className="w-full">
-            <TabsList className="grid w-full grid-cols-2 rounded-xl h-11">
+            <TabsList className="grid w-full grid-cols-3 rounded-xl h-11">
               <TabsTrigger value="active" className="rounded-lg gap-2 text-xs sm:text-sm">
                 <Brain size={14} /> Active Recall
               </TabsTrigger>
               <TabsTrigger value="normal" className="rounded-lg gap-2 text-xs sm:text-sm">
                 <Eye size={14} /> Normal
               </TabsTrigger>
+              <TabsTrigger value="match" className="rounded-lg gap-2 text-xs sm:text-sm">
+                <Gamepad2 size={14} /> Match
+              </TabsTrigger>
             </TabsList>
           </Tabs>
         </div>
 
         <div className="space-y-6 sm:space-y-8">
-          <div 
-            className="perspective-1000 cursor-pointer touch-none"
-            onClick={() => mode === "normal" && setIsFlipped(!isFlipped)}
-          >
-            <motion.div
-              animate={{ rotateY: isFlipped ? 180 : 0 }}
-              transition={{ duration: 0.6, type: "spring", stiffness: 260, damping: 20 }}
-              style={{ transformStyle: "preserve-3d" }}
-              className="relative w-full min-h-[240px] sm:min-h-[300px]"
-            >
-              {/* Front Side */}
-              <Card className="absolute inset-0 w-full h-full border-border shadow-none bg-card flex items-center justify-center text-center p-6 sm:p-8 backface-hidden overflow-hidden">
-                <div className="absolute top-4 right-4">
-                  {getStatusBadge(cardProgress?.status)}
-                </div>
-                <CardContent className="p-0 w-full">
-                  <p className="text-lg sm:text-xl md:text-2xl font-medium leading-relaxed text-card-foreground break-words">
-                    {frontContent}
-                  </p>
-                  {mode === "normal" && !isFlipped && (
-                    <p className="mt-4 text-[10px] font-bold text-muted-foreground/40 uppercase tracking-widest">Tap to flip</p>
-                  )}
-                </CardContent>
-              </Card>
-
-              {/* Back Side */}
-              <Card 
-                className="absolute inset-0 w-full h-full border-border shadow-none bg-accent flex items-center justify-center text-center p-6 sm:p-8 backface-hidden overflow-hidden"
-                style={{ transform: "rotateY(180deg)" }}
-              >
-                <CardContent className="p-0 w-full">
-                  <p className="text-lg sm:text-xl font-medium leading-relaxed text-accent-foreground break-words">
-                    {backContent}
-                  </p>
-                </CardContent>
-              </Card>
-            </motion.div>
-          </div>
-
           <AnimatePresence mode="wait">
-            {mode === "active" ? (
-              <motion.form 
-                key="active-form"
+            {mode === 'match' ? (
+              <motion.div
+                key="match-mode"
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -10 }}
-                onSubmit={handleSubmit} 
-                className="space-y-4"
+                className="space-y-8"
               >
-                <div className="space-y-2">
-                  <div className="flex justify-between items-end">
-                    <label className="text-[10px] font-bold text-muted-foreground/60 uppercase tracking-wider">
-                      Type the {frontSide === "definition" ? "Term" : "Definition"}
-                    </label>
-                    {showHint && !isSubmitted && (
-                      <span className="text-[10px] font-medium text-primary animate-in fade-in slide-in-from-right-2">
-                        Starts with: <span className="font-bold uppercase">{targetAnswer.charAt(0)}</span>
-                      </span>
-                    )}
-                  </div>
-                  <Input
-                    autoFocus
-                    value={userInput}
-                    onChange={(e) => setUserInput(e.target.value)}
-                    disabled={isSubmitted}
-                    placeholder={`What is the ${frontSide === "definition" ? "term" : "definition"}?`}
-                    className={cn(
-                      "h-12 sm:h-14 text-base sm:text-lg border-border focus-visible:ring-primary rounded-xl transition-all",
-                      isSubmitted && isCorrect && "border-green-500 bg-green-500/10 text-green-600 dark:text-green-400",
-                      isSubmitted && !isCorrect && "border-destructive bg-destructive/10 text-destructive"
-                    )}
-                  />
-                </div>
-
-                {!isSubmitted ? (
-                  <div className="flex gap-2 sm:gap-3">
-                    <Button type="submit" className="flex-[2] h-12 sm:h-14 rounded-xl text-base sm:text-lg font-semibold shadow-lg shadow-primary/10">
-                      Check
-                    </Button>
-                    <Button 
-                      type="button"
-                      variant="outline"
-                      onClick={() => showHint ? handleShowAnswer() : setShowHint(true)}
-                      className="flex-1 h-12 sm:h-14 rounded-xl border-primary/20 text-primary hover:bg-primary/5 text-xs sm:text-sm"
-                    >
-                      {showHint ? "Answer" : "Hint"}
+                {matchTime ? (
+                  <div className="text-center space-y-6 py-12">
+                    <div className="w-20 h-20 bg-green-500/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                      <CheckCircle2 className="text-green-500 w-10 h-10" />
+                    </div>
+                    <div className="space-y-2">
+                      <h3 className="text-3xl font-bold">All Matched!</h3>
+                      <p className="text-xl text-muted-foreground">Time: <span className="text-foreground font-bold">{matchTime.toFixed(2)}s</span></p>
+                    </div>
+                    <Button onClick={initializeMatch} className="rounded-xl h-12 px-8">
+                      <RefreshCcw className="mr-2 h-4 w-4" /> Play Again
                     </Button>
                   </div>
                 ) : (
-                  <motion.div 
-                    initial={{ opacity: 0, scale: 0.95 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    className="space-y-4"
-                  >
-                    <div className={cn(
-                      "p-3 sm:p-4 rounded-xl flex items-center gap-3 border",
-                      isCorrect 
-                        ? "bg-green-500/10 text-green-600 dark:text-green-400 border-green-500/20" 
-                        : "bg-destructive/10 text-destructive border-destructive/20"
-                    )}>
-                      {isCorrect ? <CheckCircle2 size={18} /> : <XCircle size={18} />}
-                      <div className="flex flex-col">
-                        <span className="font-bold text-sm sm:text-base">
-                          {isCorrect ? "Correct!" : "Incorrect"}
-                        </span>
-                        {!isCorrect && (
-                          <span className="text-xs sm:text-sm opacity-90">
-                            Correct answer: <span className="font-bold underline">{targetAnswer}</span>
-                          </span>
-                        )}
-                      </div>
-                    </div>
-
-                    <div className="flex gap-2">
-                      <Button
-                        variant={isCorrect ? "default" : "outline"}
-                        onClick={overrideCorrect}
-                        disabled={overrideSet && isCorrect}
-                        className="flex-1 h-10 rounded-md"
-                      >
-                        Mark Correct
-                      </Button>
-                      <Button
-                        variant={!isCorrect ? "default" : "outline"}
-                        onClick={overrideIncorrect}
-                        disabled={overrideSet && !isCorrect}
-                        className="flex-1 h-10 rounded-md"
-                      >
-                        Mark Incorrect
-                      </Button>
-                    </div>
-
-                    <Button onClick={handleNext} className="w-full h-12 sm:h-14 rounded-xl text-base sm:text-lg font-semibold">
-                      {currentIndex < shuffledCards.length - 1 ? "Next Card" : "Finish Session"}
-                    </Button>
-                  </motion.div>
-                )}
-              </motion.form>
-            ) : (
-              <motion.div 
-                key="normal-controls"
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -10 }}
-                className="space-y-4"
-              >
-                {!isFlipped ? (
-                  <div className="flex gap-3">
-                    <Button onClick={() => setIsFlipped(true)} className="flex-[2] h-12 sm:h-14 rounded-xl text-base sm:text-lg font-semibold shadow-lg shadow-primary/10">
-                      Show Answer
-                    </Button>
-                    <Button variant="outline" onClick={handleNext} className="flex-1 h-12 sm:h-14 rounded-xl border-border hover:bg-muted">
-                      Skip <ArrowRight className="ml-1 h-4 w-4" />
-                    </Button>
-                  </div>
-                ) : (
-                  <div className="grid grid-cols-2 gap-3 sm:gap-4">
-                    <Button 
-                      variant="outline" 
-                      onClick={() => handleNormalResult(false)}
-                      className="h-12 sm:h-14 rounded-xl border-destructive text-destructive hover:bg-destructive/10 text-xs sm:text-sm"
-                    >
-                      <XCircle className="mr-1.5 h-4 w-4 sm:h-5 sm:w-5" /> Incorrect
-                    </Button>
-                    <Button 
-                      onClick={() => handleNormalResult(true)}
-                      className="h-12 sm:h-14 rounded-xl bg-green-600 hover:bg-green-700 text-white text-xs sm:text-sm"
-                    >
-                      <CheckCircle2 className="mr-1.5 h-4 w-4 sm:h-5 sm:w-5" /> Correct
-                    </Button>
+                  <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 sm:gap-4">
+                    {matchItems.map((item) => {
+                      const isMatched = matchedIds.has(item.id);
+                      const isSelected = selectedMatch?.id === item.id;
+                      
+                      return (
+                        <motion.button
+                          key={item.id}
+                          layout
+                          onClick={() => handleMatchClick(item)}
+                          disabled={isMatched}
+                          className={cn(
+                            "p-4 sm:p-6 rounded-2xl border-2 text-xs sm:text-sm font-medium transition-all min-h-[100px] flex items-center justify-center text-center leading-relaxed",
+                            isMatched ? "opacity-0 pointer-events-none" : "hover:border-primary/50",
+                            isSelected ? "border-primary bg-primary/5 shadow-lg shadow-primary/10 scale-[1.02]" : "border-border bg-card"
+                          )}
+                        >
+                          {item.content}
+                        </motion.button>
+                      );
+                    })}
                   </div>
                 )}
               </motion.div>
+            ) : (
+              <div className="space-y-6 sm:space-y-8">
+                <div 
+                  className="perspective-1000 cursor-pointer touch-none"
+                  onClick={() => mode === "normal" && setIsFlipped(!isFlipped)}
+                >
+                  <motion.div
+                    animate={{ rotateY: isFlipped ? 180 : 0 }}
+                    transition={{ duration: 0.6, type: "spring", stiffness: 260, damping: 20 }}
+                    style={{ transformStyle: "preserve-3d" }}
+                    className="relative w-full min-h-[240px] sm:min-h-[300px]"
+                  >
+                    {/* Front Side */}
+                    <Card className="absolute inset-0 w-full h-full border-border shadow-none bg-card flex items-center justify-center text-center p-6 sm:p-8 backface-hidden overflow-hidden">
+                      <div className="absolute top-4 right-4">
+                        {getStatusBadge(cardProgress?.status)}
+                      </div>
+                      <CardContent className="p-0 w-full">
+                        <p className="text-lg sm:text-xl md:text-2xl font-medium leading-relaxed text-card-foreground break-words">
+                          {frontContent}
+                        </p>
+                        {mode === "normal" && !isFlipped && (
+                          <p className="mt-4 text-[10px] font-bold text-muted-foreground/40 uppercase tracking-widest">Tap to flip</p>
+                        )}
+                      </CardContent>
+                    </Card>
+
+                    {/* Back Side */}
+                    <Card 
+                      className="absolute inset-0 w-full h-full border-border shadow-none bg-accent flex items-center justify-center text-center p-6 sm:p-8 backface-hidden overflow-hidden"
+                      style={{ transform: "rotateY(180deg)" }}
+                    >
+                      <CardContent className="p-0 w-full">
+                        <p className="text-lg sm:text-xl font-medium leading-relaxed text-accent-foreground break-words">
+                          {backContent}
+                        </p>
+                      </CardContent>
+                    </Card>
+                  </motion.div>
+                </div>
+
+                <AnimatePresence mode="wait">
+                  {mode === "active" ? (
+                    <motion.form 
+                      key="active-form"
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -10 }}
+                      onSubmit={handleSubmit} 
+                      className="space-y-4"
+                    >
+                      <div className="space-y-2">
+                        <div className="flex justify-between items-end">
+                          <label className="text-[10px] font-bold text-muted-foreground/60 uppercase tracking-wider">
+                            Type the {frontSide === "definition" ? "Term" : "Definition"}
+                          </label>
+                          {showHint && !isSubmitted && (
+                            <span className="text-[10px] font-medium text-primary animate-in fade-in slide-in-from-right-2">
+                              Starts with: <span className="font-bold uppercase">{targetAnswer.charAt(0)}</span>
+                            </span>
+                          )}
+                        </div>
+                        <Input
+                          autoFocus
+                          value={userInput}
+                          onChange={(e) => setUserInput(e.target.value)}
+                          disabled={isSubmitted}
+                          placeholder={`What is the ${frontSide === "definition" ? "term" : "definition"}?`}
+                          className={cn(
+                            "h-12 sm:h-14 text-base sm:text-lg border-border focus-visible:ring-primary rounded-xl transition-all",
+                            isSubmitted && isCorrect && "border-green-500 bg-green-500/10 text-green-600 dark:text-green-400",
+                            isSubmitted && !isCorrect && "border-destructive bg-destructive/10 text-destructive"
+                          )}
+                        />
+                      </div>
+
+                      {!isSubmitted ? (
+                        <div className="flex gap-2 sm:gap-3">
+                          <Button type="submit" className="flex-[2] h-12 sm:h-14 rounded-xl text-base sm:text-lg font-semibold shadow-lg shadow-primary/10">
+                            Check
+                          </Button>
+                          <Button 
+                            type="button"
+                            variant="outline"
+                            onClick={() => showHint ? handleShowAnswer() : setShowHint(true)}
+                            className="flex-1 h-12 sm:h-14 rounded-xl border-primary/20 text-primary hover:bg-primary/5 text-xs sm:text-sm"
+                          >
+                            {showHint ? "Answer" : "Hint"}
+                          </Button>
+                        </div>
+                      ) : (
+                        <motion.div 
+                          initial={{ opacity: 0, scale: 0.95 }}
+                          animate={{ opacity: 1, scale: 1 }}
+                          className="space-y-4"
+                        >
+                          <div className={cn(
+                            "p-3 sm:p-4 rounded-xl flex items-center gap-3 border",
+                            isCorrect 
+                              ? "bg-green-500/10 text-green-600 dark:text-green-400 border-green-500/20" 
+                              : "bg-destructive/10 text-destructive border-destructive/20"
+                          )}>
+                            {isCorrect ? <CheckCircle2 size={18} /> : <XCircle size={18} />}
+                            <div className="flex flex-col">
+                              <span className="font-bold text-sm sm:text-base">
+                                {isCorrect ? "Correct!" : "Incorrect"}
+                              </span>
+                              {!isCorrect && (
+                                <span className="text-xs sm:text-sm opacity-90">
+                                  Correct answer: <span className="font-bold underline">{targetAnswer}</span>
+                                </span>
+                              )}
+                            </div>
+                          </div>
+
+                          <div className="flex gap-2">
+                            <Button
+                              variant={isCorrect ? "default" : "outline"}
+                              onClick={overrideCorrect}
+                              disabled={overrideSet && isCorrect}
+                              className="flex-1 h-10 rounded-md"
+                            >
+                              Mark Correct
+                            </Button>
+                            <Button
+                              variant={!isCorrect ? "default" : "outline"}
+                              onClick={overrideIncorrect}
+                              disabled={overrideSet && !isCorrect}
+                              className="flex-1 h-10 rounded-md"
+                            >
+                              Mark Incorrect
+                            </Button>
+                          </div>
+
+                          <Button onClick={handleNext} className="w-full h-12 sm:h-14 rounded-xl text-base sm:text-lg font-semibold">
+                            {currentIndex < shuffledCards.length - 1 ? "Next Card" : "Finish Session"}
+                          </Button>
+                        </motion.div>
+                      )}
+                    </motion.form>
+                  ) : (
+                    <motion.div 
+                      key="normal-controls"
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -10 }}
+                      className="space-y-4"
+                    >
+                      {!isFlipped ? (
+                        <div className="flex gap-3">
+                          <Button onClick={() => setIsFlipped(true)} className="flex-[2] h-12 sm:h-14 rounded-xl text-base sm:text-lg font-semibold shadow-lg shadow-primary/10">
+                            Show Answer
+                          </Button>
+                          <Button variant="outline" onClick={handleNext} className="flex-1 h-12 sm:h-14 rounded-xl border-border hover:bg-muted">
+                            Skip <ArrowRight className="ml-1 h-4 w-4" />
+                          </Button>
+                        </div>
+                      ) : (
+                        <div className="grid grid-cols-2 gap-3 sm:gap-4">
+                          <Button 
+                            variant="outline" 
+                            onClick={() => handleNormalResult(false)}
+                            className="h-12 sm:h-14 rounded-xl border-destructive text-destructive hover:bg-destructive/10 text-xs sm:text-sm"
+                          >
+                            <XCircle className="mr-1.5 h-4 w-4 sm:h-5 sm:w-5" /> Incorrect
+                          </Button>
+                          <Button 
+                            onClick={() => handleNormalResult(true)}
+                            className="h-12 sm:h-14 rounded-xl bg-green-600 hover:bg-green-700 text-white text-xs sm:text-sm"
+                          >
+                            <CheckCircle2 className="mr-1.5 h-4 w-4 sm:h-5 sm:w-5" /> Correct
+                          </Button>
+                        </div>
+                      )}
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
             )}
           </AnimatePresence>
         </div>
