@@ -6,6 +6,8 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Landing from "./pages/Landing";
 import Dashboard from "./pages/Dashboard";
 import Units from "./pages/Units";
+import UnitsPsych from "./pages/UnitsPsych";
+import UnitsPrecalc from "./pages/UnitsPrecalc";
 import Quiz from "./pages/Quiz";
 import QuizUnit2 from "./pages/QuizUnit2";
 import QuizUnit3 from "./pages/QuizUnit3";
@@ -36,6 +38,8 @@ const App = () => (
           <Route path="/" element={<Landing />} />
           <Route path="/home" element={<Dashboard />} />
           <Route path="/units/ap-world" element={<Units />} />
+          <Route path="/units/ap-psych" element={<UnitsPsych />} />
+          <Route path="/units/ap-precalc" element={<UnitsPrecalc />} />
           <Route path="/units/ap-world/quiz/2" element={<QuizUnit2 />} />
           <Route path="/units/ap-world/quiz/3" element={<QuizUnit3 />} />
           <Route path="/units/ap-world/quiz/4" element={<QuizUnit4 />} />
