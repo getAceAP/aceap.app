@@ -6,14 +6,16 @@ import { Brain, Timer, ShieldCheck, GraduationCap } from "lucide-react";
 interface QuizModeSelectionProps {
   onSelect: (mode: 'study' | 'exam') => void;
   unitTitle: string;
+  examMinutes?: number;
+  examDescription?: string;
 }
 
-const QuizModeSelection = ({ onSelect, unitTitle }: QuizModeSelectionProps) => {
+const QuizModeSelection = ({ onSelect, unitTitle, examMinutes = 50, examDescription }: QuizModeSelectionProps) => {
   return (
     <div className="max-w-2xl mx-auto space-y-8 py-12">
       <div className="text-center space-y-2">
         <h1 className="text-3xl font-bold tracking-tight">{unitTitle}</h1>
-        <p className="text-muted-foreground">Choose how you want to practice today.</p>
+        <p className="text-muted-foreground">{examDescription ?? "Choose how you want to practice today."}</p>
       </div>
 
       <div className="grid sm:grid-cols-2 gap-6">
@@ -51,7 +53,7 @@ const QuizModeSelection = ({ onSelect, unitTitle }: QuizModeSelectionProps) => {
           </CardHeader>
           <CardContent className="space-y-4">
             <ul className="text-sm space-y-2 text-muted-foreground">
-              <li className="flex items-center gap-2"><Timer size={14} className="text-destructive" /> 50-minute timer</li>
+              <li className="flex items-center gap-2"><Timer size={14} className="text-destructive" /> {examMinutes}-minute timer</li>
               <li className="flex items-center gap-2"><Timer size={14} className="text-destructive" /> No instant feedback</li>
               <li className="flex items-center gap-2"><Timer size={14} className="text-destructive" /> Results at the end</li>
             </ul>

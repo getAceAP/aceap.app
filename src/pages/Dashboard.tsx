@@ -6,6 +6,7 @@ import { BookOpen, Lock, ArrowRight, Code, Beaker, Calculator, Variable, Brain }
 import { Badge } from "@/components/ui/badge";
 import { motion } from "framer-motion";
 import { useAllProgress } from "@/hooks/useAllProgress";
+import { psychologyUnits } from "@/data/psychology";
 import { Progress } from "@/components/ui/progress";
 import { useTitle } from "@/hooks/useTitle";
 import { useAuth } from "@/context/AuthContext";
@@ -80,10 +81,15 @@ const Dashboard = () => {
   useTitle("Home");
   const { user } = useAuth();
   const { stats, loading } = useAllProgress();
+  const { stats: psychStats } = useAllProgress(psychologyUnits);
 
   const totalLearned = Object.values(stats).reduce((acc, s) => acc + s.learned, 0);
   const totalCards = Object.values(stats).reduce((acc, s) => acc + s.total, 0);
   const overallPercentage = totalCards > 0 ? Math.round((totalLearned / totalCards) * 100) : 0;
+
+  const psychLearned = Object.values(psychStats).reduce((acc, s) => acc + s.learned, 0);
+  const psychCards = Object.values(psychStats).reduce((acc, s) => acc + s.total, 0);
+  const psychPercentage = psychCards > 0 ? Math.round((psychLearned / psychCards) * 100) : 0;
 
   const firstName = user?.user_metadata?.first_name;
 
@@ -111,7 +117,13 @@ const Dashboard = () => {
           
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {subjects.map((subject, i) => {
-              const isAPWorld = subject.id === 'ap-world';
+              const masteryPercentage = subject.id === "ap-world"
+                ? overallPercentage
+                : subject.id === "ap-psych"
+                  ? psychPercentage
+                  : subject.id === "ap-precalc"
+                    ? 0
+                    : null;
               return (
                 <motion.div
                   key={subject.id}
@@ -139,13 +151,13 @@ const Dashboard = () => {
                       </CardDescription>
                     </CardHeader>
                     <CardContent className="p-8 pt-4 space-y-6 mt-auto">
-                      {isAPWorld && (
+                      {masteryPercentage !== null && (
                         <div className="space-y-3">
                           <div className="flex justify-between text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
                             <span>Course Mastery</span>
-                            <span>{overallPercentage}%</span>
+                            <span>{masteryPercentage}%</span>
                           </div>
-                          <Progress value={overallPercentage} className="h-1.5 bg-muted" />
+                          <Progress value={masteryPercentage} className="h-1.5 bg-muted" />
                         </div>
                       )}
                       

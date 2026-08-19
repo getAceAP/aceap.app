@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/context/AuthContext';
-import { units } from '@/data/content';
+import { units as worldUnits, Unit } from '@/data/content';
 
 export interface UnitStats {
   learned: number;
@@ -9,7 +9,7 @@ export interface UnitStats {
   percentage: number;
 }
 
-export const useAllProgress = () => {
+export const useAllProgress = (courseUnits: Unit[] = worldUnits) => {
   const { user } = useAuth();
   const [stats, setStats] = useState<Record<number, UnitStats>>({});
   const [loading, setLoading] = useState(true);
@@ -28,7 +28,7 @@ export const useAllProgress = () => {
     if (!error && data) {
       const newStats: Record<number, UnitStats> = {};
       
-      units.forEach(unit => {
+      courseUnits.forEach(unit => {
         const unitCardIds = unit.flashcards.map(f => f.id);
         const learnedInUnit = data.filter(p => 
           unitCardIds.includes(p.flashcard_id) && p.correct_count >= 3
@@ -48,7 +48,7 @@ export const useAllProgress = () => {
 
   useEffect(() => {
     fetchAllProgress();
-  }, [user]);
+  }, [user, courseUnits]);
 
   return { stats, loading, refresh: fetchAllProgress };
 };

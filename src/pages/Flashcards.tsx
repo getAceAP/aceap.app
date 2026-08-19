@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import Layout from "@/components/Layout";
 import { units, Flashcard } from "@/data/content";
+import { psychologyUnits, getPsychologyUnit, isPsychologyReview } from "@/data/psychology";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
@@ -38,11 +39,14 @@ type MatchItem = {
 };
 
 const Flashcards = () => {
-  const { unitId } = useParams();
+  const { courseId = "ap-world", unitId } = useParams();
   const navigate = useNavigate();
   const { user } = useAuth();
-  const unit = units.find((u) => u.id === Number(unitId));
-  const { progress, updateProgress } = useFlashcardProgress(Number(unitId));
+  const courseUnits = courseId === "ap-psych" ? psychologyUnits : units;
+  const coursePath = `/units/${courseId}`;
+  const unit = courseId === "ap-psych" ? getPsychologyUnit(unitId) : courseUnits.find((u) => u.id === Number(unitId));
+  const review = isPsychologyReview(unit);
+  const { progress, updateProgress } = useFlashcardProgress(unit?.id ?? Number(unitId));
   
   const [mode, setMode] = useState<"active" | "normal" | "match">("active");
   const [frontSide, setFrontSide] = useState<"term" | "definition">("definition");
@@ -308,7 +312,7 @@ const Flashcards = () => {
           className="max-w-md mx-auto text-center space-y-8 py-6 sm:py-12"
         >
           <div className="space-y-2">
-            <h2 className="text-2xl sm:text-3xl font-bold">Unit {unit.id} Complete!</h2>
+            <h2 className="text-2xl sm:text-3xl font-bold">{review ? "Full Course Review Complete!" : `Unit ${unit.id} Complete!`}</h2>
             <p className="text-muted-foreground">Session Summary</p>
           </div>
           
@@ -327,7 +331,7 @@ const Flashcards = () => {
             <Button onClick={resetSession} className="w-full h-12 rounded-xl">
               <RefreshCcw className="mr-2 h-4 w-4" /> Restart
             </Button>
-            <Button variant="outline" onClick={() => navigate("/units/ap-world")} className="flex-1 h-12 rounded-xl">
+            <Button variant="outline" onClick={() => navigate(coursePath)} className="flex-1 h-12 rounded-xl">
               Back to Units
             </Button>
           </div>
@@ -342,7 +346,7 @@ const Flashcards = () => {
         <div className="flex flex-col gap-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <Button variant="ghost" size="sm" onClick={() => navigate("/units/ap-world")} className="text-muted-foreground h-8 px-2">
+              <Button variant="ghost" size="sm" onClick={() => navigate(coursePath)} className="text-muted-foreground h-8 px-2">
                 <ArrowLeft className="mr-1 h-4 w-4" /> Exit
               </Button>
               <Button variant="outline" size="sm" onClick={handleShuffle} className="rounded-lg text-[10px] font-bold uppercase tracking-wider h-8">
@@ -357,7 +361,7 @@ const Flashcards = () => {
                 </DialogTrigger>
                 <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto rounded-3xl">
                   <DialogHeader>
-                    <DialogTitle className="text-2xl font-bold">Unit {unit.id} Vocabulary</DialogTitle>
+                    <DialogTitle className="text-2xl font-bold">{review ? "All Units Vocabulary" : `Unit ${unit.id} Vocabulary`}</DialogTitle>
                   </DialogHeader>
                   <div className="space-y-4 pt-4">
                     {unit.flashcards.map((card) => (

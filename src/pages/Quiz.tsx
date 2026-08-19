@@ -2,10 +2,11 @@ import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import Layout from "@/components/Layout";
 import { units, Question } from "@/data/content";
+import { psychologyUnits, getPsychologyUnit, isPsychologyReview, buildPsychologyPracticeExam } from "@/data/psychology";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { Card, CardContent } from "@/components/ui/card";
-import { CheckCircle2, XCircle, ArrowLeft, RefreshCcw, Timer, AlertCircle, Shuffle } from "lucide-react";
+import { CheckCircle2, XCircle, ArrowLeft, RefreshCcw, Timer, AlertCircle, Shuffle, BookOpen } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { motion } from "framer-motion";
 import { playSound } from "@/utils/sounds";
@@ -13,9 +14,13 @@ import QuizModeSelection from "@/components/QuizModeSelection";
 import { useQuizProgress } from "@/hooks/useQuizProgress";
 
 const Quiz = () => {
-  const { unitId } = useParams();
+  const { courseId = "ap-world", unitId } = useParams();
   const navigate = useNavigate();
-  const unit = units.find((u) => u.id === Number(unitId));
+  const courseUnits = courseId === "ap-psych" ? psychologyUnits : units;
+  const coursePath = `/units/${courseId}`;
+  const unit = courseId === "ap-psych" ? getPsychologyUnit(unitId) : courseUnits.find((u) => u.id === Number(unitId));
+  const review = isPsychologyReview(unit);
+  const examMinutes = review ? 90 : 50;
   const { saveQuizResult } = useQuizProgress();
   
   const [mode, setMode] = useState<'study' | 'exam' | null>(null);
@@ -24,24 +29,33 @@ const Quiz = () => {
   const [userAnswers, setUserAnswers] = useState<Record<number, string>>({});
   const [isAnswered, setIsAnswered] = useState(false);
   const [score, setScore] = useState(0);
+  const [incorrectCount, setIncorrectCount] = useState(0);
   const [isFinished, setIsFinished] = useState(false);
   const [timeLeft, setTimeLeft] = useState(50 * 60);
 
   const prepareQuestions = (qs: Question[]) => {
-    return [...qs]
+    if (review) {
+      return buildPsychologyPracticeExam(10).map((q) => ({
+        ...q,
+        options: [...q.options].sort(() => 0.5 - Math.random()),
+      }));
+    }
+    const shuffled = [...qs]
       .sort(() => 0.5 - Math.random())
-      .slice(0, 15)
       .map(q => ({
         ...q,
         options: [...q.options].sort(() => 0.5 - Math.random())
       }));
+    return courseId === "ap-psych" ? shuffled : shuffled.slice(0, 15);
   };
 
   useEffect(() => {
     if (unit) {
-      setSessionQuestions(prepareQuestions(unit.questions));
+      const prepared = prepareQuestions(unit.questions);
+      setSessionQuestions(prepared);
+      setTimeLeft(review ? examMinutes * 60 : courseId === "ap-psych" ? prepared.length * 60 : 50 * 60);
     }
-  }, [unit]);
+  }, [unit, courseId]);
 
   useEffect(() => {
     if (mode === 'exam' && !isFinished && timeLeft > 0) {
@@ -54,12 +68,14 @@ const Quiz = () => {
 
   const handleShuffle = () => {
     if (unit) {
-      setSessionQuestions(prepareQuestions(unit.questions));
+      const prepared = prepareQuestions(unit.questions);
+      setSessionQuestions(prepared);
       setCurrentIndex(0);
       setUserAnswers({});
       setIsAnswered(false);
       setScore(0);
-      setTimeLeft(50 * 60);
+      setIncorrectCount(0);
+      setTimeLeft(review ? examMinutes * 60 : courseId === "ap-psych" ? prepared.length * 60 : 50 * 60);
     }
   };
 
@@ -77,9 +93,10 @@ const Quiz = () => {
     if (mode === 'study') {
       setIsAnswered(true);
       if (option === sessionQuestions[currentIndex].correctAnswer) {
-        setScore(score + 1);
+        setScore((currentScore) => currentScore + 1);
         playSound('correct');
       } else {
+        setIncorrectCount((currentCount) => currentCount + 1);
         playSound('wrong');
       }
     }
@@ -103,13 +120,19 @@ const Quiz = () => {
       setScore(finalScore);
     }
     setIsFinished(true);
-    saveQuizResult(unit.id, finalScore, sessionQuestions.length, mode!);
+    const progressUnitId = courseId === "ap-psych" ? 100 + unit.id : unit.id;
+    saveQuizResult(progressUnitId, finalScore, sessionQuestions.length, mode!);
   };
 
   if (!mode) {
     return (
       <Layout>
-        <QuizModeSelection unitTitle={unit.title} onSelect={setMode} />
+        <QuizModeSelection
+          unitTitle={unit.title}
+          onSelect={setMode}
+          examMinutes={examMinutes}
+          examDescription={review ? "About 75 mixed questions, including stimulus-based items from every unit." : undefined}
+        />
       </Layout>
     );
   }
@@ -125,7 +148,16 @@ const Quiz = () => {
           <div className="space-y-2">
             <h2 className="text-2xl sm:text-3xl font-bold">Quiz Complete!</h2>
             <p className="text-muted-foreground">Mode: <span className="capitalize font-bold text-foreground">{mode}</span></p>
-            <p className="text-muted-foreground">You scored {score} out of {sessionQuestions.length}</p>
+          </div>
+          <div className="grid grid-cols-2 gap-4">
+            <div className="p-4 sm:p-6 rounded-2xl bg-green-500/10 border border-green-500/20">
+              <div className="text-2xl sm:text-3xl font-bold text-green-600 dark:text-green-400">{score}</div>
+              <div className="text-[10px] sm:text-xs font-bold uppercase tracking-widest text-green-600/70">Correct</div>
+            </div>
+            <div className="p-4 sm:p-6 rounded-2xl bg-destructive/10 border border-destructive/20">
+              <div className="text-2xl sm:text-3xl font-bold text-destructive">{sessionQuestions.length - score}</div>
+              <div className="text-[10px] sm:text-xs font-bold uppercase tracking-widest text-destructive/70">Incorrect</div>
+            </div>
           </div>
           <div className="p-8 rounded-3xl bg-primary/10 border border-primary/20">
             <div className="text-5xl font-bold text-primary mb-2">{Math.round((score/sessionQuestions.length)*100)}%</div>
@@ -135,7 +167,7 @@ const Quiz = () => {
             <Button onClick={() => window.location.reload()} className="flex-1 h-12 rounded-xl">
               <RefreshCcw className="mr-2 h-4 w-4" /> Try Again
             </Button>
-            <Button variant="outline" onClick={() => navigate("/units/ap-world")} className="flex-1 h-12 rounded-xl">
+            <Button variant="outline" onClick={() => navigate(coursePath)} className="flex-1 h-12 rounded-xl">
               Back to Units
             </Button>
           </div>
@@ -152,7 +184,7 @@ const Quiz = () => {
       <div className="space-y-6 sm:space-y-8">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <Button variant="ghost" onClick={() => navigate("/units/ap-world")} className="text-muted-foreground">
+            <Button variant="ghost" onClick={() => navigate(coursePath)} className="text-muted-foreground">
               <ArrowLeft className="mr-2 h-4 w-4" /> Exit
             </Button>
             <Button variant="outline" size="sm" onClick={handleShuffle} className="rounded-lg h-8 px-3 text-[10px] font-bold uppercase tracking-wider">
@@ -169,13 +201,33 @@ const Quiz = () => {
                 {formatTime(timeLeft)}
               </div>
             )}
-            <span className="text-sm font-medium text-muted-foreground">
-              Question {currentIndex + 1} of {sessionQuestions.length}
-            </span>
+            {mode === "exam" ? null : (
+              <div className="flex items-center gap-4 text-xs sm:text-sm font-bold">
+                <span className="text-green-600 dark:text-green-400">{score} right</span>
+                <span className="text-destructive">{incorrectCount} wrong</span>
+              </div>
+            )}
           </div>
         </div>
         <Progress value={progress} className="h-1.5 bg-muted" />
-        <div className="space-y-6">
+        <div className={cn("space-y-6", currentQuestion.stimulus && "grid grid-cols-1 lg:grid-cols-2 gap-8 items-start space-y-0")}>
+          {currentQuestion.stimulus && (
+            <Card className="overflow-hidden border-border shadow-xl shadow-primary/5 rounded-3xl lg:sticky lg:top-24">
+              <CardContent className="p-6 sm:p-8 space-y-4">
+                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 text-primary text-[10px] font-bold uppercase tracking-widest">
+                  <BookOpen size={12} />
+                  Stimulus
+                </div>
+                <p className="text-base sm:text-lg leading-relaxed font-medium italic text-foreground/90">
+                  “{currentQuestion.stimulus.text}”
+                </p>
+                <div className="pt-4 border-t border-border text-[10px] text-muted-foreground font-medium uppercase tracking-wider">
+                  Source: {currentQuestion.stimulus.source}
+                </div>
+              </CardContent>
+            </Card>
+          )}
+          <div className="space-y-6">
           <h2 className="text-2xl font-semibold leading-tight">{currentQuestion.question}</h2>
           <div className="grid gap-3">
             {currentQuestion.options.map((option) => {
@@ -222,6 +274,7 @@ const Quiz = () => {
                 {currentIndex < sessionQuestions.length - 1 ? "Next Question" : "Submit Quiz"}
               </Button>
             )}
+          </div>
           </div>
         </div>
       </div>

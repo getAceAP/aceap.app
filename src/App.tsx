@@ -18,6 +18,7 @@ import QuizUnit7 from "./pages/QuizUnit7";
 import QuizUnit8 from "./pages/QuizUnit8";
 import Flashcards from "./pages/Flashcards";
 import StudyGuide from "./pages/StudyGuide";
+import PsychStudyGuide from "./pages/PsychStudyGuide";
 import Privacy from "./pages/Privacy";
 import Terms from "./pages/Terms";
 import Login from "./pages/Login";
@@ -47,8 +48,9 @@ const App = () => (
           <Route path="/units/ap-world/quiz/6" element={<QuizUnit6 />} />
           <Route path="/units/ap-world/quiz/7" element={<QuizUnit7 />} />
           <Route path="/units/ap-world/quiz/8" element={<QuizUnit8 />} />
-          <Route path="/units/ap-world/quiz/:unitId" element={<Quiz />} />
-          <Route path="/units/ap-world/flashcards/:unitId" element={<Flashcards />} />
+          <Route path="/units/:courseId/quiz/:unitId" element={<Quiz />} />
+          <Route path="/units/:courseId/flashcards/:unitId" element={<Flashcards />} />
+          <Route path="/units/ap-psych/guide/:unitId" element={<PsychStudyGuide />} />
           <Route path="/units/ap-world/guide/:unitId" element={<StudyGuide />} />
           <Route path="/predictions" element={<Predictions />} />
           <Route path="/privacy" element={<Privacy />} />

@@ -4,6 +4,10 @@ export interface Question {
   options: string[];
   correctAnswer: string;
   explanation: string;
+  stimulus?: {
+    text: string;
+    source: string;
+  };
 }
 
 export interface Flashcard {
@@ -819,7 +823,7 @@ export const units: Unit[] = [
     flashcards: [
       { id: "u9-f1", prompt: "Population explosion", answer: "The rapid growth of the world's human population during the past century, attended by ever-shorter doubling times and accelerating rates of increase" },
       { id: "u9-f2", prompt: "Green Revolution", answer: "Rapid diffusion of new agricultural technology, especially new high-yield seeds and fertilizers." },
-      { id: "u9-f3", prompt: "one-child family policy", answer: "in 1978, in order to control expanding chinese population      { id: "u9-f3", prompt: "one-child family policy", answer: "in 1978, in order to control expanding chinese population and said each family could have one child, very hard to enforce in rural areas and policy not unified in all provinces" },
+      { id: "u9-f3", prompt: "one-child family policy", answer: "Chinese policy begun in 1978 to limit population growth by restricting most families to one child; it was difficult to enforce in rural areas and was not applied uniformly in all provinces." },
       { id: "u9-f4", prompt: "Age of Fossil Fuels", answer: "Time period in which man used fossil fuels as a main source of power" },
       { id: "u9-f5", prompt: "Second-wave feminism", answer: "Women's rights movement that revived in the 1960s with a different agenda than earlier women's suffrage movements; second-wave feminists demanded equal rights for women in employment and education, women's right to control their own bodies, and the end of patriarchal domination." },
       { id: "u9-f6", prompt: "Influenza pandemic", answer: "1918 global outbreak of influenza, a highly contagious viral infection, killing as many as 30 million people worldwide." },
