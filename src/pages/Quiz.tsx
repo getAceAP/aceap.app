@@ -104,11 +104,19 @@ const Quiz = () => {
 
   const handleNext = () => {
     if (currentIndex < sessionQuestions.length - 1) {
-      setCurrentIndex(currentIndex + 1);
-      setIsAnswered(false);
+      const nextIndex = currentIndex + 1;
+      setCurrentIndex(nextIndex);
+      setIsAnswered(mode === "study" && Boolean(userAnswers[nextIndex]));
     } else {
       finishQuiz();
     }
+  };
+
+  const handleBack = () => {
+    if (currentIndex === 0) return;
+    const prevIndex = currentIndex - 1;
+    setCurrentIndex(prevIndex);
+    setIsAnswered(mode === "study" && Boolean(userAnswers[prevIndex]));
   };
 
   const finishQuiz = () => {
@@ -264,15 +272,25 @@ const Quiz = () => {
                     <AlertCircle size={14} /> Explanation
                   </div>
                   <p className="text-foreground leading-relaxed">{currentQuestion.explanation}</p>
-                  <Button onClick={handleNext} className="w-full h-12 rounded-xl text-lg font-bold">
-                    {currentIndex < sessionQuestions.length - 1 ? "Next Question" : "Finish Quiz"}
-                  </Button>
+                  <div className="flex gap-3">
+                    <Button variant="outline" onClick={handleBack} disabled={currentIndex === 0} className="flex-1 h-12 rounded-xl text-lg font-bold">
+                      Back
+                    </Button>
+                    <Button onClick={handleNext} className="flex-[2] h-12 rounded-xl text-lg font-bold">
+                      {currentIndex < sessionQuestions.length - 1 ? "Next Question" : "Finish Quiz"}
+                    </Button>
+                  </div>
                 </CardContent>
               </Card>
             ) : (
-              <Button onClick={handleNext} disabled={!userAnswers[currentIndex]} className="w-full h-14 rounded-2xl text-lg font-bold shadow-lg shadow-primary/20">
-                {currentIndex < sessionQuestions.length - 1 ? "Next Question" : "Submit Quiz"}
-              </Button>
+              <div className="flex gap-3">
+                <Button variant="outline" onClick={handleBack} disabled={currentIndex === 0} className="flex-1 h-14 rounded-2xl text-lg font-bold">
+                  Back
+                </Button>
+                <Button onClick={handleNext} disabled={!userAnswers[currentIndex]} className="flex-[2] h-14 rounded-2xl text-lg font-bold shadow-lg shadow-primary/20">
+                  {currentIndex < sessionQuestions.length - 1 ? "Next Question" : "Submit Quiz"}
+                </Button>
+              </div>
             )}
           </div>
           </div>

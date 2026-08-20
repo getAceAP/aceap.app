@@ -19,7 +19,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
-const Layout = ({ children }: { children: React.ReactNode }) => {
+const Layout = ({ children, wide = false }: { children: React.ReactNode; wide?: boolean }) => {
   const location = useLocation();
   const isHome = location.pathname === "/home";
   const { user, signOut } = useAuth();
@@ -131,7 +131,9 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
-        className="max-w-7xl mx-auto px-4 sm:px-8 py-8 sm:py-12"
+        className={cn(
+          wide ? "px-0 py-0" : "max-w-7xl mx-auto px-4 sm:px-8 py-8 sm:py-12"
+        )}
       >
         {children}
       </motion.main>

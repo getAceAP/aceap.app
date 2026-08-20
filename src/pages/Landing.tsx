@@ -28,6 +28,21 @@ import {
   Repeat,
 } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
+import { cn } from "@/lib/utils";
+
+const Band = ({
+  children,
+  className,
+  innerClassName,
+}: {
+  children: React.ReactNode;
+  className?: string;
+  innerClassName?: string;
+}) => (
+  <section className={cn("py-20 sm:py-28 px-4 sm:px-8", className)}>
+    <div className={cn("max-w-6xl mx-auto", innerClassName)}>{children}</div>
+  </section>
+);
 
 const Landing = () => {
   const { user, loading } = useAuth();
@@ -48,54 +63,54 @@ const Landing = () => {
   }
 
   return (
-    <Layout>
-      <div className="space-y-24 sm:space-y-32 py-4 sm:py-12">
-        <section className="text-center space-y-8 sm:space-y-12 max-w-5xl mx-auto relative">
-          <div className="absolute -top-24 left-1/2 -translate-x-1/2 w-[500px] h-[500px] bg-primary/5 rounded-full blur-[120px] -z-10" />
+    <Layout wide>
+      <Band className="relative overflow-hidden" innerClassName="max-w-5xl text-center space-y-8 sm:space-y-12">
+        <div className="absolute -top-24 left-1/2 -translate-x-1/2 w-[500px] h-[500px] bg-primary/5 rounded-full blur-[120px] -z-10" />
 
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
-            className="space-y-6"
-          >
-            <div className="flex flex-wrap items-center justify-center gap-3">
-              <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-primary/5 border border-primary/10 text-[10px] sm:text-xs font-bold text-primary uppercase tracking-widest shadow-sm">
-                <Users size={12} />
-                1.5K+ unique visitors last month
-              </div>
-              <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-primary/5 border border-primary/10 text-[10px] sm:text-xs font-bold text-primary uppercase tracking-widest shadow-sm">
-                <Sparkles size={12} className="fill-primary" />
-                Built for the 5
-              </div>
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
+          className="space-y-6"
+        >
+          <div className="flex flex-wrap items-center justify-center gap-3">
+            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-primary/5 border border-primary/10 text-[10px] sm:text-xs font-bold text-primary uppercase tracking-widest shadow-sm">
+              <Users size={12} />
+              1.5K+ unique visitors last month
             </div>
-            <h1 className="text-5xl sm:text-6xl md:text-8xl font-bold tracking-tight text-foreground leading-[1.05] sm:leading-[1.05]">
-              Master <span className="text-primary italic">AP Exams</span>
-              <br />
-              <span className="text-muted-foreground/80">with Active Recall.</span>
-            </h1>
-            <p className="text-lg sm:text-2xl text-muted-foreground leading-relaxed max-w-2xl mx-auto px-4 font-medium">
-              Stop passive reading. AceAP uses randomized testing and type-in flashcards to force your brain to remember the curriculum.
-            </p>
-          </motion.div>
+            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-primary/5 border border-primary/10 text-[10px] sm:text-xs font-bold text-primary uppercase tracking-widest shadow-sm">
+              <Sparkles size={12} className="fill-primary" />
+              Built for the 5
+            </div>
+          </div>
+          <h1 className="text-5xl sm:text-6xl md:text-8xl font-bold tracking-tight text-foreground leading-[1.05] sm:leading-[1.05]">
+            Master <span className="text-primary italic">AP Exams</span>
+            <br />
+            <span className="text-muted-foreground/80">with Active Recall.</span>
+          </h1>
+          <p className="text-lg sm:text-2xl text-muted-foreground leading-relaxed max-w-2xl mx-auto px-4 font-medium">
+            Stop passive reading. AceAP uses randomized testing and type-in flashcards to force your brain to remember the curriculum.
+          </p>
+        </motion.div>
 
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.2, ease: [0.22, 1, 0.36, 1] }}
-            className="flex flex-col items-center justify-center gap-3 px-4"
-          >
-            <Button asChild size="lg" className="w-full sm:w-auto h-16 px-10 text-xl rounded-2xl shadow-[0_20px_50px_rgba(139,92,246,0.3)] hover:shadow-[0_20px_50px_rgba(139,92,246,0.5)] transition-all duration-500 font-bold">
-              <Link to="/home">
-                Start Studying Now
-                <ArrowRight className="ml-2 h-6 w-6" />
-              </Link>
-            </Button>
-            <p className="text-sm text-muted-foreground font-medium">Free to start. No textbook required.</p>
-          </motion.div>
-        </section>
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, delay: 0.2, ease: [0.22, 1, 0.36, 1] }}
+          className="flex flex-col items-center justify-center gap-3 px-4"
+        >
+          <Button asChild size="lg" className="w-full sm:w-auto h-16 px-10 text-xl rounded-2xl shadow-[0_20px_50px_rgba(139,92,246,0.3)] hover:shadow-[0_20px_50px_rgba(139,92,246,0.5)] transition-all duration-500 font-bold">
+            <Link to="/home">
+              Start Studying Now
+              <ArrowRight className="ml-2 h-6 w-6" />
+            </Link>
+          </Button>
+          <p className="text-sm text-muted-foreground font-medium">Free to start. No textbook required.</p>
+        </motion.div>
+      </Band>
 
-        <section className="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8 px-4">
+      <Band className="bg-violet-50 dark:bg-violet-950/40">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8">
           {[
             {
               icon: <Brain className="text-blue-500" size={28} />,
@@ -130,9 +145,11 @@ const Landing = () => {
               </div>
             </motion.div>
           ))}
-        </section>
+        </div>
+      </Band>
 
-        <section className="px-4 max-w-6xl mx-auto space-y-12">
+      <Band className="bg-sky-50 dark:bg-sky-950/30">
+        <div className="space-y-12">
           <div className="text-center space-y-4">
             <h2 className="text-3xl sm:text-5xl font-bold tracking-tight">How a session actually works</h2>
             <p className="text-muted-foreground text-lg max-w-2xl mx-auto">Pick a course, open a unit, then drill until the terms stick. No 40-page PDF to scroll.</p>
@@ -150,9 +167,11 @@ const Landing = () => {
               </div>
             ))}
           </div>
-        </section>
+        </div>
+      </Band>
 
-        <section className="px-4 max-w-6xl mx-auto space-y-12">
+      <Band className="bg-amber-50 dark:bg-amber-950/25">
+        <div className="space-y-12">
           <div className="text-center space-y-4">
             <h2 className="text-3xl sm:text-5xl font-bold tracking-tight">Courses on AceAP</h2>
             <p className="text-muted-foreground text-lg max-w-2xl mx-auto">Built around College Board units, not random trivia decks.</p>
@@ -179,9 +198,11 @@ const Landing = () => {
               </div>
             ))}
           </div>
-        </section>
+        </div>
+      </Band>
 
-        <section className="px-4 max-w-6xl mx-auto space-y-12">
+      <Band className="bg-fuchsia-50 dark:bg-fuchsia-950/25">
+        <div className="space-y-12">
           <div className="text-center space-y-4">
             <h2 className="text-3xl sm:text-5xl font-bold tracking-tight">Study tools, not another notes dump</h2>
           </div>
@@ -205,9 +226,11 @@ const Landing = () => {
               </div>
             ))}
           </div>
-        </section>
+        </div>
+      </Band>
 
-        <section className="px-4 max-w-6xl mx-auto space-y-12">
+      <Band className="bg-emerald-50 dark:bg-emerald-950/25">
+        <div className="space-y-12">
           <div className="text-center space-y-4">
             <h2 className="text-3xl sm:text-5xl font-bold tracking-tight">Little things that add up</h2>
             <p className="text-muted-foreground text-lg max-w-2xl mx-auto">Random, true points about the site. None of them are “read chapter 12 again.”</p>
@@ -236,36 +259,38 @@ const Landing = () => {
               </div>
             ))}
           </div>
-        </section>
+        </div>
+      </Band>
 
-        <section className="px-4 max-w-5xl mx-auto">
-          <div className="rounded-[2.5rem] border border-border bg-card p-8 sm:p-14 space-y-8">
-            <h2 className="text-3xl sm:text-4xl font-bold tracking-tight">Rereading highlights is a trap</h2>
-            <div className="grid md:grid-cols-2 gap-8 text-muted-foreground leading-relaxed text-lg">
-              <p>
-                Highlighting a packet feels productive and then evaporates on exam day. AceAP is built around retrieval: you have to produce the term, pick the cause, or match the study before you see the answer.
-              </p>
-              <p>
-                That is why cards ask you to type, why quizzes shuffle options, and why study mode explains the miss immediately. The site is annoying on purpose. Annoying is how memories stick.
-              </p>
-            </div>
-            <ul className="grid sm:grid-cols-2 gap-3">
-              {[
-                "No infinite scroll of notes",
-                "No paywall in the middle of a unit",
-                "No “unlock this deck” after question 3",
-                "Explanations sit under the question, not in a separate PDF",
-              ].map((line) => (
-                <li key={line} className="flex items-center gap-2 font-medium text-foreground">
-                  <CheckCircle2 size={16} className="text-primary shrink-0" />
-                  {line}
-                </li>
-              ))}
-            </ul>
+      <Band className="bg-rose-50 dark:bg-rose-950/25" innerClassName="max-w-5xl">
+        <div className="rounded-[2.5rem] border border-border bg-card p-8 sm:p-14 space-y-8">
+          <h2 className="text-3xl sm:text-4xl font-bold tracking-tight">Rereading highlights is a trap</h2>
+          <div className="grid md:grid-cols-2 gap-8 text-muted-foreground leading-relaxed text-lg">
+            <p>
+              Highlighting a packet feels productive and then evaporates on exam day. AceAP is built around retrieval: you have to produce the term, pick the cause, or match the study before you see the answer.
+            </p>
+            <p>
+              That is why cards ask you to type, why quizzes shuffle options, and why study mode explains the miss immediately. The site is annoying on purpose. Annoying is how memories stick.
+            </p>
           </div>
-        </section>
+          <ul className="grid sm:grid-cols-2 gap-3">
+            {[
+              "No infinite scroll of notes",
+              "No paywall in the middle of a unit",
+              "No “unlock this deck” after question 3",
+              "Explanations sit under the question, not in a separate PDF",
+            ].map((line) => (
+              <li key={line} className="flex items-center gap-2 font-medium text-foreground">
+                <CheckCircle2 size={16} className="text-primary shrink-0" />
+                {line}
+              </li>
+            ))}
+          </ul>
+        </div>
+      </Band>
 
-        <section className="px-4 max-w-6xl mx-auto space-y-12">
+      <Band className="bg-indigo-50 dark:bg-indigo-950/30">
+        <div className="space-y-12">
           <div className="text-center space-y-4">
             <h2 className="text-3xl sm:text-5xl font-bold tracking-tight">Made for how AP actually tests</h2>
           </div>
@@ -299,28 +324,30 @@ const Landing = () => {
               </p>
             </div>
           </div>
-        </section>
+        </div>
+      </Band>
 
-        <section className="px-4 max-w-4xl mx-auto space-y-10">
-          <h2 className="text-3xl sm:text-5xl font-bold tracking-tight text-center">Questions people actually ask</h2>
-          <div className="space-y-4">
-            {[
-              { q: "Is it only AP World?", a: "No. World is the original course, Psychology is fully live, and Precalculus is on the hub. More APs are listed as coming soon." },
-              { q: "Do I have to make an account?", a: "You can browse, but logging in with Google is how flashcard mastery and quiz results save." },
-              { q: "Is this the official College Board curriculum?", a: "It is aligned to AP units and CED-style Psych units. It is a study tool, not the exam itself." },
-              { q: "Why type answers instead of tapping?", a: "Recognition is easier than recall. Typing the term is closer to what you need when a prompt is blank on test day." },
-              { q: "Can I use it the night before?", a: "Yes, but it is better as a loop: miss a card, see the explanation, shuffle, hit it again tomorrow." },
-              { q: "What’s with the 1.5K number?", a: "That is unique visitors from last month, not a made-up “millions of learners” stat." },
-            ].map((item) => (
-              <div key={item.q} className="p-6 sm:p-8 rounded-3xl border border-border bg-card space-y-2">
-                <h3 className="font-bold text-lg">{item.q}</h3>
-                <p className="text-muted-foreground leading-relaxed">{item.a}</p>
-              </div>
-            ))}
-          </div>
-        </section>
+      <Band className="bg-orange-50 dark:bg-orange-950/25" innerClassName="max-w-4xl space-y-10">
+        <h2 className="text-3xl sm:text-5xl font-bold tracking-tight text-center">Questions people actually ask</h2>
+        <div className="space-y-4">
+          {[
+            { q: "Is it only AP World?", a: "No. World is the original course, Psychology is fully live, and Precalculus is on the hub. More APs are listed as coming soon." },
+            { q: "Do I have to make an account?", a: "You can browse, but logging in with Google is how flashcard mastery and quiz results save." },
+            { q: "Is this the official College Board curriculum?", a: "It is aligned to AP units and CED-style Psych units. It is a study tool, not the exam itself." },
+            { q: "Why type answers instead of tapping?", a: "Recognition is easier than recall. Typing the term is closer to what you need when a prompt is blank on test day." },
+            { q: "Can I use it the night before?", a: "Yes, but it is better as a loop: miss a card, see the explanation, shuffle, hit it again tomorrow." },
+            { q: "What’s with the 1.5K number?", a: "That is unique visitors from last month, not a made-up “millions of learners” stat." },
+          ].map((item) => (
+            <div key={item.q} className="p-6 sm:p-8 rounded-3xl border border-border bg-card space-y-2">
+              <h3 className="font-bold text-lg">{item.q}</h3>
+              <p className="text-muted-foreground leading-relaxed">{item.a}</p>
+            </div>
+          ))}
+        </div>
+      </Band>
 
-        <section className="border-t border-border/50 pt-24 sm:pt-32 text-center space-y-16 px-4">
+      <Band className="bg-slate-100 dark:bg-slate-900/60">
+        <div className="text-center space-y-16">
           <h2 className="text-3xl sm:text-5xl font-bold tracking-tight">Everything you need for a 5.</h2>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-12">
             {[
@@ -342,26 +369,26 @@ const Landing = () => {
               </motion.div>
             ))}
           </div>
-        </section>
+        </div>
+      </Band>
 
-        <section className="mx-4">
-          <motion.div
-            whileHover={{ scale: 1.01 }}
-            className="bg-primary rounded-[3rem] p-10 sm:p-20 text-center text-primary-foreground space-y-8 shadow-[0_40px_100px_rgba(139,92,246,0.3)] relative overflow-hidden"
-          >
-            <div className="absolute top-0 left-0 w-full h-full bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-10" />
-            <div className="relative z-10 space-y-6">
-              <h2 className="text-3xl sm:text-6xl font-bold tracking-tight">Ready to ace your APs?</h2>
-              <p className="text-primary-foreground/80 max-w-xl mx-auto text-lg sm:text-xl font-medium">
-                Join 1,500+ AP students who used AceAP last month to study smarter, not longer.
-              </p>
-              <Button asChild size="lg" variant="secondary" className="w-full sm:w-auto h-16 rounded-2xl px-12 text-xl font-bold shadow-2xl">
-                <Link to="/home">Get Started for Free</Link>
-              </Button>
-            </div>
-          </motion.div>
-        </section>
-      </div>
+      <Band className="bg-primary/10 dark:bg-primary/20">
+        <motion.div
+          whileHover={{ scale: 1.01 }}
+          className="bg-primary rounded-[3rem] p-10 sm:p-20 text-center text-primary-foreground space-y-8 shadow-[0_40px_100px_rgba(139,92,246,0.3)] relative overflow-hidden"
+        >
+          <div className="absolute top-0 left-0 w-full h-full bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-10" />
+          <div className="relative z-10 space-y-6">
+            <h2 className="text-3xl sm:text-6xl font-bold tracking-tight">Ready to ace your APs?</h2>
+            <p className="text-primary-foreground/80 max-w-xl mx-auto text-lg sm:text-xl font-medium">
+              Join 1,500+ AP students who used AceAP last month to study smarter, not longer.
+            </p>
+            <Button asChild size="lg" variant="secondary" className="w-full sm:w-auto h-16 rounded-2xl px-12 text-xl font-bold shadow-2xl">
+              <Link to="/home">Get Started for Free</Link>
+            </Button>
+          </div>
+        </motion.div>
+      </Band>
     </Layout>
   );
 };
