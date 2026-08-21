@@ -15,6 +15,10 @@ export default defineConfig(() => ({
     VitePWA({
       registerType: 'autoUpdate',
       includeAssets: ['favicon.ico', 'AceAP.png'],
+      workbox: {
+        // Main bundle exceeds Workbox's default 2 MiB precache cap after Precalc/tldraw.
+        maximumFileSizeToCacheInBytes: 5 * 1024 * 1024,
+      },
       manifest: {
         name: 'AceAP - AP Revision Tool',
         short_name: 'AceAP',
