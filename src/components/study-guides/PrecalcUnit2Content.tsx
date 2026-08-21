@@ -192,7 +192,7 @@ const PrecalcUnit2Content = () => (
           Condense to one log when possible, then exponentiate. Example: <MathText text="$\\log_2(x-1)+\\log_2(x+1)=3\\Rightarrow\\log_2((x-1)(x+1))=3\\Rightarrow x^2-1=8$" />. Solutions candidates $\\pm 3$; discard $x=-3$ if it fails domain.
         </p>
         <p className="text-sm text-muted-foreground leading-relaxed m-0">
-          Domain of <MathText text="$\\log_b(g(x))$" />: <MathText text="$g(x)>0$" /> (and $b>0$, $b\\neq 1$). For a sum of logs, every argument must be positive.
+          Domain of <MathText text="$\\log_b(g(x))$" />: <MathText text="$g(x)>0$ (and $b>0$, $b\\neq 1$)" />. For a sum of logs, every argument must be positive.
         </p>
         <p className="text-sm text-muted-foreground leading-relaxed m-0">
           Change of base is your calculator friend: <MathText text="$\\log_b a=\\dfrac{\\ln a}{\\ln b}=\\dfrac{\\log a}{\\log b}$" />.
