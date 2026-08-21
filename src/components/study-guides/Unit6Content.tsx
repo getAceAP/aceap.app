@@ -1,4 +1,4 @@
-import { Target, Globe, Users, TrendingUp, ShieldAlert, Zap, Landmark, AlertTriangle, BookOpen, HeartPulse, MapPin } from "lucide-react";
+import { Target, Globe, Users, TrendingUp, ShieldAlert, Zap, Landmark, AlertTriangle, BookOpen, HeartPulse, MapPin, ArrowLeftRight } from "lucide-react";
 
 const Unit6Content = () => {
   return (
@@ -11,6 +11,9 @@ const Unit6Content = () => {
             <h3 className="font-bold text-primary mb-1">Unit 6: Consequences of Industrialization (1750-1900)</h3>
             <p className="text-sm text-muted-foreground leading-relaxed">
               This unit examines how industrialization fueled a new wave of <strong>Imperialism</strong>. Western powers and Japan used their technological superiority to establish vast empires, leading to global resistance, the creation of export economies, and massive waves of human migration.
+            </p>
+            <p className="text-sm text-muted-foreground leading-relaxed mt-3">
+              Distinguish formal colonies (India, Congo) from economic imperialism (Opium Wars, banana republics, Suez). Resistance includes both western-educated nationalists and millenarian prophets. Migration is a CED topic of its own: indenture after abolition, ethnic enclaves, and nativist exclusion laws.
             </p>
           </div>
         </div>
@@ -123,6 +126,25 @@ const Unit6Content = () => {
               </ul>
             </div>
           </div>
+        </div>
+      </section>
+
+      <section className="space-y-8">
+        <div className="border-l-4 border-primary pl-6">
+          <h2 className="text-3xl font-bold m-0">6.4–6.5 Economic imperialism and export economies</h2>
+          <p className="text-muted-foreground mt-2">When the flag is optional but the contract is not.</p>
+        </div>
+        <div className="not-prose p-6 rounded-2xl bg-muted/30 border border-border space-y-4">
+          <p className="text-sm text-muted-foreground leading-relaxed m-0">
+            Britain forced China open after the <strong>Opium Wars</strong> and the Treaty of Nanjing: treaty ports, extraterritoriality, and later a sphere of influence. Latin America often stayed politically independent while British and US capital controlled railroads, mines, and cash crops. Egypt’s cotton boom and Suez debt pulled it toward British occupation. Rubber, palm oil, copper, and meat packing turned colonies and semi-colonies into <strong>export economies</strong> that imported manufactured goods and food.
+          </p>
+          <p className="text-sm text-muted-foreground leading-relaxed m-0">
+            Add resistance names the exam likes: <strong>Tupac Amaru II</strong> in the Andes, the <strong>Mahdist</strong> state in Sudan, <strong>Yaa Asantewaa</strong> and the Asante, the <strong>Boxer Rebellion</strong> in China. Direct vs. indirect rule (French assimilation vs. British princely states) is a useful comparison, not a moral ranking.
+          </p>
+        </div>
+        <div className="not-prose p-6 rounded-2xl border border-primary/20 bg-primary/5 flex gap-3">
+          <ArrowLeftRight className="text-primary shrink-0 mt-0.5" size={18} />
+          <p className="text-sm text-muted-foreground m-0"><strong>Exam tip:</strong> Ideology (Social Darwinism, civilizing mission) justifies; industry creates the need for rubber and markets. If the question is migration, indenture and exclusion acts are safer than “people moved for jobs.” Economic imperialism ≠ a painted colony on the map.</p>
         </div>
       </section>
     </div>

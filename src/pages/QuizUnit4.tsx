@@ -10,6 +10,8 @@ import { cn } from "@/lib/utils";
 import { playSound } from "@/utils/sounds";
 import QuizModeSelection from "@/components/QuizModeSelection";
 import { useQuizProgress } from "@/hooks/useQuizProgress";
+import { useGuestLimit, capGuestItems } from "@/hooks/useGuestLimit";
+import SignupGateDialog from "@/components/SignupGateDialog";
 
 // ... (stimuli and questions arrays remain the same)
 const stimuli = [
@@ -25,7 +27,7 @@ const stimuli = [
   { id: 10, text: "A boundary or straight line be determined and drawn... from the north to the south pole... three hundred and seventy leagues west of the Cape Verde Islands, dividing the world between the two Crowns.", source: "Treaty of Tordesillas, 1494" }
 ];
 
-const questions = [
+const questionBank = [
   { id: 1, stimulusId: 1, question: "Which technology allowed the caravel to 'sail with any wind' as described?", options: ["Astrolabe", "Lateen Sail", "Stern Rudder", "Magnetic Compass"], correctAnswer: "Lateen Sail", explanation: "The triangular lateen sail allowed ships to tack against the wind, essential for exploring the African coast." },
   { id: 2, stimulusId: 1, question: "The 'discovery of the coast of Guinea' was primarily driven by which nation?", options: ["Spain", "England", "Portugal", "Netherlands"], correctAnswer: "Portugal", explanation: "Portugal pioneered the exploration of the West African coast (Guinea) in the 15th century." },
   { id: 3, stimulusId: 1, question: "What was the primary purpose of the 'light and easy to handle' caravel?", options: ["Coastal exploration", "Heavy cargo transport", "Naval warfare", "Trans-Atlantic migration"], correctAnswer: "Coastal exploration", explanation: "The caravel's shallow draft and maneuverability made it ideal for exploring unknown coastlines." },
@@ -81,6 +83,7 @@ const questions = [
 const QuizUnit4 = () => {
   const navigate = useNavigate();
   const { saveQuizResult } = useQuizProgress();
+  const { gateOpen, setGateOpen, allowItem, canStartNew, remaining } = useGuestLimit("quiz");
   
   const [mode, setMode] = useState<'study' | 'exam' | null>(null);
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -89,10 +92,11 @@ const QuizUnit4 = () => {
   const [crossedOut, setCrossedOut] = useState<Record<number, string[]>>({});
   const [isFinished, setIsFinished] = useState(false);
   const [timeLeft, setTimeLeft] = useState(50 * 60);
+  const [sessionQuestions, setSessionQuestions] = useState(questionBank);
 
-  const currentQuestion = questions[currentIndex];
+  const currentQuestion = sessionQuestions[currentIndex];
   const currentStimulus = stimuli.find(s => s.id === currentQuestion.stimulusId);
-  const progress = (currentIndex / questions.length) * 100;
+  const progress = (currentIndex / sessionQuestions.length) * 100;
 
   useEffect(() => {
     if (mode === 'exam' && !isFinished && timeLeft > 0) {
@@ -105,6 +109,7 @@ const QuizUnit4 = () => {
 
   const handleOptionSelect = (option: string) => {
     if (mode === 'study' && checkedIndices.has(currentIndex)) return;
+    if (!allowItem(sessionQuestions[currentIndex]?.id ?? currentIndex)) return;
     setUserAnswers(prev => ({ ...prev, [currentIndex]: option }));
   };
 
@@ -133,15 +138,16 @@ const QuizUnit4 = () => {
 
   const finishQuiz = () => {
     let score = 0;
-    questions.forEach((q, idx) => {
+    sessionQuestions.forEach((q, idx) => {
       if (userAnswers[idx] === q.correctAnswer) score++;
     });
     setIsFinished(true);
-    saveQuizResult(4, score, questions.length, mode!);
+    saveQuizResult(4, score, sessionQuestions.length, mode!);
   };
 
   const handleNext = () => {
-    if (currentIndex < questions.length - 1) {
+    if (currentIndex < sessionQuestions.length - 1) {
+      if (!canStartNew()) return;
       setCurrentIndex(currentIndex + 1);
     } else {
       finishQuiz();
@@ -157,14 +163,30 @@ const QuizUnit4 = () => {
   if (!mode) {
     return (
       <Layout>
-        <QuizModeSelection unitTitle="Unit 4: Transoceanic Interconnections" onSelect={setMode} />
+        <QuizModeSelection
+          unitTitle="Unit 4: Transoceanic Interconnections"
+          onSelect={(nextMode) => {
+            if (!canStartNew()) return;
+            const shuffled = [...questionBank]
+              .sort(() => 0.5 - Math.random())
+              .map((q) => ({ ...q, options: [...q.options].sort(() => 0.5 - Math.random()) }));
+            setSessionQuestions(capGuestItems(shuffled, remaining));
+            setCurrentIndex(0);
+            setUserAnswers({});
+            setCheckedIndices(new Set());
+            setCrossedOut({});
+            setIsFinished(false);
+            setMode(nextMode);
+          }}
+        />
+        <SignupGateDialog open={gateOpen} onOpenChange={setGateOpen} kind="quiz" />
       </Layout>
     );
   }
 
   if (isFinished) {
     let finalScore = 0;
-    questions.forEach((q, idx) => {
+    sessionQuestions.forEach((q, idx) => {
       if (userAnswers[idx] === q.correctAnswer) finalScore++;
     });
     return (
@@ -177,11 +199,11 @@ const QuizUnit4 = () => {
           <div className="space-y-2">
             <h2 className="text-3xl font-bold">Unit 4 Mastery Complete!</h2>
             <p className="text-muted-foreground">Mode: <span className="capitalize font-bold text-foreground">{mode}</span></p>
-            <p className="text-muted-foreground">You scored {finalScore} out of {questions.length}</p>
+            <p className="text-muted-foreground">You scored {finalScore} out of {sessionQuestions.length}</p>
           </div>
           
           <div className="p-8 rounded-3xl bg-primary/10 border border-primary/20">
-            <div className="text-5xl font-bold text-primary mb-2">{Math.round((finalScore/questions.length)*100)}%</div>
+            <div className="text-5xl font-bold text-primary mb-2">{Math.round((finalScore/sessionQuestions.length)*100)}%</div>
             <div className="text-sm font-bold uppercase tracking-widest text-primary/70">Final Score</div>
           </div>
 
@@ -216,7 +238,7 @@ const QuizUnit4 = () => {
               </div>
             )}
             <div className="text-right">
-              <div className="text-sm font-bold text-primary">Question {currentIndex + 1} / {questions.length}</div>
+              <div className="text-sm font-bold text-primary">Question {currentIndex + 1} / {sessionQuestions.length}</div>
               <div className="text-[10px] font-bold text-muted-foreground uppercase tracking-tighter">Unit 4: Transoceanic Interconnections</div>
             </div>
           </div>
@@ -344,7 +366,7 @@ const QuizUnit4 = () => {
                         disabled={mode === 'exam' && !userAnswers[currentIndex]}
                         className="flex-[2] h-14 rounded-2xl text-lg font-bold shadow-lg shadow-primary/20"
                       >
-                        {currentIndex < questions.length - 1 ? "Next Question" : "Finish Quiz"}
+                        {currentIndex < sessionQuestions.length - 1 ? "Next Question" : "Finish Quiz"}
                         <ArrowRight className="ml-2 h-5 w-5" />
                       </Button>
                     )}
@@ -355,6 +377,7 @@ const QuizUnit4 = () => {
           </div>
         </div>
       </div>
+      <SignupGateDialog open={gateOpen} onOpenChange={setGateOpen} kind="quiz" />
     </Layout>
   );
 };

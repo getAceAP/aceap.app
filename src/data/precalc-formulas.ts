@@ -1,0 +1,78 @@
+import { Flashcard } from "./content";
+
+const cards = (unit: number, pairs: [string, string][]): Flashcard[] =>
+  pairs.map(([prompt, answer], i) => ({
+    id: `precalc-u${unit}-f${i + 1}`,
+    prompt,
+    answer,
+  }));
+
+export const precalcFormulasUnit1 = cards(1, [
+  ["Average rate of change of $f$ on $[a,b]$", "$\\dfrac{f(b)-f(a)}{b-a}$"],
+  ["End behavior of $ax^n$ if $n$ even and $a>0$", "Both ends $\\to +\\infty$"],
+  ["End behavior of $ax^n$ if $n$ even and $a<0$", "Both ends $\\to -\\infty$"],
+  ["End behavior of $ax^n$ if $n$ odd and $a>0$", "Left $-\\infty$, right $+\\infty$"],
+  ["End behavior of $ax^n$ if $n$ odd and $a<0$", "Left $+\\infty$, right $-\\infty$"],
+  ["Remainder Theorem", "The remainder when $p(x)$ is divided by $x-c$ is $p(c)$."],
+  ["Factor Theorem", "$x-c$ is a factor of $p$ iff $p(c)=0$."],
+  ["Possible rational zeros (Rational Root Theorem)", "Factors of constant over factors of leading coefficient"],
+  ["A zero of multiplicity $k$ even", "Graph touches the $x$-axis and turns around"],
+  ["A zero of multiplicity $k$ odd", "Graph crosses the $x$-axis"],
+  ["Vertical asymptote of a rational function", "$x=c$ where the denominator is $0$ after reducing"],
+  ["Hole in a rational function", "A factor that cancels in numerator and denominator"],
+  ["Horizontal asymptote if deg num $<$ deg den", "$y=0$"],
+  ["Horizontal asymptote if degrees equal", "$y=$ ratio of leading coefficients"],
+  ["Oblique / slant asymptote", "When deg num $=$ deg den $+1$; divide polynomials"],
+  ["Maximum turning points of a degree-$n$ polynomial", "$n-1$"],
+  ["Complex zeros of polynomials with real coefficients", "Come in conjugate pairs"],
+  ["$y$-intercept of $p(x)$", "$p(0)$"],
+  ["Linear function rate of change", "Constant first differences"],
+  ["Quadratic function rate of change", "Linear first differences; constant second differences"],
+]);
+
+export const precalcFormulasUnit2 = cards(2, [
+  ["Exponential growth form", "$f(x)=ab^x$ with $b>1$"],
+  ["Exponential decay form", "$f(x)=ab^x$ with $0<b<1$"],
+  ["Change of base", "$\\log_b a = \\dfrac{\\log_k a}{\\log_k b}$"],
+  ["Product rule for logs", "$\\log_b(MN)=\\log_b M+\\log_b N$"],
+  ["Quotient rule for logs", "$\\log_b\\!\\left(\\dfrac{M}{N}\\right)=\\log_b M-\\log_b N$"],
+  ["Power rule for logs", "$\\log_b(M^p)=p\\log_b M$"],
+  ["$\\log_b(b^k)$", "$k$"],
+  ["$b^{\\log_b k}$ (for $k>0$)", "$k$"],
+  ["Inverse of $f(x)=a^x$", "$f^{-1}(x)=\\log_a x$"],
+  ["Inverse of $f(x)=\\log_a x$", "$f^{-1}(x)=a^x$"],
+  ["Domain of $y=\\log_b x$", "$x>0$"],
+  ["Range of $y=\\log_b x$", "All real numbers"],
+  ["Convert $a^x$ to base $e$", "$a^x=e^{x\\ln a}$"],
+  ["Solve $b^x=c$", "$x=\\log_b c=\\dfrac{\\ln c}{\\ln b}$"],
+  ["Compound interest (annual)", "$A=P(1+r)^t$"],
+  ["Half-life remaining after $n$ half-lives", "$A=A_0\\left(\\dfrac{1}{2}\\right)^n$"],
+  ["Composition $(f\\circ g)(x)$", "$f(g(x))$"],
+  ["Linear vs exponential from a table", "Linear: constant first differences. Exponential: constant ratios."],
+  ["Semi-log plot of an exponential", "$\\log y$ vs $x$ is linear"],
+  ["Natural log", "$\\ln x=\\log_e x$"],
+]);
+
+export const precalcFormulasUnit3 = cards(3, [
+  ["Degrees to radians", "Multiply by $\\dfrac{\\pi}{180}$"],
+  ["Radians to degrees", "Multiply by $\\dfrac{180}{\\pi}$"],
+  ["$\\sin\\theta$ on the unit circle", "$y$-coordinate"],
+  ["$\\cos\\theta$ on the unit circle", "$x$-coordinate"],
+  ["$\\tan\\theta$", "$\\dfrac{\\sin\\theta}{\\cos\\theta}$"],
+  ["Pythagorean identity", "$\\sin^2\\theta+\\cos^2\\theta=1$"],
+  ["Period of $\\sin(bx)$ or $\\cos(bx)$", "$\\dfrac{2\\pi}{|b|}$"],
+  ["Amplitude of $a\\sin(bx)$", "$|a|$"],
+  ["Midline of $a\\sin(bx)+d$", "$y=d$"],
+  ["Phase shift of $\\sin(b(x-h))$", "$h$ units right"],
+  ["$\\csc\\theta$", "$\\dfrac{1}{\\sin\\theta}$"],
+  ["$\\sec\\theta$", "$\\dfrac{1}{\\cos\\theta}$"],
+  ["$\\cot\\theta$", "$\\dfrac{\\cos\\theta}{\\sin\\theta}$"],
+  ["Range of $y=\\arcsin x$", "$\\left[-\\dfrac{\\pi}{2},\\dfrac{\\pi}{2}\\right]$"],
+  ["Range of $y=\\arccos x$", "$[0,\\pi]$"],
+  ["Polar to rectangular", "$x=r\\cos\\theta$, $y=r\\sin\\theta$"],
+  ["$r$ from rectangular", "$r=\\sqrt{x^2+y^2}$"],
+  ["Even/odd: sine", "Odd: $\\sin(-\\theta)=-\\sin\\theta$"],
+  ["Even/odd: cosine", "Even: $\\cos(-\\theta)=\\cos\\theta$"],
+  ["$\\tan\\theta$ is undefined", "When $\\cos\\theta=0$"],
+  ["Reference angle in QII", "$\\pi-\\theta$ (radians)"],
+]);

@@ -10,6 +10,8 @@ import { cn } from "@/lib/utils";
 import { playSound } from "@/utils/sounds";
 import QuizModeSelection from "@/components/QuizModeSelection";
 import { useQuizProgress } from "@/hooks/useQuizProgress";
+import { useGuestLimit, capGuestItems } from "@/hooks/useGuestLimit";
+import SignupGateDialog from "@/components/SignupGateDialog";
 
 const stimuli = [
   { id: 1, text: "The city of Cambaluc is at the end of the Silk Road... there are many merchants from all parts of the world who bring there many costly wares... the Great Khan has made a paper money which is current in all his kingdoms.", source: "Marco Polo, The Travels of Marco Polo, c. 1300" },
@@ -80,6 +82,7 @@ const initialQuestions = [
 const QuizUnit2 = () => {
   const navigate = useNavigate();
   const { saveQuizResult } = useQuizProgress();
+  const { gateOpen, setGateOpen, allowItem, canStartNew, remaining } = useGuestLimit("quiz");
   
   const [mode, setMode] = useState<'study' | 'exam' | null>(null);
   const [questions, setQuestions] = useState<any[]>([]);
@@ -91,12 +94,15 @@ const QuizUnit2 = () => {
   const [timeLeft, setTimeLeft] = useState(50 * 60);
 
   const prepareQuestions = (qs: any[]) => {
-    return [...qs]
-      .sort(() => 0.5 - Math.random())
-      .map(q => ({
-        ...q,
-        options: [...q.options].sort(() => 0.5 - Math.random())
-      }));
+    return capGuestItems(
+      [...qs]
+        .sort(() => 0.5 - Math.random())
+        .map(q => ({
+          ...q,
+          options: [...q.options].sort(() => 0.5 - Math.random())
+        })),
+      remaining
+    );
   };
 
   useEffect(() => {
@@ -123,6 +129,7 @@ const QuizUnit2 = () => {
 
   const handleOptionSelect = (option: string) => {
     if (mode === 'study' && checkedIndices.has(currentIndex)) return;
+    if (!allowItem(questions[currentIndex]?.id ?? currentIndex)) return;
     setUserAnswers(prev => ({ ...prev, [currentIndex]: option }));
   };
 
@@ -159,6 +166,7 @@ const QuizUnit2 = () => {
 
   const handleNext = () => {
     if (currentIndex < questions.length - 1) {
+      if (!canStartNew()) return;
       setCurrentIndex(currentIndex + 1);
     } else {
       finishQuiz();
@@ -174,7 +182,20 @@ const QuizUnit2 = () => {
   if (!mode) {
     return (
       <Layout>
-        <QuizModeSelection unitTitle="Unit 2: Networks of Exchange" onSelect={setMode} />
+        <QuizModeSelection
+          unitTitle="Unit 2: Networks of Exchange"
+          onSelect={(nextMode) => {
+            if (!canStartNew()) return;
+            setQuestions(prepareQuestions(initialQuestions));
+            setCurrentIndex(0);
+            setUserAnswers({});
+            setCheckedIndices(new Set());
+            setCrossedOut({});
+            setIsFinished(false);
+            setMode(nextMode);
+          }}
+        />
+        <SignupGateDialog open={gateOpen} onOpenChange={setGateOpen} kind="quiz" />
       </Layout>
     );
   }
@@ -347,6 +368,7 @@ const QuizUnit2 = () => {
           </div>
         </div>
       </div>
+      <SignupGateDialog open={gateOpen} onOpenChange={setGateOpen} kind="quiz" />
     </Layout>
   );
 };

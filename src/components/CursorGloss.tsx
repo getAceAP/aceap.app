@@ -30,7 +30,7 @@ export const CursorGloss = () => {
         width: "400px",
         height: "400px",
         borderRadius: "50%",
-        background: "radial-gradient(circle, hsl(var(--primary) / 0.08) 0%, transparent 70%)",
+        background: "radial-gradient(circle, hsl(var(--primary) / 0.06) 0%, transparent 70%)",
         pointerEvents: "none",
         zIndex: 9999,
         x: x,
@@ -38,7 +38,7 @@ export const CursorGloss = () => {
         translateX: "-50%",
         translateY: "-50%",
       }}
-      className="hidden md:block"
+      className="hidden md:block opacity-70 dark:opacity-100"
     />
   );
 };

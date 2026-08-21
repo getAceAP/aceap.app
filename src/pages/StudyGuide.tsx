@@ -4,6 +4,8 @@ import { units } from "@/data/content";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, BookOpen, Clock, MapPin, Download, ChevronLeft, ChevronRight } from "lucide-react";
 import { motion } from "framer-motion";
+import Unit1Content from "@/components/study-guides/Unit1Content";
+import Unit2Content from "@/components/study-guides/Unit2Content";
 import Unit3Content from "@/components/study-guides/Unit3Content";
 import Unit4Content from "@/components/study-guides/Unit4Content";
 import Unit5Content from "@/components/study-guides/Unit5Content";
@@ -25,6 +27,8 @@ const StudyGuide = () => {
 
   const renderContent = () => {
     switch (unit.id) {
+      case 1: return <Unit1Content />;
+      case 2: return <Unit2Content />;
       case 3: return <Unit3Content />;
       case 4: return <Unit4Content />;
       case 5: return <Unit5Content />;

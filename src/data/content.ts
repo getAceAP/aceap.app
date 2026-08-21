@@ -1,3 +1,6 @@
+import { worldUnit1Questions } from "./world-questions-unit1";
+import { worldUnit9Questions } from "./world-questions-unit9";
+
 export interface Question {
   id: string;
   question: string;
@@ -31,22 +34,7 @@ export const units: Unit[] = [
     title: "The Global Tapestry",
     period: "1200-1450",
     description: "State building and cultural developments across the globe.",
-    questions: [
-      {
-        id: "u1-q1",
-        question: "Which dynasty is credited with the creation of the Grand Canal in China?",
-        options: ["Tang", "Song", "Sui", "Yuan"],
-        correctAnswer: "Sui",
-        explanation: "The Sui Dynasty initiated the Grand Canal, though it was expanded by later dynasties."
-      },
-      {
-        id: "u1-q2",
-        question: "The 'Bhakti Movement' originated in which region?",
-        options: ["East Asia", "South Asia", "Middle East", "West Africa"],
-        correctAnswer: "South Asia",
-        explanation: "The Bhakti movement was a Hindu devotional trend that emerged in South Asia."
-      }
-    ],
+    questions: worldUnit1Questions,
     flashcards: [
       { id: "u1-f1", prompt: "Song Dynasty", answer: "(960-1279 CE) The Chinese dynasty that placed much more emphasis on civil administration, industry, education, and arts other than military." },
       { id: "u1-f2", prompt: "Imperial Bureaucracy", answer: "Division of an empire into organized provinces to make it easier to control" },
@@ -811,15 +799,7 @@ export const units: Unit[] = [
     title: "Globalization",
     period: "1900-present",
     description: "Technological advances and global integration.",
-    questions: [
-      {
-        id: "u9-q1",
-        question: "Which organization was created in 1995 to regulate international trade?",
-        options: ["UN", "NATO", "WTO", "IMF"],
-        correctAnswer: "WTO",
-        explanation: "The World Trade Organization replaced the GATT."
-      }
-    ],
+    questions: worldUnit9Questions,
     flashcards: [
       { id: "u9-f1", prompt: "Population explosion", answer: "The rapid growth of the world's human population during the past century, attended by ever-shorter doubling times and accelerating rates of increase" },
       { id: "u9-f2", prompt: "Green Revolution", answer: "Rapid diffusion of new agricultural technology, especially new high-yield seeds and fertilizers." },

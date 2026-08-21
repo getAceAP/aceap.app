@@ -1,4 +1,4 @@
-import { Swords, AlertTriangle, TrendingUp, Zap, Landmark, Globe, ShieldAlert, HeartPulse, Users, BookOpen } from "lucide-react";
+import { Swords, AlertTriangle, TrendingUp, Zap, Landmark, Globe, ShieldAlert, HeartPulse, Users, BookOpen, ArrowLeftRight } from "lucide-react";
 
 const Unit7Content = () => {
   return (
@@ -11,6 +11,9 @@ const Unit7Content = () => {
             <h3 className="font-bold text-primary mb-1">Unit 7: Global Conflict (1900-present)</h3>
             <p className="text-sm text-muted-foreground leading-relaxed">
               This unit covers the era of "Total War." It examines the causes and consequences of World War I and World War II, the interwar period marked by the Great Depression and the rise of totalitarianism, and the horrific genocides that occurred during this time.
+            </p>
+            <p className="text-sm text-muted-foreground leading-relaxed mt-3">
+              Total war means the home front is a battlefield of labor, food, and propaganda. Colonial troops fought in both world wars, then returned with new claims on independence. The Great Depression did not cause fascism by itself, but it made democratic capitalism look weak. Mass killing is a CED topic: industrial genocide (Holocaust) is not the same as famine-as-policy (Holodomor) or wartime massacre (Nanjing), but all are state or military violence against civilians.
             </p>
           </div>
         </div>
@@ -123,6 +126,31 @@ const Unit7Content = () => {
               </div>
             </div>
           </div>
+        </div>
+      </section>
+
+      <section className="space-y-8">
+        <div className="border-l-4 border-primary pl-6">
+          <h2 className="text-3xl font-bold m-0">Methods, empires, and the global South</h2>
+          <p className="text-muted-foreground mt-2">What AP still asks after you know MAIN and D-Day.</p>
+        </div>
+        <div className="grid md:grid-cols-2 gap-6 not-prose items-stretch">
+          <div className="p-6 rounded-2xl bg-muted/30 border border-border space-y-3">
+            <h3 className="font-bold text-lg m-0">States try to manage the crash</h3>
+            <p className="text-sm text-muted-foreground leading-relaxed m-0">
+              The US New Deal, Soviet Five-Year Plans, and fascist corporatism are three answers to 1930s collapse. <strong>Keynesian</strong> spending vs. autarky vs. forced collectivization is a comparison, not a morality play. Japan’s militarists chose empire in China as an economic and nationalist fix. The League of Nations failed Manchuria, Ethiopia, and the Rhineland — appeasement is a policy, not a personality defect.
+            </p>
+          </div>
+          <div className="p-6 rounded-2xl bg-muted/30 border border-border space-y-3">
+            <h3 className="font-bold text-lg m-0">Colonies and the world wars</h3>
+            <p className="text-sm text-muted-foreground leading-relaxed m-0">
+              Indian, African, and ANZAC soldiers fought for empires that still denied them self-rule. Wilson’s Fourteen Points and self-determination were applied to Europe, not to British India or French Indochina. The mandate system in the Middle East recycled Ottoman lands under British and French control. WWII’s Pacific and North African fronts make this a global, not just European, story.
+            </p>
+          </div>
+        </div>
+        <div className="not-prose p-6 rounded-2xl border border-primary/20 bg-primary/5 flex gap-3">
+          <ArrowLeftRight className="text-primary shrink-0 mt-0.5" size={18} />
+          <p className="text-sm text-muted-foreground m-0"><strong>Exam tip:</strong> MAIN explains WWI’s structure; the assassination is the spark. Versailles explains German grievance, not every later war. Total war = civilian targeting, rationing, and women’s factory labor. Name a specific genocide with perpetrator and victim group — do not use “atrocities” as a catch-all.</p>
         </div>
       </section>
     </div>

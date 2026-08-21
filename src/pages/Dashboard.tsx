@@ -10,6 +10,7 @@ import { psychologyUnits } from "@/data/psychology";
 import { Progress } from "@/components/ui/progress";
 import { useTitle } from "@/hooks/useTitle";
 import { useAuth } from "@/context/AuthContext";
+import { courseCovers } from "@/data/course-covers";
 
 const subjects = [
   {
@@ -132,18 +133,24 @@ const Dashboard = () => {
                   transition={{ delay: i * 0.05 }}
                 >
                   <Card 
-                    className={`border-border/50 shadow-sm transition-all duration-500 bg-card rounded-[2.5rem] overflow-hidden group h-full flex flex-col ${
-                      subject.status === 'active' ? 'hover:border-primary/30 hover:shadow-xl' : 'opacity-70'
+                    className={`border-border shadow-sm transition-colors duration-200 bg-card rounded-[2.5rem] overflow-hidden group h-full flex flex-col ${
+                      subject.status === 'active' ? 'hover:border-primary/40 hover:shadow-xl hover:shadow-primary/10' : 'opacity-70'
                     }`}
                   >
+                    <div className="relative h-36 overflow-hidden">
+                      <img
+                        src={courseCovers[subject.id]}
+                        alt=""
+                        className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-card via-card/40 to-transparent" />
+                      {subject.status === 'soon' && (
+                        <Badge variant="secondary" className="absolute top-4 right-4 bg-background/80 text-muted-foreground border-none font-bold px-3 py-1 rounded-full backdrop-blur-sm">Soon</Badge>
+                      )}
+                    </div>
                     <CardHeader className="p-8 pb-4">
-                      <div className="flex justify-between items-start mb-4">
-                        <div className="w-12 h-12 rounded-2xl bg-muted flex items-center justify-center group-hover:scale-110 transition-transform duration-500">
-                          {subject.icon}
-                        </div>
-                        {subject.status === 'soon' && (
-                          <Badge variant="secondary" className="bg-muted text-muted-foreground border-none font-bold px-3 py-1 rounded-full">Soon</Badge>
-                        )}
+                      <div className="w-12 h-12 -mt-12 mb-4 rounded-2xl bg-muted border border-border flex items-center justify-center relative z-10 group-hover:scale-105 transition-transform duration-300">
+                        {subject.icon}
                       </div>
                       <CardTitle className="text-xl font-bold tracking-tight">{subject.title}</CardTitle>
                       <CardDescription className="text-muted-foreground leading-relaxed text-sm font-medium line-clamp-2">
@@ -162,7 +169,7 @@ const Dashboard = () => {
                       )}
                       
                       {subject.status === 'active' ? (
-                        <Button asChild className="w-full h-12 rounded-2xl text-base font-bold shadow-lg shadow-primary/10 group-hover:shadow-primary/20 transition-all duration-500">
+                        <Button asChild className="w-full h-12 rounded-2xl text-base font-bold shadow-lg shadow-primary/15 group-hover:shadow-primary/25 transition-shadow duration-300">
                           <Link to={`/units/${subject.id}`}>
                             Open Course
                             <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />

@@ -3,6 +3,8 @@ import { useParams, useNavigate } from "react-router-dom";
 import Layout from "@/components/Layout";
 import { units, Flashcard } from "@/data/content";
 import { psychologyUnits, getPsychologyUnit, isPsychologyReview } from "@/data/psychology";
+import { getPrecalcUnit } from "@/data/precalc";
+import MathText from "@/components/MathText";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
@@ -13,6 +15,8 @@ import { motion, AnimatePresence } from "framer-motion";
 import { playSound } from "@/utils/sounds";
 import { useAuth } from "@/context/AuthContext";
 import { useFlashcardProgress, MasteryStatus } from "@/hooks/useFlashcardProgress";
+import { useGuestLimit } from "@/hooks/useGuestLimit";
+import SignupGateDialog from "@/components/SignupGateDialog";
 import { Badge } from "@/components/ui/badge";
 import {
   DropdownMenu,
@@ -42,11 +46,18 @@ const Flashcards = () => {
   const { courseId = "ap-world", unitId } = useParams();
   const navigate = useNavigate();
   const { user } = useAuth();
+  const isPrecalc = courseId === "ap-precalc";
   const courseUnits = courseId === "ap-psych" ? psychologyUnits : units;
   const coursePath = `/units/${courseId}`;
-  const unit = courseId === "ap-psych" ? getPsychologyUnit(unitId) : courseUnits.find((u) => u.id === Number(unitId));
-  const review = isPsychologyReview(unit);
+  const unit =
+    isPrecalc
+      ? getPrecalcUnit(unitId)
+      : courseId === "ap-psych"
+        ? getPsychologyUnit(unitId)
+        : courseUnits.find((u) => u.id === Number(unitId));
+  const review = courseId === "ap-psych" ? isPsychologyReview(unit) : false;
   const { progress, updateProgress } = useFlashcardProgress(unit?.id ?? Number(unitId));
+  const { gateOpen, setGateOpen, allowItem, canStartNew } = useGuestLimit("flashcards");
   
   const [mode, setMode] = useState<"active" | "normal" | "match">("active");
   const [frontSide, setFrontSide] = useState<"term" | "definition">("definition");
@@ -122,6 +133,7 @@ const Flashcards = () => {
   const frontContent = frontSide === "term" ? currentCard.prompt : currentCard.answer;
   const backContent = frontSide === "term" ? currentCard.answer : currentCard.prompt;
   const targetAnswer = frontSide === "term" ? currentCard.answer : currentCard.prompt;
+  const renderCardText = (text: string) => (isPrecalc ? <MathText text={text} /> : text);
 
   const handleShuffle = () => {
     const shuffled = [...shuffledCards].sort(() => Math.random() - 0.5);
@@ -132,6 +144,7 @@ const Flashcards = () => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (isSubmitted || !userInput.trim()) return;
+    if (!allowItem(currentCard.id)) return;
 
     const normalizedInput = userInput.trim().toLowerCase();
     const normalizedTarget = targetAnswer.trim().toLowerCase();
@@ -152,6 +165,7 @@ const Flashcards = () => {
   };
 
   const handleShowAnswer = () => {
+    if (!allowItem(currentCard.id)) return;
     setIsCorrect(false);
     setIsSubmitted(true);
     setIncorrectCount(prev => prev + 1);
@@ -160,6 +174,7 @@ const Flashcards = () => {
   };
 
   const handleNormalResult = (correct: boolean) => {
+    if (!allowItem(currentCard.id)) return;
     if (correct) {
       setCorrectCount(prev => prev + 1);
       playSound('correct');
@@ -172,7 +187,9 @@ const Flashcards = () => {
   };
 
   const handleNext = () => {
+    if (!allowItem(currentCard.id)) return;
     if (currentIndex < shuffledCards.length - 1) {
+      if (!canStartNew()) return;
       setCurrentIndex(currentIndex + 1);
       setUserInput("");
       setIsSubmitted(false);
@@ -222,6 +239,7 @@ const Flashcards = () => {
 
   const handleMatchClick = (item: MatchItem) => {
     if (matchedIds.has(item.id) || wrongMatchIds.has(item.id) || correctMatchIds.has(item.id)) return;
+    if (!allowItem(item.originalId)) return;
     
     if (selectedMatch?.id === item.id) {
       setSelectedMatch(null);
@@ -484,7 +502,7 @@ const Flashcards = () => {
                             !isSelected && !isWrong && !isCorrectPair && "border-border bg-card"
                           )}
                         >
-                          {item.content}
+                          {renderCardText(item.content)}
                         </motion.button>
                       );
                     })}
@@ -510,7 +528,7 @@ const Flashcards = () => {
                       </div>
                       <CardContent className="p-0 w-full">
                         <p className="text-lg sm:text-xl md:text-2xl font-medium leading-relaxed text-card-foreground break-words">
-                          {frontContent}
+                          {renderCardText(frontContent)}
                         </p>
                         {mode === "normal" && !isFlipped && (
                           <p className="mt-4 text-[10px] font-bold text-muted-foreground/40 uppercase tracking-widest">Tap to flip</p>
@@ -525,7 +543,7 @@ const Flashcards = () => {
                     >
                       <CardContent className="p-0 w-full">
                         <p className="text-lg sm:text-xl font-medium leading-relaxed text-accent-foreground break-words">
-                          {backContent}
+                          {renderCardText(backContent)}
                         </p>
                       </CardContent>
                     </Card>
@@ -673,6 +691,7 @@ const Flashcards = () => {
           </AnimatePresence>
         </div>
       </div>
+      <SignupGateDialog open={gateOpen} onOpenChange={setGateOpen} kind="flashcards" />
     </Layout>
   );
 };

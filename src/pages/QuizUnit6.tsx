@@ -10,6 +10,8 @@ import { cn } from "@/lib/utils";
 import { playSound } from "@/utils/sounds";
 import QuizModeSelection from "@/components/QuizModeSelection";
 import { useQuizProgress } from "@/hooks/useQuizProgress";
+import { useGuestLimit, capGuestItems } from "@/hooks/useGuestLimit";
+import SignupGateDialog from "@/components/SignupGateDialog";
 
 const stimuli = [
   { id: 1, text: "The path of progress is strewn with the wreck of nations... the lower races must give way to the higher, for the higher are more capable of utilizing the resources of the earth.", source: "Karl Pearson, Social Darwinism and Nationalism, 1900" },
@@ -24,7 +26,7 @@ const stimuli = [
   { id: 10, text: "The Opium trade has corrupted our people and drained our silver... we must stop this poison from entering our ports, even if it means war with the British.", source: "Lin Zexu, Letter to Queen Victoria, 1839" }
 ];
 
-const questions = [
+const questionBank = [
   { id: 1, stimulusId: 1, question: "The 'higher races' mentioned by Pearson is a core concept of:", options: ["Socialism", "Social Darwinism", "Mercantilism", "Abolitionism"], correctAnswer: "Social Darwinism", explanation: "Social Darwinism applied 'survival of the fittest' to justify racial hierarchy and imperialism." },
   { id: 2, stimulusId: 1, question: "Imperialists used this ideology to justify:", options: ["Free trade", "Global equality", "Territorial expansion and dominance", "Religious freedom"], correctAnswer: "Territorial expansion and dominance", explanation: "It provided a 'scientific' rationale for Western nations to conquer and rule others." },
   { id: 3, stimulusId: 1, question: "Which movement directly opposed the ideas expressed in the text?", options: ["Nationalism", "Anti-imperialism", "Industrialization", "Urbanization"], correctAnswer: "Anti-imperialism", explanation: "Anti-imperialists challenged the morality and logic of racial superiority and colonial rule." },
@@ -80,6 +82,7 @@ const questions = [
 const QuizUnit6 = () => {
   const navigate = useNavigate();
   const { saveQuizResult } = useQuizProgress();
+  const { gateOpen, setGateOpen, allowItem, canStartNew, remaining } = useGuestLimit("quiz");
   
   const [mode, setMode] = useState<'study' | 'exam' | null>(null);
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -88,10 +91,11 @@ const QuizUnit6 = () => {
   const [crossedOut, setCrossedOut] = useState<Record<number, string[]>>({});
   const [isFinished, setIsFinished] = useState(false);
   const [timeLeft, setTimeLeft] = useState(50 * 60);
+  const [sessionQuestions, setSessionQuestions] = useState(questionBank);
 
-  const currentQuestion = questions[currentIndex];
+  const currentQuestion = sessionQuestions[currentIndex];
   const currentStimulus = stimuli.find(s => s.id === currentQuestion.stimulusId);
-  const progress = (currentIndex / questions.length) * 100;
+  const progress = (currentIndex / sessionQuestions.length) * 100;
 
   useEffect(() => {
     if (mode === 'exam' && !isFinished && timeLeft > 0) {
@@ -104,6 +108,7 @@ const QuizUnit6 = () => {
 
   const handleOptionSelect = (option: string) => {
     if (mode === 'study' && checkedIndices.has(currentIndex)) return;
+    if (!allowItem(sessionQuestions[currentIndex]?.id ?? currentIndex)) return;
     setUserAnswers(prev => ({ ...prev, [currentIndex]: option }));
   };
 
@@ -132,15 +137,16 @@ const QuizUnit6 = () => {
 
   const finishQuiz = () => {
     let score = 0;
-    questions.forEach((q, idx) => {
+    sessionQuestions.forEach((q, idx) => {
       if (userAnswers[idx] === q.correctAnswer) score++;
     });
     setIsFinished(true);
-    saveQuizResult(6, score, questions.length, mode!);
+    saveQuizResult(6, score, sessionQuestions.length, mode!);
   };
 
   const handleNext = () => {
-    if (currentIndex < questions.length - 1) {
+    if (currentIndex < sessionQuestions.length - 1) {
+      if (!canStartNew()) return;
       setCurrentIndex(currentIndex + 1);
     } else {
       finishQuiz();
@@ -156,14 +162,30 @@ const QuizUnit6 = () => {
   if (!mode) {
     return (
       <Layout>
-        <QuizModeSelection unitTitle="Unit 6: Consequences of Industrialization" onSelect={setMode} />
+        <QuizModeSelection
+          unitTitle="Unit 6: Consequences of Industrialization"
+          onSelect={(nextMode) => {
+            if (!canStartNew()) return;
+            const shuffled = [...questionBank]
+              .sort(() => 0.5 - Math.random())
+              .map((q) => ({ ...q, options: [...q.options].sort(() => 0.5 - Math.random()) }));
+            setSessionQuestions(capGuestItems(shuffled, remaining));
+            setCurrentIndex(0);
+            setUserAnswers({});
+            setCheckedIndices(new Set());
+            setCrossedOut({});
+            setIsFinished(false);
+            setMode(nextMode);
+          }}
+        />
+        <SignupGateDialog open={gateOpen} onOpenChange={setGateOpen} kind="quiz" />
       </Layout>
     );
   }
 
   if (isFinished) {
     let finalScore = 0;
-    questions.forEach((q, idx) => {
+    sessionQuestions.forEach((q, idx) => {
       if (userAnswers[idx] === q.correctAnswer) finalScore++;
     });
     return (
@@ -176,11 +198,11 @@ const QuizUnit6 = () => {
           <div className="space-y-2">
             <h2 className="text-3xl font-bold">Unit 6 Mastery Complete!</h2>
             <p className="text-muted-foreground">Mode: <span className="capitalize font-bold text-foreground">{mode}</span></p>
-            <p className="text-muted-foreground">You scored {finalScore} out of {questions.length}</p>
+            <p className="text-muted-foreground">You scored {finalScore} out of {sessionQuestions.length}</p>
           </div>
           
           <div className="p-8 rounded-3xl bg-primary/10 border border-primary/20">
-            <div className="text-5xl font-bold text-primary mb-2">{Math.round((finalScore/questions.length)*100)}%</div>
+            <div className="text-5xl font-bold text-primary mb-2">{Math.round((finalScore/sessionQuestions.length)*100)}%</div>
             <div className="text-sm font-bold uppercase tracking-widest text-primary/70">Final Score</div>
           </div>
 
@@ -215,7 +237,7 @@ const QuizUnit6 = () => {
               </div>
             )}
             <div className="text-right">
-              <div className="text-sm font-bold text-primary">Question {currentIndex + 1} / {questions.length}</div>
+              <div className="text-sm font-bold text-primary">Question {currentIndex + 1} / {sessionQuestions.length}</div>
               <div className="text-[10px] font-bold text-muted-foreground uppercase tracking-tighter">Unit 6: Consequences of Industrialization</div>
             </div>
           </div>
@@ -343,7 +365,7 @@ const QuizUnit6 = () => {
                         disabled={mode === 'exam' && !userAnswers[currentIndex]}
                         className="flex-[2] h-14 rounded-2xl text-lg font-bold shadow-lg shadow-primary/20"
                       >
-                        {currentIndex < questions.length - 1 ? "Next Question" : "Finish Quiz"}
+                        {currentIndex < sessionQuestions.length - 1 ? "Next Question" : "Finish Quiz"}
                         <ArrowRight className="ml-2 h-5 w-5" />
                       </Button>
                     )}
@@ -354,6 +376,7 @@ const QuizUnit6 = () => {
           </div>
         </div>
       </div>
+      <SignupGateDialog open={gateOpen} onOpenChange={setGateOpen} kind="quiz" />
     </Layout>
   );
 };

@@ -1,4 +1,4 @@
-import { Ship, Anchor, Zap, Users, TrendingUp, HeartPulse, ShieldAlert, Globe, Coins, AlertTriangle, BookOpen } from "lucide-react";
+import { Ship, Anchor, Zap, Users, TrendingUp, HeartPulse, ShieldAlert, Globe, Coins, AlertTriangle, BookOpen, ArrowLeftRight } from "lucide-react";
 
 const Unit4Content = () => {
   return (
@@ -11,6 +11,9 @@ const Unit4Content = () => {
             <h3 className="font-bold text-primary mb-1">Unit 4: Transoceanic Interconnections (1450-1750)</h3>
             <p className="text-sm text-muted-foreground leading-relaxed">
               This era marks the first time in history that the Eastern and Western Hemispheres were permanently linked. This "Global Collision" led to the Columbian Exchange, the rise of maritime empires, the development of mercantilism, and a fundamental shift in global economic power from land-based to sea-based trade.
+            </p>
+            <p className="text-sm text-muted-foreground leading-relaxed mt-3">
+              Europeans did not invent ocean travel. They combined Chinese, Islamic, and Mediterranean tools, then used state money and joint-stock companies to stay on the water year after year. Silver from Potosí tied the Americas to China; sugar and enslaved labor tied West Africa to the Caribbean. Unit 4 is as much about coerced labor as it is about ships.
             </p>
           </div>
         </div>
@@ -161,6 +164,27 @@ const Unit4Content = () => {
               </div>
             </div>
           </div>
+        </div>
+      </section>
+
+      <section className="space-y-8">
+        <div className="border-l-4 border-primary pl-6">
+          <h2 className="text-3xl font-bold m-0">4.8 Continuity and change</h2>
+          <p className="text-muted-foreground mt-2">What stayed land-based, and what the Atlantic flipped.</p>
+        </div>
+        <div className="grid md:grid-cols-2 gap-6 not-prose items-stretch">
+          <div className="p-6 rounded-2xl bg-muted/30 border border-border space-y-3">
+            <h3 className="font-bold text-lg m-0">Continuities</h3>
+            <p className="text-sm text-muted-foreground leading-relaxed m-0">Indian Ocean merchants still moved bulk goods; Muslim and Chinese diasporas still ran ports. Asian land empires (Ming/Qing, Ottomans, Mughals) remained huge. Existing African kingdoms still sold captives into older Indian Ocean and trans-Saharan slave trades even as the Atlantic trade exploded in volume and brutality.</p>
+          </div>
+          <div className="p-6 rounded-2xl bg-muted/30 border border-border space-y-3">
+            <h3 className="font-bold text-lg m-0">Changes</h3>
+            <p className="text-sm text-muted-foreground leading-relaxed m-0">The <strong>Great Dying</strong> emptied labor in the Americas and pulled in African chattel slavery. Potosí silver flowed into Spanish coffers and then into China, where it became the tax metal of the Ming. Mercantilist rivalries produced wars in Europe and the Caribbean. Syncretic religions (Vodun, Santería, cult of saints) formed under colonial pressure, not as tourist culture.</p>
+          </div>
+        </div>
+        <div className="not-prose p-6 rounded-2xl border border-primary/20 bg-primary/5 flex gap-3">
+          <ArrowLeftRight className="text-primary shrink-0 mt-0.5" size={18} />
+          <p className="text-sm text-muted-foreground m-0"><strong>Exam tip:</strong> Columbian Exchange is biological (crops, animals, germs), not “trade in general.” Mercantilism wants bullion and colonies; joint-stock companies socialize risk. Name a labor system (encomienda, mita, chattel, indenture) instead of writing “slavery” for every coerced worker.</p>
         </div>
       </section>
     </div>

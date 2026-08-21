@@ -1,4 +1,4 @@
-import { Scale, Factory, Zap, Users, TrendingUp, Globe, Landmark, ScrollText, BookOpen, AlertTriangle, ShieldCheck } from "lucide-react";
+import { Scale, Factory, Zap, Users, TrendingUp, Globe, Landmark, ScrollText, BookOpen, AlertTriangle, ShieldCheck, ArrowLeftRight } from "lucide-react";
 
 const Unit5Content = () => {
   return (
@@ -11,6 +11,9 @@ const Unit5Content = () => {
             <h3 className="font-bold text-primary mb-1">Unit 5: Revolutions (1750-1900)</h3>
             <p className="text-sm text-muted-foreground leading-relaxed">
               This era is defined by two seismic shifts: the <strong>Enlightenment-led political revolutions</strong> that challenged monarchies and established republics, and the <strong>Industrial Revolution</strong> that fundamentally altered how humans produced goods, lived their lives, and interacted with the environment.
+            </p>
+            <p className="text-sm text-muted-foreground leading-relaxed mt-3">
+              Treat the two tracks as linked. Factory wealth and steam power gave some states the surplus to fight longer wars and later to colonize. Enlightenment language of rights was used by creoles who still kept slavery, and by Haitians who destroyed it. Nationalism is a Unit 5 product: it can unify Italy and Germany and also fracture empires.
             </p>
           </div>
         </div>
@@ -142,6 +145,31 @@ const Unit5Content = () => {
               <p className="text-sm text-muted-foreground leading-relaxed">Attempted to modernize Egypt's military and economy through state-sponsored textile production, but faced resistance from the British who wanted to maintain Egypt as a source of raw cotton.</p>
             </div>
           </div>
+        </div>
+      </section>
+
+      <section className="space-y-8">
+        <div className="border-l-4 border-primary pl-6">
+          <h2 className="text-3xl font-bold m-0">Reform, nationalism, and the factory world</h2>
+          <p className="text-muted-foreground mt-2">What the CED wants beyond “Britain had coal.”</p>
+        </div>
+        <div className="grid md:grid-cols-2 gap-6 not-prose items-stretch">
+          <div className="p-6 rounded-2xl bg-muted/30 border border-border space-y-3">
+            <h3 className="font-bold text-lg m-0">Political aftershocks</h3>
+            <p className="text-sm text-muted-foreground leading-relaxed m-0">
+              Haiti scared slaveholders across the Atlantic. Latin American independence often produced caudillo rule rather than stable republics. Abolition of the slave trade (Britain 1807) and later of slavery itself was uneven and often replaced by indenture. Women’s rights petitions (Wollstonecraft, Seneca Falls) used the same natural-rights vocabulary as male revolutionaries — and were usually deferred.
+            </p>
+          </div>
+          <div className="p-6 rounded-2xl bg-muted/30 border border-border space-y-3">
+            <h3 className="font-bold text-lg m-0">Industrial spread and limits</h3>
+            <p className="text-sm text-muted-foreground leading-relaxed m-0">
+              Belgium, Germany, and the US copied British machines; Russia and Egypt tried from the top down with mixed results. The Ottoman Tanzimat and China’s Self-Strengthening show reform without full industrialization. Fossil fuels, railroads, and steamships shrank distance and dirtied cities. Factory discipline created a working class that unions and socialists then organized.
+            </p>
+          </div>
+        </div>
+        <div className="not-prose p-6 rounded-2xl border border-primary/20 bg-primary/5 flex gap-3">
+          <ArrowLeftRight className="text-primary shrink-0 mt-0.5" size={18} />
+          <p className="text-sm text-muted-foreground m-0"><strong>Exam tip:</strong> Name a specific Enlightenment claim (natural rights, social contract, laissez-faire) and who was left out of it. For industry, give a cause unique to Britain (coal + enclosure + capital) plus one state-led path (Meiji, Muhammad Ali). Haiti is the only successful large-scale slave revolution — use it when the question is about race and rights, not just “French Revolution 2.0.”</p>
         </div>
       </section>
     </div>

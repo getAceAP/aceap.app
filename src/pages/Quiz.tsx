@@ -3,110 +3,182 @@ import { useParams, useNavigate } from "react-router-dom";
 import Layout from "@/components/Layout";
 import { units, Question } from "@/data/content";
 import { psychologyUnits, getPsychologyUnit, isPsychologyReview, buildPsychologyPracticeExam } from "@/data/psychology";
+import { getPrecalcUnit, type PrecalcQuestion } from "@/data/precalc";
+import { buildPrecalcSession, answersMatch, EXAM_MINUTES, STUDY_LENGTH, EXAM_LENGTH } from "@/lib/precalc/generate";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { Card, CardContent } from "@/components/ui/card";
-import { CheckCircle2, XCircle, ArrowLeft, RefreshCcw, Timer, AlertCircle, Shuffle, BookOpen } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { CheckCircle2, XCircle, ArrowLeft, RefreshCcw, Timer, AlertCircle, Shuffle, BookOpen, Calculator } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { motion } from "framer-motion";
 import { playSound } from "@/utils/sounds";
 import QuizModeSelection from "@/components/QuizModeSelection";
 import { useQuizProgress } from "@/hooks/useQuizProgress";
+import { useGuestLimit, capGuestItems } from "@/hooks/useGuestLimit";
+import SignupGateDialog from "@/components/SignupGateDialog";
+import MathText from "@/components/MathText";
+import {
+  QuizStudyToolsProvider,
+  QuizStudyToolsBar,
+  QuizStudyToolsPanel,
+} from "@/components/QuizStudyTools";
+
+type SessionQuestion = Question | PrecalcQuestion;
+
+const isPrecalcQ = (q: SessionQuestion): q is PrecalcQuestion =>
+  "kind" in q && (q.kind === "mcq" || q.kind === "numeric");
 
 const Quiz = () => {
   const { courseId = "ap-world", unitId } = useParams();
   const navigate = useNavigate();
-  const courseUnits = courseId === "ap-psych" ? psychologyUnits : units;
+  const isPrecalc = courseId === "ap-precalc";
+  const isPsych = courseId === "ap-psych";
   const coursePath = `/units/${courseId}`;
-  const unit = courseId === "ap-psych" ? getPsychologyUnit(unitId) : courseUnits.find((u) => u.id === Number(unitId));
-  const review = isPsychologyReview(unit);
-  const examMinutes = review ? 90 : 50;
+  const unit = isPrecalc
+    ? getPrecalcUnit(unitId)
+    : isPsych
+      ? getPsychologyUnit(unitId)
+      : units.find((u) => u.id === Number(unitId));
+  const review = isPsych ? isPsychologyReview(unit) : false;
+  const examMinutes = isPrecalc ? EXAM_MINUTES : review ? 90 : 50;
   const { saveQuizResult } = useQuizProgress();
-  
-  const [mode, setMode] = useState<'study' | 'exam' | null>(null);
-  const [sessionQuestions, setSessionQuestions] = useState<Question[]>([]);
+  const { gateOpen, setGateOpen, allowItem, canStartNew, remaining } = useGuestLimit("quiz");
+
+  const [mode, setMode] = useState<"study" | "exam" | null>(null);
+  const [sessionQuestions, setSessionQuestions] = useState<SessionQuestion[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [userAnswers, setUserAnswers] = useState<Record<number, string>>({});
+  const [numericDraft, setNumericDraft] = useState("");
   const [isAnswered, setIsAnswered] = useState(false);
   const [score, setScore] = useState(0);
   const [incorrectCount, setIncorrectCount] = useState(0);
   const [isFinished, setIsFinished] = useState(false);
-  const [timeLeft, setTimeLeft] = useState(50 * 60);
+  const [timeLeft, setTimeLeft] = useState(examMinutes * 60);
 
-  const prepareQuestions = (qs: Question[]) => {
+  const prepareQuestions = (): SessionQuestion[] => {
+    if (!unit) return [];
+    if (isPrecalc) {
+      return buildPrecalcSession(unit.id, mode ?? "study");
+    }
     if (review) {
       return buildPsychologyPracticeExam(10).map((q) => ({
         ...q,
         options: [...q.options].sort(() => 0.5 - Math.random()),
       }));
     }
+    const qs = "questions" in unit ? unit.questions : [];
     const shuffled = [...qs]
       .sort(() => 0.5 - Math.random())
-      .map(q => ({
+      .map((q) => ({
         ...q,
-        options: [...q.options].sort(() => 0.5 - Math.random())
+        options: [...q.options].sort(() => 0.5 - Math.random()),
       }));
-    return courseId === "ap-psych" ? shuffled : shuffled.slice(0, 15);
+    return isPsych ? shuffled : shuffled.slice(0, 15);
   };
 
   useEffect(() => {
-    if (unit) {
-      const prepared = prepareQuestions(unit.questions);
+    if (unit && mode) {
+      const prepared = capGuestItems(prepareQuestions(), remaining);
       setSessionQuestions(prepared);
-      setTimeLeft(review ? examMinutes * 60 : courseId === "ap-psych" ? prepared.length * 60 : 50 * 60);
+      setCurrentIndex(0);
+      setUserAnswers({});
+      setNumericDraft("");
+      setIsAnswered(false);
+      setScore(0);
+      setIncorrectCount(0);
+      setIsFinished(false);
+      if (isPrecalc) {
+        setTimeLeft(mode === "exam" ? EXAM_MINUTES * 60 : prepared.length * 90);
+      } else {
+        setTimeLeft(review ? examMinutes * 60 : isPsych ? prepared.length * 60 : 50 * 60);
+      }
     }
-  }, [unit, courseId]);
+  }, [unit, courseId, mode]);
 
   useEffect(() => {
-    if (mode === 'exam' && !isFinished && timeLeft > 0) {
+    if (mode === "exam" && !isFinished && timeLeft > 0) {
       const timer = setInterval(() => setTimeLeft((prev) => prev - 1), 1000);
       return () => clearInterval(timer);
-    } else if (timeLeft === 0 && !isFinished) {
+    } else if (timeLeft === 0 && !isFinished && mode === "exam") {
       finishQuiz();
     }
   }, [mode, isFinished, timeLeft]);
 
   const handleShuffle = () => {
-    if (unit) {
-      const prepared = prepareQuestions(unit.questions);
-      setSessionQuestions(prepared);
-      setCurrentIndex(0);
-      setUserAnswers({});
-      setIsAnswered(false);
-      setScore(0);
-      setIncorrectCount(0);
-      setTimeLeft(review ? examMinutes * 60 : courseId === "ap-psych" ? prepared.length * 60 : 50 * 60);
+    if (!unit || !mode) return;
+    const prepared = capGuestItems(
+      isPrecalc ? buildPrecalcSession(unit.id, mode) : prepareQuestions(),
+      remaining
+    );
+    setSessionQuestions(prepared);
+    setCurrentIndex(0);
+    setUserAnswers({});
+    setNumericDraft("");
+    setIsAnswered(false);
+    setScore(0);
+    setIncorrectCount(0);
+    if (isPrecalc) {
+      setTimeLeft(mode === "exam" ? EXAM_MINUTES * 60 : prepared.length * 90);
+    } else {
+      setTimeLeft(review ? examMinutes * 60 : isPsych ? prepared.length * 60 : 50 * 60);
     }
   };
 
-  if (!unit || sessionQuestions.length === 0) return null;
+  if (!unit) return null;
 
   const formatTime = (seconds: number) => {
     const mins = Math.floor(seconds / 60);
     const secs = seconds % 60;
-    return `${mins}:${secs.toString().padStart(2, '0')}`;
+    return `${mins}:${secs.toString().padStart(2, "0")}`;
+  };
+
+  const checkCorrect = (q: SessionQuestion, response: string) => {
+    if (isPrecalcQ(q)) return answersMatch(q, response);
+    return response === q.correctAnswer;
   };
 
   const handleOptionSelect = (option: string) => {
-    if (mode === 'study' && isAnswered) return;
-    setUserAnswers(prev => ({ ...prev, [currentIndex]: option }));
-    if (mode === 'study') {
+    if (mode === "study" && isAnswered) return;
+    if (!allowItem(sessionQuestions[currentIndex]?.id ?? String(currentIndex))) return;
+    setUserAnswers((prev) => ({ ...prev, [currentIndex]: option }));
+    if (mode === "study") {
       setIsAnswered(true);
-      if (option === sessionQuestions[currentIndex].correctAnswer) {
-        setScore((currentScore) => currentScore + 1);
-        playSound('correct');
+      if (checkCorrect(sessionQuestions[currentIndex], option)) {
+        setScore((s) => s + 1);
+        playSound("correct");
       } else {
-        setIncorrectCount((currentCount) => currentCount + 1);
-        playSound('wrong');
+        setIncorrectCount((c) => c + 1);
+        playSound("wrong");
+      }
+    }
+  };
+
+  const handleNumericSubmit = () => {
+    if (mode === "study" && isAnswered) return;
+    if (!numericDraft.trim()) return;
+    if (!allowItem(sessionQuestions[currentIndex]?.id ?? String(currentIndex))) return;
+    const value = numericDraft.trim();
+    setUserAnswers((prev) => ({ ...prev, [currentIndex]: value }));
+    if (mode === "study") {
+      setIsAnswered(true);
+      if (checkCorrect(sessionQuestions[currentIndex], value)) {
+        setScore((s) => s + 1);
+        playSound("correct");
+      } else {
+        setIncorrectCount((c) => c + 1);
+        playSound("wrong");
       }
     }
   };
 
   const handleNext = () => {
     if (currentIndex < sessionQuestions.length - 1) {
+      if (!canStartNew()) return;
       const nextIndex = currentIndex + 1;
       setCurrentIndex(nextIndex);
       setIsAnswered(mode === "study" && Boolean(userAnswers[nextIndex]));
+      setNumericDraft(userAnswers[nextIndex] ?? "");
     } else {
       finishQuiz();
     }
@@ -117,18 +189,19 @@ const Quiz = () => {
     const prevIndex = currentIndex - 1;
     setCurrentIndex(prevIndex);
     setIsAnswered(mode === "study" && Boolean(userAnswers[prevIndex]));
+    setNumericDraft(userAnswers[prevIndex] ?? "");
   };
 
   const finishQuiz = () => {
     let finalScore = score;
-    if (mode === 'exam') {
+    if (mode === "exam") {
       finalScore = sessionQuestions.reduce((acc, q, idx) => {
-        return acc + (userAnswers[idx] === q.correctAnswer ? 1 : 0);
+        return acc + (checkCorrect(q, userAnswers[idx] ?? "") ? 1 : 0);
       }, 0);
       setScore(finalScore);
     }
     setIsFinished(true);
-    const progressUnitId = courseId === "ap-psych" ? 100 + unit.id : unit.id;
+    const progressUnitId = isPsych ? 100 + unit.id : isPrecalc ? 200 + unit.id : unit.id;
     saveQuizResult(progressUnitId, finalScore, sessionQuestions.length, mode!);
   };
 
@@ -137,10 +210,28 @@ const Quiz = () => {
       <Layout>
         <QuizModeSelection
           unitTitle={unit.title}
-          onSelect={setMode}
+          onSelect={(nextMode) => {
+            if (!canStartNew()) return;
+            setMode(nextMode);
+          }}
           examMinutes={examMinutes}
-          examDescription={review ? "About 75 mixed questions, including stimulus-based items from every unit." : undefined}
+          examDescription={
+            isPrecalc
+              ? `Study: ${STUDY_LENGTH} mixed items with explanations. Exam: ${EXAM_LENGTH} items (${EXAM_MINUTES} min), calc and no-calc mix, generated variants.`
+              : review
+                ? "About 75 mixed questions, including stimulus-based items from every unit."
+                : undefined
+          }
         />
+        <SignupGateDialog open={gateOpen} onOpenChange={setGateOpen} kind="quiz" />
+      </Layout>
+    );
+  }
+
+  if (sessionQuestions.length === 0) {
+    return (
+      <Layout>
+        <div className="text-center py-20 text-muted-foreground">Loading practice set…</div>
       </Layout>
     );
   }
@@ -148,14 +239,16 @@ const Quiz = () => {
   if (isFinished) {
     return (
       <Layout>
-        <motion.div 
+        <motion.div
           initial={{ opacity: 0, scale: 0.95 }}
           animate={{ opacity: 1, scale: 1 }}
           className="max-w-md mx-auto text-center space-y-8 py-6 sm:py-12"
         >
           <div className="space-y-2">
             <h2 className="text-2xl sm:text-3xl font-bold">Quiz Complete!</h2>
-            <p className="text-muted-foreground">Mode: <span className="capitalize font-bold text-foreground">{mode}</span></p>
+            <p className="text-muted-foreground">
+              Mode: <span className="capitalize font-bold text-foreground">{mode}</span>
+            </p>
           </div>
           <div className="grid grid-cols-2 gap-4">
             <div className="p-4 sm:p-6 rounded-2xl bg-green-500/10 border border-green-500/20">
@@ -168,11 +261,19 @@ const Quiz = () => {
             </div>
           </div>
           <div className="p-8 rounded-3xl bg-primary/10 border border-primary/20">
-            <div className="text-5xl font-bold text-primary mb-2">{Math.round((score/sessionQuestions.length)*100)}%</div>
+            <div className="text-5xl font-bold text-primary mb-2">
+              {Math.round((score / sessionQuestions.length) * 100)}%
+            </div>
             <div className="text-sm font-bold uppercase tracking-widest text-primary/70">Final Score</div>
           </div>
           <div className="flex gap-4">
-            <Button onClick={() => window.location.reload()} className="flex-1 h-12 rounded-xl">
+            <Button
+              onClick={() => {
+                setMode(null);
+                setIsFinished(false);
+              }}
+              className="flex-1 h-12 rounded-xl"
+            >
               <RefreshCcw className="mr-2 h-4 w-4" /> Try Again
             </Button>
             <Button variant="outline" onClick={() => navigate(coursePath)} className="flex-1 h-12 rounded-xl">
@@ -185,26 +286,37 @@ const Quiz = () => {
   }
 
   const currentQuestion = sessionQuestions[currentIndex];
-  const progress = ((currentIndex) / sessionQuestions.length) * 100;
+  const progress = (currentIndex / sessionQuestions.length) * 100;
+  const precalcCurrent = isPrecalcQ(currentQuestion) ? currentQuestion : null;
+  const isNumeric = precalcCurrent?.kind === "numeric";
+  const options = precalcCurrent?.options ?? ("options" in currentQuestion ? currentQuestion.options : []);
 
-  return (
-    <Layout>
+  const quizBody = (
       <div className="space-y-6 sm:space-y-8">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <Button variant="ghost" onClick={() => navigate(coursePath)} className="text-muted-foreground">
               <ArrowLeft className="mr-2 h-4 w-4" /> Exit
             </Button>
-            <Button variant="outline" size="sm" onClick={handleShuffle} className="rounded-lg h-8 px-3 text-[10px] font-bold uppercase tracking-wider">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={handleShuffle}
+              className="rounded-lg h-8 px-3 text-[10px] font-bold uppercase tracking-wider"
+            >
               <Shuffle className="mr-1.5 h-3 w-3" /> Shuffle
             </Button>
           </div>
           <div className="flex items-center gap-4">
-            {mode === 'exam' && (
-              <div className={cn(
-                "flex items-center gap-2 px-3 py-1 rounded-full font-mono font-bold border",
-                timeLeft < 300 ? "bg-destructive/10 text-destructive border-destructive/20 animate-pulse" : "bg-muted text-foreground border-border"
-              )}>
+            {mode === "exam" && (
+              <div
+                className={cn(
+                  "flex items-center gap-2 px-3 py-1 rounded-full font-mono font-bold border",
+                  timeLeft < 300
+                    ? "bg-destructive/10 text-destructive border-destructive/20 animate-pulse"
+                    : "bg-muted text-foreground border-border"
+                )}
+              >
                 <Timer size={16} />
                 {formatTime(timeLeft)}
               </div>
@@ -218,8 +330,18 @@ const Quiz = () => {
           </div>
         </div>
         <Progress value={progress} className="h-1.5 bg-muted" />
-        <div className={cn("space-y-6", currentQuestion.stimulus && "grid grid-cols-1 lg:grid-cols-2 gap-8 items-start space-y-0")}>
-          {currentQuestion.stimulus && (
+
+        <div
+          className={cn(
+            "space-y-6",
+            isPrecalc && "lg:grid lg:grid-cols-[minmax(0,1fr)_minmax(340px,0.95fr)] lg:gap-8 lg:items-start lg:space-y-0",
+            "stimulus" in currentQuestion &&
+              currentQuestion.stimulus &&
+              !isPrecalc &&
+              "grid grid-cols-1 lg:grid-cols-2 gap-8 items-start space-y-0"
+          )}
+        >
+          {"stimulus" in currentQuestion && currentQuestion.stimulus && (
             <Card className="overflow-hidden border-border shadow-xl shadow-primary/5 rounded-3xl lg:sticky lg:top-24">
               <CardContent className="p-6 sm:p-8 space-y-4">
                 <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 text-primary text-[10px] font-bold uppercase tracking-widest">
@@ -235,67 +357,171 @@ const Quiz = () => {
               </CardContent>
             </Card>
           )}
+
           <div className="space-y-6">
-          <h2 className="text-2xl font-semibold leading-tight">{currentQuestion.question}</h2>
-          <div className="grid gap-3">
-            {currentQuestion.options.map((option) => {
-              const isCorrect = option === currentQuestion.correctAnswer;
-              const isSelected = userAnswers[currentIndex] === option;
-              return (
-                <button
-                  key={option}
-                  disabled={mode === 'study' && isAnswered}
-                  onClick={() => handleOptionSelect(option)}
+            {precalcCurrent && (
+              <div className="flex flex-wrap gap-2">
+                <span className="inline-flex items-center px-2.5 py-1 rounded-full bg-muted text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
+                  Skill {precalcCurrent.skill}
+                </span>
+                <span
                   className={cn(
-                    "w-full text-left p-5 rounded-2xl border-2 transition-all duration-200 text-lg font-medium",
-                    !isAnswered && !isSelected && "border-border hover:border-primary/50",
-                    !isAnswered && isSelected && "border-primary bg-primary/5",
-                    mode === 'study' && isAnswered && isCorrect && "border-green-500 bg-green-500/10 text-green-600",
-                    mode === 'study' && isAnswered && isSelected && !isCorrect && "border-destructive bg-destructive/10 text-destructive",
-                    mode === 'study' && isAnswered && !isCorrect && !isSelected && "border-border opacity-40"
+                    "inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider",
+                    precalcCurrent.calculator
+                      ? "bg-sky-500/10 text-sky-700 dark:text-sky-300"
+                      : "bg-amber-500/10 text-amber-700 dark:text-amber-300"
                   )}
                 >
-                  <div className="flex items-center justify-between">
-                    <span>{option}</span>
-                    {mode === 'study' && isAnswered && isCorrect && <CheckCircle2 className="h-6 w-6 text-green-600" />}
-                    {mode === 'study' && isAnswered && isSelected && !isCorrect && <XCircle className="h-6 w-6 text-destructive" />}
-                  </div>
-                </button>
-              );
-            })}
-          </div>
-          <div className="pt-4">
-            {mode === 'study' && isAnswered ? (
-              <Card className="border-none bg-muted shadow-none rounded-2xl">
-                <CardContent className="pt-6 space-y-4">
-                  <div className="text-xs font-bold uppercase tracking-wider text-muted-foreground flex items-center gap-2">
-                    <AlertCircle size={14} /> Explanation
-                  </div>
-                  <p className="text-foreground leading-relaxed">{currentQuestion.explanation}</p>
-                  <div className="flex gap-3">
-                    <Button variant="outline" onClick={handleBack} disabled={currentIndex === 0} className="flex-1 h-12 rounded-xl text-lg font-bold">
-                      Back
-                    </Button>
-                    <Button onClick={handleNext} className="flex-[2] h-12 rounded-xl text-lg font-bold">
-                      {currentIndex < sessionQuestions.length - 1 ? "Next Question" : "Finish Quiz"}
-                    </Button>
-                  </div>
-                </CardContent>
-              </Card>
-            ) : (
-              <div className="flex gap-3">
-                <Button variant="outline" onClick={handleBack} disabled={currentIndex === 0} className="flex-1 h-14 rounded-2xl text-lg font-bold">
-                  Back
-                </Button>
-                <Button onClick={handleNext} disabled={!userAnswers[currentIndex]} className="flex-[2] h-14 rounded-2xl text-lg font-bold shadow-lg shadow-primary/20">
-                  {currentIndex < sessionQuestions.length - 1 ? "Next Question" : "Submit Quiz"}
-                </Button>
+                  <Calculator size={12} />
+                  {precalcCurrent.calculator ? "Calculator OK" : "No calculator"}
+                </span>
+                <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground self-center">
+                  {currentIndex + 1}/{sessionQuestions.length}
+                </span>
               </div>
             )}
+
+            {isPrecalc && <QuizStudyToolsBar />}
+
+            <h2 className="text-2xl font-semibold leading-tight">
+              {isPrecalc ? <MathText text={currentQuestion.question} /> : currentQuestion.question}
+            </h2>
+
+            {isNumeric ? (
+              <div className="space-y-3 max-w-sm">
+                <Input
+                  type="text"
+                  inputMode="decimal"
+                  value={mode === "study" && isAnswered ? userAnswers[currentIndex] ?? numericDraft : numericDraft}
+                  onChange={(e) => setNumericDraft(e.target.value)}
+                  disabled={mode === "study" && isAnswered}
+                  placeholder="Enter a number"
+                  className="h-14 rounded-2xl text-lg"
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") {
+                      if (mode === "exam") {
+                        if (!allowItem(sessionQuestions[currentIndex]?.id ?? String(currentIndex))) return;
+                        setUserAnswers((prev) => ({ ...prev, [currentIndex]: numericDraft.trim() }));
+                      } else {
+                        handleNumericSubmit();
+                      }
+                    }
+                  }}
+                />
+                {!(mode === "study" && isAnswered) && (
+                  <Button
+                    onClick={() => {
+                      if (mode === "exam") {
+                        if (!numericDraft.trim()) return;
+                        if (!allowItem(sessionQuestions[currentIndex]?.id ?? String(currentIndex))) return;
+                        setUserAnswers((prev) => ({ ...prev, [currentIndex]: numericDraft.trim() }));
+                      } else {
+                        handleNumericSubmit();
+                      }
+                    }}
+                    className="h-12 rounded-xl font-bold"
+                  >
+                    {mode === "exam" ? "Lock Answer" : "Check Answer"}
+                  </Button>
+                )}
+              </div>
+            ) : (
+              <div className="grid gap-3">
+                {options.map((option) => {
+                  const isCorrect = checkCorrect(currentQuestion, option);
+                  const isSelected = userAnswers[currentIndex] === option;
+                  return (
+                    <button
+                      key={option}
+                      disabled={mode === "study" && isAnswered}
+                      onClick={() => handleOptionSelect(option)}
+                      className={cn(
+                        "w-full text-left p-5 rounded-2xl border-2 transition-all duration-200 text-lg font-medium",
+                        !isAnswered && !isSelected && "border-border hover:border-primary/50",
+                        !isAnswered && isSelected && "border-primary bg-primary/5",
+                        mode === "study" && isAnswered && isCorrect && "border-green-500 bg-green-500/10 text-green-600",
+                        mode === "study" && isAnswered && isSelected && !isCorrect && "border-destructive bg-destructive/10 text-destructive",
+                        mode === "study" && isAnswered && !isCorrect && !isSelected && "border-border opacity-40"
+                      )}
+                    >
+                      <div className="flex items-center justify-between gap-3">
+                        <span>{isPrecalc ? <MathText text={option} /> : option}</span>
+                        {mode === "study" && isAnswered && isCorrect && <CheckCircle2 className="h-6 w-6 text-green-600 shrink-0" />}
+                        {mode === "study" && isAnswered && isSelected && !isCorrect && (
+                          <XCircle className="h-6 w-6 text-destructive shrink-0" />
+                        )}
+                      </div>
+                    </button>
+                  );
+                })}
+              </div>
+            )}
+
+            <div className="pt-4">
+              {mode === "study" && isAnswered ? (
+                <Card className="border-none bg-muted shadow-none rounded-2xl">
+                  <CardContent className="pt-6 space-y-4">
+                    <div className="text-xs font-bold uppercase tracking-wider text-muted-foreground flex items-center gap-2">
+                      <AlertCircle size={14} /> Explanation
+                    </div>
+                    <p className="text-foreground leading-relaxed">
+                      {isPrecalc ? <MathText text={currentQuestion.explanation} /> : currentQuestion.explanation}
+                    </p>
+                    <div className="flex gap-3">
+                      <Button
+                        variant="outline"
+                        onClick={handleBack}
+                        disabled={currentIndex === 0}
+                        className="flex-1 h-12 rounded-xl text-lg font-bold"
+                      >
+                        Back
+                      </Button>
+                      <Button onClick={handleNext} className="flex-[2] h-12 rounded-xl text-lg font-bold">
+                        {currentIndex < sessionQuestions.length - 1 ? "Next Question" : "Finish Quiz"}
+                      </Button>
+                    </div>
+                  </CardContent>
+                </Card>
+              ) : (
+                <div className="flex gap-3">
+                  <Button
+                    variant="outline"
+                    onClick={handleBack}
+                    disabled={currentIndex === 0}
+                    className="flex-1 h-14 rounded-2xl text-lg font-bold"
+                  >
+                    Back
+                  </Button>
+                  <Button
+                    onClick={handleNext}
+                    disabled={!userAnswers[currentIndex]}
+                    className="flex-[2] h-14 rounded-2xl text-lg font-bold shadow-lg shadow-primary/20"
+                  >
+                    {currentIndex < sessionQuestions.length - 1 ? "Next Question" : "Submit Quiz"}
+                  </Button>
+                </div>
+              )}
+            </div>
           </div>
-          </div>
+
+          {isPrecalc && <QuizStudyToolsPanel />}
         </div>
       </div>
+  );
+
+  return (
+    <Layout>
+      {isPrecalc ? (
+        <QuizStudyToolsProvider
+          allowCalculator={Boolean(precalcCurrent?.calculator)}
+          persistenceKey={`aceap-precalc-u${unit.id}-wb`}
+        >
+          {quizBody}
+        </QuizStudyToolsProvider>
+      ) : (
+        quizBody
+      )}
+      <SignupGateDialog open={gateOpen} onOpenChange={setGateOpen} kind="quiz" />
     </Layout>
   );
 };

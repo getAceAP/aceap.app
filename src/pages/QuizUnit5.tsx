@@ -10,6 +10,8 @@ import { cn } from "@/lib/utils";
 import { playSound } from "@/utils/sounds";
 import QuizModeSelection from "@/components/QuizModeSelection";
 import { useQuizProgress } from "@/hooks/useQuizProgress";
+import { useGuestLimit, capGuestItems } from "@/hooks/useGuestLimit";
+import SignupGateDialog from "@/components/SignupGateDialog";
 
 const stimuli = [
   { id: 1, text: "The state of nature has a law of nature to govern it, which obliges every one: and reason, which is that law, teaches all mankind... that being all equal and independent, no one ought to harm another in his life, health, liberty, or possessions.", source: "John Locke, Second Treatise of Government, 1689" },
@@ -24,7 +26,7 @@ const stimuli = [
   { id: 10, text: "I do not wish them [women] to have power over men; but over themselves... It is time to effect a revolution in female manners - time to restore to them their lost dignity.", source: "Mary Wollstonecraft, A Vindication of the Rights of Woman, 1792" }
 ];
 
-const questions = [
+const questionBank = [
   { id: 1, stimulusId: 1, question: "Locke's 'natural rights' as described in the text include:", options: ["Life, Liberty, Happiness", "Life, Liberty, Property", "Freedom, Equality, Fraternity", "Order, Progress, Security"], correctAnswer: "Life, Liberty, Property", explanation: "Locke explicitly lists life, health, liberty, and possessions (property) as natural rights." },
   { id: 2, stimulusId: 1, question: "The 'social contract' theory implied by Locke suggests that government power comes from:", options: ["The Divine Right of Kings", "The Consent of the Governed", "Military Conquest", "Religious Authority"], correctAnswer: "The Consent of the Governed", explanation: "Locke argued that people form governments to protect their rights, implying consent." },
   { id: 3, stimulusId: 1, question: "Which Enlightenment thinker advocated for the separation of powers to protect these rights?", options: ["Voltaire", "Rousseau", "Montesquieu", "Adam Smith"], correctAnswer: "Montesquieu", explanation: "Montesquieu's 'The Spirit of the Laws' proposed dividing government into three branches." },
@@ -80,6 +82,7 @@ const questions = [
 const QuizUnit5 = () => {
   const navigate = useNavigate();
   const { saveQuizResult } = useQuizProgress();
+  const { gateOpen, setGateOpen, allowItem, canStartNew, remaining } = useGuestLimit("quiz");
   
   const [mode, setMode] = useState<'study' | 'exam' | null>(null);
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -88,10 +91,11 @@ const QuizUnit5 = () => {
   const [crossedOut, setCrossedOut] = useState<Record<number, string[]>>({});
   const [isFinished, setIsFinished] = useState(false);
   const [timeLeft, setTimeLeft] = useState(50 * 60);
+  const [sessionQuestions, setSessionQuestions] = useState(questionBank);
 
-  const currentQuestion = questions[currentIndex];
+  const currentQuestion = sessionQuestions[currentIndex];
   const currentStimulus = stimuli.find(s => s.id === currentQuestion.stimulusId);
-  const progress = (currentIndex / questions.length) * 100;
+  const progress = (currentIndex / sessionQuestions.length) * 100;
 
   useEffect(() => {
     if (mode === 'exam' && !isFinished && timeLeft > 0) {
@@ -104,6 +108,7 @@ const QuizUnit5 = () => {
 
   const handleOptionSelect = (option: string) => {
     if (mode === 'study' && checkedIndices.has(currentIndex)) return;
+    if (!allowItem(sessionQuestions[currentIndex]?.id ?? currentIndex)) return;
     setUserAnswers(prev => ({ ...prev, [currentIndex]: option }));
   };
 
@@ -132,15 +137,16 @@ const QuizUnit5 = () => {
 
   const finishQuiz = () => {
     let score = 0;
-    questions.forEach((q, idx) => {
+    sessionQuestions.forEach((q, idx) => {
       if (userAnswers[idx] === q.correctAnswer) score++;
     });
     setIsFinished(true);
-    saveQuizResult(5, score, questions.length, mode!);
+    saveQuizResult(5, score, sessionQuestions.length, mode!);
   };
 
   const handleNext = () => {
-    if (currentIndex < questions.length - 1) {
+    if (currentIndex < sessionQuestions.length - 1) {
+      if (!canStartNew()) return;
       setCurrentIndex(currentIndex + 1);
     } else {
       finishQuiz();
@@ -156,14 +162,30 @@ const QuizUnit5 = () => {
   if (!mode) {
     return (
       <Layout>
-        <QuizModeSelection unitTitle="Unit 5: Revolutions" onSelect={setMode} />
+        <QuizModeSelection
+          unitTitle="Unit 5: Revolutions"
+          onSelect={(nextMode) => {
+            if (!canStartNew()) return;
+            const shuffled = [...questionBank]
+              .sort(() => 0.5 - Math.random())
+              .map((q) => ({ ...q, options: [...q.options].sort(() => 0.5 - Math.random()) }));
+            setSessionQuestions(capGuestItems(shuffled, remaining));
+            setCurrentIndex(0);
+            setUserAnswers({});
+            setCheckedIndices(new Set());
+            setCrossedOut({});
+            setIsFinished(false);
+            setMode(nextMode);
+          }}
+        />
+        <SignupGateDialog open={gateOpen} onOpenChange={setGateOpen} kind="quiz" />
       </Layout>
     );
   }
 
   if (isFinished) {
     let finalScore = 0;
-    questions.forEach((q, idx) => {
+    sessionQuestions.forEach((q, idx) => {
       if (userAnswers[idx] === q.correctAnswer) finalScore++;
     });
     return (
@@ -176,11 +198,11 @@ const QuizUnit5 = () => {
           <div className="space-y-2">
             <h2 className="text-3xl font-bold">Unit 5 Mastery Complete!</h2>
             <p className="text-muted-foreground">Mode: <span className="capitalize font-bold text-foreground">{mode}</span></p>
-            <p className="text-muted-foreground">You scored {finalScore} out of {questions.length}</p>
+            <p className="text-muted-foreground">You scored {finalScore} out of {sessionQuestions.length}</p>
           </div>
           
           <div className="p-8 rounded-3xl bg-primary/10 border border-primary/20">
-            <div className="text-5xl font-bold text-primary mb-2">{Math.round((finalScore/questions.length)*100)}%</div>
+            <div className="text-5xl font-bold text-primary mb-2">{Math.round((finalScore/sessionQuestions.length)*100)}%</div>
             <div className="text-sm font-bold uppercase tracking-widest text-primary/70">Final Score</div>
           </div>
 
@@ -215,7 +237,7 @@ const QuizUnit5 = () => {
               </div>
             )}
             <div className="text-right">
-              <div className="text-sm font-bold text-primary">Question {currentIndex + 1} / {questions.length}</div>
+              <div className="text-sm font-bold text-primary">Question {currentIndex + 1} / {sessionQuestions.length}</div>
               <div className="text-[10px] font-bold text-muted-foreground uppercase tracking-tighter">Unit 5: Revolutions</div>
             </div>
           </div>
@@ -343,7 +365,7 @@ const QuizUnit5 = () => {
                         disabled={mode === 'exam' && !userAnswers[currentIndex]}
                         className="flex-[2] h-14 rounded-2xl text-lg font-bold shadow-lg shadow-primary/20"
                       >
-                        {currentIndex < questions.length - 1 ? "Next Question" : "Finish Quiz"}
+                        {currentIndex < sessionQuestions.length - 1 ? "Next Question" : "Finish Quiz"}
                         <ArrowRight className="ml-2 h-5 w-5" />
                       </Button>
                     )}
@@ -354,6 +376,7 @@ const QuizUnit5 = () => {
           </div>
         </div>
       </div>
+      <SignupGateDialog open={gateOpen} onOpenChange={setGateOpen} kind="quiz" />
     </Layout>
   );
 };

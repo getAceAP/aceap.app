@@ -1,4 +1,4 @@
-import { Globe, Zap, Users, TrendingUp, ShieldAlert, Landmark, AlertTriangle, BookOpen, HeartPulse, MapPin, Scale, Factory, Sparkles } from "lucide-react";
+import { Globe, Zap, Users, TrendingUp, ShieldAlert, Landmark, AlertTriangle, BookOpen, HeartPulse, MapPin, Scale, Factory, Sparkles, ArrowLeftRight } from "lucide-react";
 
 const Unit9Content = () => {
   return (
@@ -11,6 +11,9 @@ const Unit9Content = () => {
             <h3 className="font-bold text-primary mb-1">Unit 9: Globalization (1900-present)</h3>
             <p className="text-sm text-muted-foreground leading-relaxed">
               This final unit examines the unprecedented level of global integration in the late 20th and early 21st centuries. It covers technological advances, global economic shifts, environmental challenges, and the spread of a global culture and human rights.
+            </p>
+            <p className="text-sm text-muted-foreground leading-relaxed mt-3">
+              Globalization is older than the internet, but container ships, jet travel, and fiber optics made it faster. The CED wants diseases old and new, Green Revolution trade-offs, neoliberal reform, NGOs, and people who push back — from World Bank protesters to religious fundamentalists to Brexit voters. Do not treat “global culture” as only K-pop; include World Cup, Hollywood, and also local revival.
             </p>
           </div>
         </div>
@@ -100,6 +103,31 @@ const Unit9Content = () => {
               <li><strong>Cultural Preservation:</strong> Efforts to protect local languages and traditions from being overwhelmed by a homogenized global culture.</li>
             </ul>
           </div>
+        </div>
+      </section>
+
+      <section className="space-y-8">
+        <div className="border-l-4 border-primary pl-6">
+          <h2 className="text-3xl font-bold m-0">Disease, rights, and institutions</h2>
+          <p className="text-muted-foreground mt-2">The rest of the Unit 9 CED that a short review usually skips.</p>
+        </div>
+        <div className="grid md:grid-cols-2 gap-6 not-prose items-stretch">
+          <div className="p-6 rounded-2xl bg-muted/30 border border-border space-y-3">
+            <h3 className="font-bold text-lg m-0">Health and population</h3>
+            <p className="text-sm text-muted-foreground leading-relaxed m-0">
+              Vaccines and antibiotics raised life expectancy; malaria and tuberculosis never left. HIV/AIDS became a global pandemic with unequal access to drugs. New epidemics (Ebola, COVID-19) travel on the same planes as tourists. The Green Revolution raised yields with fertilizers, irrigation, and new seeds — and with soil and water costs. Birth control changed women’s life courses where it was available.
+            </p>
+          </div>
+          <div className="p-6 rounded-2xl bg-muted/30 border border-border space-y-3">
+            <h3 className="font-bold text-lg m-0">Rights, firms, and pushback</h3>
+            <p className="text-sm text-muted-foreground leading-relaxed m-0">
+              UN declarations, the end of apartheid, and feminist and LGBTQ movements sit next to ongoing inequality. Multinationals (Nike, Nestlé, Toyota) and regional blocs (EU, NAFTA/USMCA, ASEAN) organize production. The World Bank and IMF attach conditions to loans. Resistance includes anti-WTO protests, religious revival, and economic nationalism. Terrorism (Al-Qaeda, later ISIS) is a violent form of contesting the US-led order, not a synonym for Islam.
+            </p>
+          </div>
+        </div>
+        <div className="not-prose p-6 rounded-2xl border border-primary/20 bg-primary/5 flex gap-3">
+          <ArrowLeftRight className="text-primary shrink-0 mt-0.5" size={18} />
+          <p className="text-sm text-muted-foreground m-0"><strong>Exam tip:</strong> Pair a technology with a cost (Green Revolution / fertilizer runoff; internet / surveillance and inequality of access). Name a specific free-market reformer (Deng, Thatcher, Reagan) and a specific institution (WTO, IMF). Globalization has winners inside poor countries and losers inside rich ones — do not write “the West vs. the rest” as the whole story.</p>
         </div>
       </section>
     </div>

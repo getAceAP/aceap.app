@@ -1,4 +1,4 @@
-import { Globe, Zap, Users, TrendingUp, ShieldAlert, Landmark, AlertTriangle, BookOpen, HeartPulse, MapPin, Scale } from "lucide-react";
+import { Globe, Zap, Users, TrendingUp, ShieldAlert, Landmark, AlertTriangle, BookOpen, HeartPulse, MapPin, Scale, ArrowLeftRight } from "lucide-react";
 
 const Unit8Content = () => {
   return (
@@ -11,6 +11,9 @@ const Unit8Content = () => {
             <h3 className="font-bold text-primary mb-1">Unit 8: Cold War & Decolonization (1900-present)</h3>
             <p className="text-sm text-muted-foreground leading-relaxed">
               This unit explores the post-WWII world, dominated by the ideological struggle between the <strong>United States (Capitalism)</strong> and the <strong>Soviet Union (Communism)</strong>. Simultaneously, a massive wave of <strong>Decolonization</strong> saw dozens of new nations gain independence in Africa and Asia.
+            </p>
+            <p className="text-sm text-muted-foreground leading-relaxed mt-3">
+              The Cold War was rarely fought as US vs. USSR armies. Proxy wars, nuclear deterrence, and competing development models did the work. Decolonization could be negotiated (Ghana, India) or fought (Algeria, Vietnam). New states then chose alignment, non-alignment, or revolution. Mao’s China is both a Cold War player and a distinct communist path.
             </p>
           </div>
         </div>
@@ -108,6 +111,31 @@ const Unit8Content = () => {
               <li><strong>Dissolution of the USSR (1991):</strong> The Soviet Union fragmented into 15 independent republics, marking the official end of the Cold War.</li>
             </ul>
           </div>
+        </div>
+      </section>
+
+      <section className="space-y-8">
+        <div className="border-l-4 border-primary pl-6">
+          <h2 className="text-3xl font-bold m-0">China, methods of independence, and the Third World</h2>
+          <p className="text-muted-foreground mt-2">More than NATO vs. Warsaw Pact.</p>
+        </div>
+        <div className="grid md:grid-cols-2 gap-6 not-prose items-stretch">
+          <div className="p-6 rounded-2xl bg-muted/30 border border-border space-y-3">
+            <h3 className="font-bold text-lg m-0">Chinese communism</h3>
+            <p className="text-sm text-muted-foreground leading-relaxed m-0">
+              1949 put the PRC in the communist camp, but Mao’s <strong>Great Leap Forward</strong> and Cultural Revolution were not copies of Stalin. Land reform and later the Sino-Soviet split matter. After Mao, Deng’s reforms belong more to Unit 9 economics, but they start from this political victory.
+            </p>
+          </div>
+          <div className="p-6 rounded-2xl bg-muted/30 border border-border space-y-3">
+            <h3 className="font-bold text-lg m-0">How empires ended</h3>
+            <p className="text-sm text-muted-foreground leading-relaxed m-0">
+              Compare Gandhi’s satyagraha with armed struggle (FLN, Viet Minh, Mau Mau). Partition, settler minorities, and Cold War aid shaped outcomes. Authoritarian development (Nasser, Sukarno) and metropole-backed coups (Chile, Congo) show independence was not automatically democratic. Apartheid in South Africa lasted until 1994 — a late decolonization of racial rule.
+            </p>
+          </div>
+        </div>
+        <div className="not-prose p-6 rounded-2xl border border-primary/20 bg-primary/5 flex gap-3">
+          <ArrowLeftRight className="text-primary shrink-0 mt-0.5" size={18} />
+          <p className="text-sm text-muted-foreground m-0"><strong>Exam tip:</strong> Containment is the US strategy; proxy war is the method; MAD is why the superpowers avoided a direct European fight. Non-alignment is a third option, not “neutral and quiet.” If the prompt is decolonization, name a negotiated case and a violent case.</p>
         </div>
       </section>
     </div>

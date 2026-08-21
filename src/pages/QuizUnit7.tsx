@@ -10,6 +10,8 @@ import { cn } from "@/lib/utils";
 import { playSound } from "@/utils/sounds";
 import QuizModeSelection from "@/components/QuizModeSelection";
 import { useQuizProgress } from "@/hooks/useQuizProgress";
+import { useGuestLimit, capGuestItems } from "@/hooks/useGuestLimit";
+import SignupGateDialog from "@/components/SignupGateDialog";
 
 const stimuli = [
   { id: 1, text: "The lamps are going out all over Europe; we shall not see them lit again in our lifetime.", source: "Sir Edward Grey, British Foreign Secretary, August 3, 1914" },
@@ -24,7 +26,7 @@ const stimuli = [
   { id: 10, text: "The Holocaust was the systematic, state-sponsored persecution and murder of six million Jews by the Nazi regime and its collaborators.", source: "United States Holocaust Memorial Museum (Context: WWII Genocide)" }
 ];
 
-const questions = [
+const questionBank = [
   { id: 1, stimulusId: 1, question: "The 'lamps going out' refers to the start of which conflict?", options: ["The Napoleonic Wars", "World War I", "World War II", "The Cold War"], correctAnswer: "World War I", explanation: "Grey's quote captured the sense of impending doom as WWI began in 1914." },
   { id: 2, stimulusId: 1, question: "Which long-term cause of WWI involved the buildup of large standing armies?", options: ["Militarism", "Alliances", "Imperialism", "Nationalism"], correctAnswer: "Militarism", explanation: "Militarism (the 'M' in MAIN) was the glorification and expansion of military power." },
   { id: 3, stimulusId: 1, question: "The assassination of which figure triggered the start of WWI?", options: ["Archduke Franz Ferdinand", "Kaiser Wilhelm II", "Czar Nicholas II", "Woodrow Wilson"], correctAnswer: "Archduke Franz Ferdinand", explanation: "The assassination in Sarajevo by a Serbian nationalist was the immediate spark for the war." },
@@ -80,6 +82,7 @@ const questions = [
 const QuizUnit7 = () => {
   const navigate = useNavigate();
   const { saveQuizResult } = useQuizProgress();
+  const { gateOpen, setGateOpen, allowItem, canStartNew, remaining } = useGuestLimit("quiz");
   
   const [mode, setMode] = useState<'study' | 'exam' | null>(null);
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -88,10 +91,11 @@ const QuizUnit7 = () => {
   const [crossedOut, setCrossedOut] = useState<Record<number, string[]>>({});
   const [isFinished, setIsFinished] = useState(false);
   const [timeLeft, setTimeLeft] = useState(50 * 60);
+  const [sessionQuestions, setSessionQuestions] = useState(questionBank);
 
-  const currentQuestion = questions[currentIndex];
+  const currentQuestion = sessionQuestions[currentIndex];
   const currentStimulus = stimuli.find(s => s.id === currentQuestion.stimulusId);
-  const progress = (currentIndex / questions.length) * 100;
+  const progress = (currentIndex / sessionQuestions.length) * 100;
 
   useEffect(() => {
     if (mode === 'exam' && !isFinished && timeLeft > 0) {
@@ -104,6 +108,7 @@ const QuizUnit7 = () => {
 
   const handleOptionSelect = (option: string) => {
     if (mode === 'study' && checkedIndices.has(currentIndex)) return;
+    if (!allowItem(sessionQuestions[currentIndex]?.id ?? currentIndex)) return;
     setUserAnswers(prev => ({ ...prev, [currentIndex]: option }));
   };
 
@@ -132,15 +137,16 @@ const QuizUnit7 = () => {
 
   const finishQuiz = () => {
     let score = 0;
-    questions.forEach((q, idx) => {
+    sessionQuestions.forEach((q, idx) => {
       if (userAnswers[idx] === q.correctAnswer) score++;
     });
     setIsFinished(true);
-    saveQuizResult(7, score, questions.length, mode!);
+    saveQuizResult(7, score, sessionQuestions.length, mode!);
   };
 
   const handleNext = () => {
-    if (currentIndex < questions.length - 1) {
+    if (currentIndex < sessionQuestions.length - 1) {
+      if (!canStartNew()) return;
       setCurrentIndex(currentIndex + 1);
     } else {
       finishQuiz();
@@ -156,14 +162,30 @@ const QuizUnit7 = () => {
   if (!mode) {
     return (
       <Layout>
-        <QuizModeSelection unitTitle="Unit 7: Global Conflict" onSelect={setMode} />
+        <QuizModeSelection
+          unitTitle="Unit 7: Global Conflict"
+          onSelect={(nextMode) => {
+            if (!canStartNew()) return;
+            const shuffled = [...questionBank]
+              .sort(() => 0.5 - Math.random())
+              .map((q) => ({ ...q, options: [...q.options].sort(() => 0.5 - Math.random()) }));
+            setSessionQuestions(capGuestItems(shuffled, remaining));
+            setCurrentIndex(0);
+            setUserAnswers({});
+            setCheckedIndices(new Set());
+            setCrossedOut({});
+            setIsFinished(false);
+            setMode(nextMode);
+          }}
+        />
+        <SignupGateDialog open={gateOpen} onOpenChange={setGateOpen} kind="quiz" />
       </Layout>
     );
   }
 
   if (isFinished) {
     let finalScore = 0;
-    questions.forEach((q, idx) => {
+    sessionQuestions.forEach((q, idx) => {
       if (userAnswers[idx] === q.correctAnswer) finalScore++;
     });
     return (
@@ -176,11 +198,11 @@ const QuizUnit7 = () => {
           <div className="space-y-2">
             <h2 className="text-3xl font-bold">Unit 7 Mastery Complete!</h2>
             <p className="text-muted-foreground">Mode: <span className="capitalize font-bold text-foreground">{mode}</span></p>
-            <p className="text-muted-foreground">You scored {finalScore} out of {questions.length}</p>
+            <p className="text-muted-foreground">You scored {finalScore} out of {sessionQuestions.length}</p>
           </div>
           
           <div className="p-8 rounded-3xl bg-primary/10 border border-primary/20">
-            <div className="text-5xl font-bold text-primary mb-2">{Math.round((finalScore/questions.length)*100)}%</div>
+            <div className="text-5xl font-bold text-primary mb-2">{Math.round((finalScore/sessionQuestions.length)*100)}%</div>
             <div className="text-sm font-bold uppercase tracking-widest text-primary/70">Final Score</div>
           </div>
 
@@ -215,7 +237,7 @@ const QuizUnit7 = () => {
               </div>
             )}
             <div className="text-right">
-              <div className="text-sm font-bold text-primary">Question {currentIndex + 1} / {questions.length}</div>
+              <div className="text-sm font-bold text-primary">Question {currentIndex + 1} / {sessionQuestions.length}</div>
               <div className="text-[10px] font-bold text-muted-foreground uppercase tracking-tighter">Unit 7: Global Conflict</div>
             </div>
           </div>
@@ -343,7 +365,7 @@ const QuizUnit7 = () => {
                         disabled={mode === 'exam' && !userAnswers[currentIndex]}
                         className="flex-[2] h-14 rounded-2xl text-lg font-bold shadow-lg shadow-primary/20"
                       >
-                        {currentIndex < questions.length - 1 ? "Next Question" : "Finish Quiz"}
+                        {currentIndex < sessionQuestions.length - 1 ? "Next Question" : "Finish Quiz"}
                         <ArrowRight className="ml-2 h-5 w-5" />
                       </Button>
                     )}
@@ -354,6 +376,7 @@ const QuizUnit7 = () => {
           </div>
         </div>
       </div>
+      <SignupGateDialog open={gateOpen} onOpenChange={setGateOpen} kind="quiz" />
     </Layout>
   );
 };

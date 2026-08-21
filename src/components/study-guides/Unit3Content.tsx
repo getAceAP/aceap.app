@@ -1,4 +1,4 @@
-import { Landmark, Swords, ScrollText, Users, Globe, ShieldCheck, BookOpen, Coins } from "lucide-react";
+import { Landmark, Swords, ScrollText, Users, Globe, ShieldCheck, BookOpen, Coins, ArrowLeftRight } from "lucide-react";
 
 const Unit3Content = () => {
   return (
@@ -11,6 +11,9 @@ const Unit3Content = () => {
             <h3 className="font-bold text-primary mb-1">Unit 3: Land-Based Empires (1450-1750)</h3>
             <p className="text-sm text-muted-foreground leading-relaxed">
               This era is defined by the rise of powerful centralized states that utilized gunpowder technology, complex bureaucracies, and religious legitimization to expand and maintain control over vast, diverse territories. The "Gunpowder Empires" (Ottoman, Safavid, Mughal) and the expansion of Russia and the Qing Dynasty are central to this period.
+            </p>
+            <p className="text-sm text-muted-foreground leading-relaxed mt-3">
+              Unit 3 is the land-based counterpart to Unit 4’s maritime empires. The exam wants you to compare <em>how</em> rulers taxed, staffed armies, and claimed the right to rule — not to list every sultan. Rivalries (Ottoman–Safavid, Ming–Manchu, European wars of religion) show that expansion created new borders and new justifications for violence.
             </p>
           </div>
         </div>
@@ -177,6 +180,25 @@ const Unit3Content = () => {
               </li>
             </ul>
           </div>
+        </div>
+      </section>
+
+      <section className="space-y-8">
+        <div className="border-l-4 border-primary pl-6">
+          <h2 className="text-3xl font-bold m-0">3.4 Comparison</h2>
+          <p className="text-muted-foreground mt-2">Same toolkit, different mix of religion, tax, and military elites.</p>
+        </div>
+        <div className="not-prose p-6 rounded-2xl bg-muted/30 border border-border space-y-4">
+          <p className="text-sm text-muted-foreground leading-relaxed m-0">
+            All of these states used gunpowder, monumental building, and some form of professional soldier or tax farmer. Differences matter on SAQs: Ottomans recruited Christian boys through <strong>devshirme</strong>; Mughals used <strong>zamindars</strong> and (under Akbar) religious accommodation; Safavids fused Twelver Shi’ism with Persian kingship; Qing kept Confucian exams while marking Han men with the <strong>queue</strong>; Tokugawa turned samurai into salaried bureaucrats and limited foreign contact. Europe’s religious wars and the Peace of Westphalia sit next to this story: states claimed the right to decide the faith of their subjects.
+          </p>
+          <p className="text-sm text-muted-foreground leading-relaxed m-0">
+            If a stimulus is architecture, name the audience: Versailles disciplined nobles; the Taj Mahal advertised piety and wealth; the Forbidden City separated the emperor from ordinary people. Art is administration by other means.
+          </p>
+        </div>
+        <div className="not-prose p-6 rounded-2xl border border-primary/20 bg-primary/5 flex gap-3">
+          <ArrowLeftRight className="text-primary shrink-0 mt-0.5" size={18} />
+          <p className="text-sm text-muted-foreground m-0"><strong>Exam tip:</strong> Pair a military recruitment system with a tax system and a legitimacy claim. “Gunpowder empire” is a label, not an answer. Janissaries ≠ samurai ≠ Cossacks — all are professional fighters, but loyalty and social origin differ.</p>
         </div>
       </section>
     </div>
