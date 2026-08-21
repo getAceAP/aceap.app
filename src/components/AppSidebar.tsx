@@ -3,15 +3,13 @@ import type { ComponentType } from "react";
 import {
   Home,
   Folder,
-  Users,
-  Bell,
   Layers,
   FileText,
   ListChecks,
   BookOpen,
+  Newspaper,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { showSuccess } from "@/utils/toast";
 
 const NavItem = ({
   to,
@@ -31,8 +29,8 @@ const NavItem = ({
   const className = cn(
     "flex items-center gap-3 w-full rounded-xl px-3 py-2.5 text-[15px] font-medium transition-colors",
     active
-      ? "bg-primary/10 text-primary"
-      : "text-muted-foreground hover:bg-primary/5 hover:text-primary"
+      ? "bg-white/15 text-white shadow-sm shadow-black/10"
+      : "text-white/70 hover:bg-white/10 hover:text-white"
   );
 
   const inner = (
@@ -41,7 +39,7 @@ const NavItem = ({
       <span className="flex min-w-0 flex-col items-start text-left leading-tight">
         <span>{label}</span>
         {hint && (
-          <span className="mt-0.5 text-[11px] font-normal text-muted-foreground">
+          <span className="mt-0.5 text-[11px] font-normal text-white/50">
             {hint}
           </span>
         )}
@@ -67,6 +65,7 @@ const NavItem = ({
 const AppSidebar = ({ onNavigate }: { onNavigate?: () => void }) => {
   const { pathname } = useLocation();
   const isHome = pathname === "/home";
+  const isUpdates = pathname.startsWith("/updates");
   const isLibrary = pathname.startsWith("/units");
   const isFlashcards =
     pathname === "/flashcards" ||
@@ -75,19 +74,14 @@ const AppSidebar = ({ onNavigate }: { onNavigate?: () => void }) => {
   const isGuides = pathname.startsWith("/guides") || pathname.includes("/guide");
   const isPracticeTests = pathname.startsWith("/practice-tests") || pathname.includes("/quiz");
 
-  const comingSoon = (label: string) => {
-    showSuccess(`${label} is coming soon.`);
-    onNavigate?.();
-  };
-
   return (
-    <div className="flex h-full flex-col bg-background px-3 py-5">
+    <div className="ace-sidebar flex h-full w-full flex-col overflow-y-auto px-3 py-5">
       <Link
         to="/home"
         onClick={onNavigate}
-        className="mb-6 flex items-center gap-2 px-3 font-bold text-lg hover:opacity-80"
+        className="mb-6 flex items-center gap-2 px-3 font-bold text-lg text-white hover:opacity-90"
       >
-        <div className="bg-primary text-primary-foreground p-1.5 rounded-xl shadow-lg shadow-primary/20">
+        <div className="bg-white/15 text-white p-1.5 rounded-xl shadow-lg shadow-black/20 ring-1 ring-white/20">
           <BookOpen size={16} />
         </div>
         AceAP
@@ -95,14 +89,26 @@ const AppSidebar = ({ onNavigate }: { onNavigate?: () => void }) => {
 
       <nav className="flex flex-col gap-1">
         <NavItem to="/home" icon={Home} label="Home" active={isHome} onClick={onNavigate} />
-        <NavItem to="/home" icon={Folder} label="Your library" active={isLibrary && !isFlashcards && !isPracticeTests && !isGuides} onClick={onNavigate} />
-        <NavItem icon={Users} label="Study groups" onClick={() => comingSoon("Study groups")} />
-        <NavItem icon={Bell} label="Notifications" onClick={() => { showSuccess("You're all caught up."); onNavigate?.(); }} />
+        <NavItem
+          to="/home"
+          icon={Folder}
+          label="Your library"
+          active={isLibrary && !isFlashcards && !isPracticeTests && !isGuides}
+          onClick={onNavigate}
+        />
+        <NavItem
+          to="/updates"
+          icon={Newspaper}
+          label="Updates"
+          hint="What’s new — blog-style posts"
+          active={isUpdates}
+          onClick={onNavigate}
+        />
       </nav>
 
-      <div className="my-4 border-t border-border" />
+      <div className="my-4 border-t border-white/15" />
 
-      <p className="px-3 pb-2 text-[13px] font-medium text-muted-foreground">Start here</p>
+      <p className="px-3 pb-2 text-[13px] font-medium text-white/45">Start here</p>
       <nav className="flex flex-col gap-1">
         <NavItem
           to="/flashcards"

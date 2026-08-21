@@ -129,38 +129,26 @@
   }
 }
 
-::view-transition-old(root) {
-  animation: none;
-  z-index: 1;
-  mix-blend-mode: normal;
-}
-
+::view-transition-old(root),
 ::view-transition-new(root) {
-  animation: theme-reveal 0.55s cubic-bezier(0.22, 1, 0.36, 1) both;
-  z-index: 2;
+  animation: none;
   mix-blend-mode: normal;
 }
 
-@keyframes theme-reveal {
-  from {
-    clip-path: circle(0 at var(--theme-x, 50%) var(--theme-y, 50%));
-  }
-  to {
-    clip-path: circle(150% at var(--theme-x, 50%) var(--theme-y, 50%));
-  }
-}
-
+/* Fallback when View Transitions API is unavailable */
 html.theme-animating,
-html.theme-animating *,
-html.theme-animating *::before,
-html.theme-animating *::after {
+html.theme-animating body,
+html.theme-animating body * {
   transition:
-    background-color 0.45s ease,
+    background-color 0.55s cubic-bezier(0.22, 1, 0.36, 1),
     color 0.45s ease,
     border-color 0.45s ease,
     box-shadow 0.45s ease,
-    fill 0.45s ease,
-    stroke 0.45s ease !important;
+    background-image 0.55s ease !important;
+}
+
+html[data-theme-to="light"].theme-animating body {
+  transition-duration: 0.65s !important;
 }
 
 @layer utilities {
@@ -176,6 +164,13 @@ html.theme-animating *::after {
   }
   .text-gradient {
     @apply bg-clip-text text-transparent bg-gradient-to-br from-foreground to-foreground/70;
+  }
+  .ace-sidebar {
+    background:
+      radial-gradient(ellipse 120% 80% at 0% 0%, hsl(280 85% 72% / 0.55), transparent 55%),
+      radial-gradient(ellipse 90% 70% at 100% 100%, hsl(250 90% 70% / 0.4), transparent 50%),
+      linear-gradient(165deg, hsl(262 62% 58%) 0%, hsl(268 58% 52%) 45%, hsl(255 55% 48%) 100%);
+    color: hsl(0 0% 100%);
   }
 }
 

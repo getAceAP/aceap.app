@@ -8,11 +8,13 @@ import { motion } from "framer-motion";
 import PrecalcUnit1Content from "@/components/study-guides/PrecalcUnit1Content";
 import PrecalcUnit2Content from "@/components/study-guides/PrecalcUnit2Content";
 import PrecalcUnit3Content from "@/components/study-guides/PrecalcUnit3Content";
+import PrecalcUnit4Content from "@/components/study-guides/PrecalcUnit4Content";
 
 const contentById: Record<number, ComponentType> = {
   1: PrecalcUnit1Content,
   2: PrecalcUnit2Content,
   3: PrecalcUnit3Content,
+  4: PrecalcUnit4Content,
 };
 
 const PrecalcStudyGuide = () => {
@@ -50,7 +52,7 @@ const PrecalcStudyGuide = () => {
             <h1 className="text-4xl font-bold tracking-tight">
               Unit {unit.id}: {unit.title}
             </h1>
-            <p className="text-muted-foreground">{unit.period} of the exam · {unit.description}</p>
+            <p className="text-muted-foreground">{unit.period} · {unit.description}</p>
           </div>
         </header>
 

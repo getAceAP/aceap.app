@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { ArrowLeft, ArrowRight, Clock } from "lucide-react";
 import { motion } from "framer-motion";
 import { useTitle } from "@/hooks/useTitle";
-import { precalcUnits, precalcUnit4Meta } from "@/data/precalc";
+import { precalcUnits } from "@/data/precalc";
 import { courseCovers } from "@/data/course-covers";
 
 const GuidesPrecalc = () => {
@@ -24,7 +24,7 @@ const GuidesPrecalc = () => {
             AP Precalculus study guides
           </h1>
           <p className="text-lg text-muted-foreground max-w-2xl leading-relaxed">
-            Teaching notes for the three exam units — formulas, worked examples, and common errors. Unit 4 is optional and not on the AP exam.
+            Teaching notes for Units 1–4 — formulas, worked examples, and common errors. Unit 4 is optional and not on the AP exam.
           </p>
         </div>
       </section>
@@ -51,7 +51,7 @@ const GuidesPrecalc = () => {
                   </h2>
                   <p className="text-sm text-muted-foreground flex items-center gap-1.5">
                     <Clock size={14} />
-                    {unit.period} of the exam
+                    {unit.period}
                   </p>
                 </div>
                 <span className="inline-flex items-center font-bold text-sm text-primary shrink-0">
@@ -61,16 +61,6 @@ const GuidesPrecalc = () => {
               </Link>
             </motion.div>
           ))}
-
-          <div className="flex flex-col sm:flex-row sm:items-center gap-4 sm:gap-8 p-6 sm:p-8 rounded-[1.75rem] border border-border bg-muted/20 opacity-70">
-            <div className="text-sm font-bold text-muted-foreground tracking-widest shrink-0">
-              UNIT {precalcUnit4Meta.id}
-            </div>
-            <div className="flex-1 min-w-0 space-y-1">
-              <h2 className="text-xl font-bold tracking-tight text-foreground">{precalcUnit4Meta.title}</h2>
-              <p className="text-sm text-muted-foreground">{precalcUnit4Meta.period} · Coming later</p>
-            </div>
-          </div>
 
           <div className="pt-6">
             <Button asChild variant="outline" className="rounded-xl h-12">

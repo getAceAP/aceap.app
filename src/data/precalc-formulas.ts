@@ -76,3 +76,28 @@ export const precalcFormulasUnit3 = cards(3, [
   ["$\\tan\\theta$ is undefined", "When $\\cos\\theta=0$"],
   ["Reference angle in QII", "$\\pi-\\theta$ (radians)"],
 ]);
+
+export const precalcFormulasUnit4 = cards(4, [
+  ["Parametric equations (basic)", "$x=f(t)$, $y=g(t)$"],
+  ["Eliminate the parameter (linear)", "Solve one equation for $t$, substitute into the other"],
+  ["Parametric circle center $(h,k)$ radius $r$", "$x=h+r\\cos t$, $y=k+r\\sin t$"],
+  ["Parametric line through $(x_0,y_0)$ direction $(a,b)$", "$x=x_0+at$, $y=y_0+bt$"],
+  ["Speed along a parametric path", "$\\sqrt{\\left(\\dfrac{dx}{dt}\\right)^2+\\left(\\dfrac{dy}{dt}\\right)^2}$ (Calc idea; Precalc estimates from tables)"],
+  ["Average rate of change of $y$ vs $x$ for parametric", "$\\dfrac{y(t_2)-y(t_1)}{x(t_2)-x(t_1)}$ when $x$ changes"],
+  ["Implicit circle", "$(x-h)^2+(y-k)^2=r^2$"],
+  ["Implicit ellipse (standard)", "$\\dfrac{(x-h)^2}{a^2}+\\dfrac{(y-k)^2}{b^2}=1$"],
+  ["Implicit hyperbola (opens horizontally)", "$\\dfrac{(x-h)^2}{a^2}-\\dfrac{(y-k)^2}{b^2}=1$"],
+  ["Parabola opens up/down", "$(x-h)^2=4p(y-k)$"],
+  ["Vector in component form", "$\\langle a,b\\rangle$ or $a\\mathbf{i}+b\\mathbf{j}$"],
+  ["Magnitude of $\\langle a,b\\rangle$", "$\\|\\mathbf{v}\\|=\\sqrt{a^2+b^2}$"],
+  ["Unit vector in direction of $\\mathbf{v}$", "$\\dfrac{\\mathbf{v}}{\\|\\mathbf{v}\\|}$"],
+  ["Dot product $\\langle a,b\\rangle\\cdot\\langle c,d\\rangle$", "$ac+bd$"],
+  ["Vectors perpendicular", "Dot product $=0$"],
+  ["Vector addition", "$\\langle a,b\\rangle+\\langle c,d\\rangle=\\langle a+c,b+d\\rangle$"],
+  ["Scalar multiple", "$k\\langle a,b\\rangle=\\langle ka,kb\\rangle$"],
+  ["$2\\times 2$ matrix times vector", "$\\begin{bmatrix}a&b\\\\c&d\\end{bmatrix}\\begin{bmatrix}x\\\\y\\end{bmatrix}=\\begin{bmatrix}ax+by\\\\cx+dy\\end{bmatrix}$"],
+  ["Determinant of $\\begin{bmatrix}a&b\\\\c&d\\end{bmatrix}$", "$ad-bc$"],
+  ["Identity matrix $2\\times 2$", "$\\begin{bmatrix}1&0\\\\0&1\\end{bmatrix}$"],
+  ["Matrix addition", "Add corresponding entries"],
+  ["Linear system as matrix equation", "$A\\mathbf{x}=\\mathbf{b}$"],
+]);

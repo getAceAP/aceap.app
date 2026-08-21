@@ -39,6 +39,7 @@ import Signup from "./pages/Signup";
 import Settings from "./pages/Settings";
 import NotFound from "./pages/NotFound";
 import PrecalcStudyGuide from "./pages/PrecalcStudyGuide";
+import Updates from "./pages/Updates";
 
 const queryClient = new QueryClient();
 
@@ -84,6 +85,7 @@ const App = () => (
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<Signup />} />
           <Route path="/settings" element={<Settings />} />
+          <Route path="/updates" element={<Updates />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>

@@ -2,9 +2,9 @@ import Layout from "@/components/Layout";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
-import { BrainCircuit, GraduationCap, ArrowLeft, FileText, Clock } from "lucide-react";
+import { BrainCircuit, GraduationCap, ArrowLeft, FileText } from "lucide-react";
 import { useTitle } from "@/hooks/useTitle";
-import { precalcUnits, precalcUnit4Meta } from "@/data/precalc";
+import { precalcUnits } from "@/data/precalc";
 
 const UnitsPrecalc = () => {
   useTitle("AP Precalculus Units");
@@ -21,7 +21,7 @@ const UnitsPrecalc = () => {
           <div className="space-y-2">
             <h1 className="text-4xl sm:text-5xl font-bold tracking-tight">AP Precalculus</h1>
             <p className="text-xl text-muted-foreground">
-              Formulas, teaching guides, and generated practice for Units 1–3. Each quiz draws fresh variants so you can drill hundreds of problems.
+              Formulas, teaching guides, and generated practice for Units 1–4. Unit 4 is optional (not on the AP exam). Each quiz draws fresh variants so you can drill hundreds of problems.
             </p>
           </div>
         </header>
@@ -63,37 +63,6 @@ const UnitsPrecalc = () => {
               </CardContent>
             </Card>
           ))}
-
-          <Card className="border-border shadow-none opacity-60 bg-card overflow-hidden rounded-[2rem]">
-            <CardHeader className="pb-3 p-6">
-              <div className="flex justify-between items-start mb-1">
-                <div className="text-xs font-bold text-muted-foreground/60 uppercase tracking-wider">
-                  Unit {precalcUnit4Meta.id}
-                </div>
-                <div className="flex items-center gap-1 text-muted-foreground text-[10px] font-bold uppercase">
-                  <Clock size={12} />
-                  Coming Soon
-                </div>
-              </div>
-              <CardTitle className="text-xl">{precalcUnit4Meta.title}</CardTitle>
-              <CardDescription className="text-muted-foreground leading-relaxed line-clamp-2">
-                {precalcUnit4Meta.description}
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-6 p-6 pt-0">
-              <div className="flex flex-wrap gap-3">
-                <Button disabled variant="outline" className="flex-1 min-w-[100px] border-border h-10 rounded-xl">
-                  Quiz
-                </Button>
-                <Button disabled variant="outline" className="flex-1 min-w-[100px] border-border h-10 rounded-xl">
-                  Formulas
-                </Button>
-                <Button disabled variant="outline" className="flex-1 min-w-[100px] border-border h-10 rounded-xl">
-                  Guide
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
         </div>
       </div>
     </Layout>

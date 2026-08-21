@@ -25,8 +25,8 @@ const courses = [
   {
     id: "ap-precalc",
     title: "AP Precalculus",
-    blurb: "Generated practice for the three exam units — calculator and no-calculator items mixed in.",
-    units: "3 exam units",
+    blurb: "Generated practice for Units 1–4 — calculator and no-calculator items mixed in.",
+    units: "4 units (Unit 4 optional)",
     href: "/practice-tests/ap-precalc",
     image: courseCovers["ap-precalc"],
   },

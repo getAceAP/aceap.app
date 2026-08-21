@@ -25,8 +25,8 @@ const courses = [
   {
     id: "ap-precalc",
     title: "AP Precalculus",
-    blurb: "Formula cards for Units 1–3 — the identities and rules you need under time pressure.",
-    units: "3 exam units",
+    blurb: "Formula cards for Units 1–4 — the identities and rules you need under time pressure.",
+    units: "4 units (Unit 4 optional)",
     href: "/flashcards/ap-precalc",
     image: courseCovers["ap-precalc"],
   },

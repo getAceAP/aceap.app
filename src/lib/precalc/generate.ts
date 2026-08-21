@@ -4,12 +4,14 @@ import { makeRng } from "./rng";
 import { unit1Templates } from "./templates/unit1";
 import { unit2Templates } from "./templates/unit2";
 import { unit3Templates } from "./templates/unit3";
+import { unit4Templates } from "./templates/unit4";
 import type { Template } from "./types";
 
 const templatesByUnit: Record<number, Template[]> = {
   1: unit1Templates,
   2: unit2Templates,
   3: unit3Templates,
+  4: unit4Templates,
 };
 
 export const STUDY_LENGTH = 15;

@@ -227,7 +227,7 @@ const Landing = () => {
             {[
               { id: "ap-world", title: "AP World History", points: ["9 units of vocab", "Stimulus-based quizzes", "Study guides for every unit"] },
               { id: "ap-psych", title: "AP Psychology", points: ["5 CED units + full review", "150 questions per unit", "Practice exam with research stimuli"] },
-              { id: "ap-precalc", title: "AP Precalculus", points: ["Generated practice (500+ variants/unit)", "Formula drills + teaching guides", "Units 1–3 live; Unit 4 later"] },
+              { id: "ap-precalc", title: "AP Precalculus", points: ["Generated practice (500+ variants/unit)", "Formula drills + teaching guides", "Units 1–4 live (Unit 4 optional)"] },
             ].map((course) => (
               <div key={course.title} className="rounded-[2.5rem] border border-border bg-card overflow-hidden space-y-0">
                 <div className="relative h-40">
@@ -384,7 +384,7 @@ const Landing = () => {
         <h2 className="text-3xl sm:text-5xl font-bold tracking-tight text-center">Questions people actually ask</h2>
         <div className="space-y-4">
           {[
-            { q: "Is it only AP World?", a: "No. World, Psychology, and Precalculus (Units 1–3) are live. More APs are listed as coming soon." },
+            { q: "Is it only AP World?", a: "No. World, Psychology, and Precalculus (Units 1–4; Unit 4 optional) are live. More APs are listed as coming soon." },
             { q: "Do I have to make an account?", a: "You can browse, but logging in with Google is how flashcard mastery and quiz results save." },
             { q: "Is this the official College Board curriculum?", a: "It is aligned to AP units and CED-style Psych units. It is a study tool, not the exam itself." },
             { q: "Why type answers instead of tapping?", a: "Recognition is easier than recall. Typing the term is closer to what you need when a prompt is blank on test day." },

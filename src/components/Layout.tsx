@@ -11,6 +11,8 @@ import { useAuth } from "@/context/AuthContext";
 import { motion, AnimatePresence } from "framer-motion";
 import { CursorGloss } from "./CursorGloss";
 import AppSidebar from "./AppSidebar";
+import { SiteSearchProvider, SiteSearchTrigger } from "./SiteSearch";
+import UpdatesPopup from "./UpdatesPopup";
 import { Sheet, SheetContent, SheetTitle } from "./ui/sheet";
 import {
   DropdownMenu,
@@ -35,11 +37,12 @@ const Layout = ({ children, wide = false }: { children: React.ReactNode; wide?: 
   };
 
   return (
+    <SiteSearchProvider>
     <div className="min-h-screen bg-background text-foreground font-sans selection:bg-primary/20">
       <CursorGloss />
       <div className={cn("min-h-screen", user && "lg:flex")}>
         {user && (
-          <aside className="hidden lg:flex w-60 shrink-0 border-r border-border/70 sticky top-0 h-screen overflow-y-auto">
+          <aside className="hidden lg:flex w-60 shrink-0 sticky top-0 h-screen overflow-hidden border-r border-white/10">
             <AppSidebar />
           </aside>
         )}
@@ -95,7 +98,20 @@ const Layout = ({ children, wide = false }: { children: React.ReactNode; wide?: 
                 </div>
               )}
 
+              {user && (
+                <div className="hidden sm:flex flex-1 justify-center px-4 max-w-xl mx-auto">
+                  <SiteSearchTrigger className="w-full max-w-md justify-start" />
+                </div>
+              )}
+
               <div className="flex items-center gap-1 sm:gap-2">
+                {!user && (
+                  <>
+                    <SiteSearchTrigger compact className="sm:hidden" />
+                    <SiteSearchTrigger className="hidden sm:inline-flex max-w-[15rem]" />
+                  </>
+                )}
+                {user && <SiteSearchTrigger compact className="sm:hidden" />}
                 <SoundToggle />
                 <ThemeToggle />
                 <div className="h-4 w-[1px] bg-border/50 mx-1 hidden sm:block" />
@@ -200,12 +216,14 @@ const Layout = ({ children, wide = false }: { children: React.ReactNode; wide?: 
       </div>
 
       <Sheet open={mobileNavOpen} onOpenChange={setMobileNavOpen}>
-        <SheetContent side="left" className="p-0 w-72">
+        <SheetContent side="left" className="p-0 w-72 border-0 ace-sidebar [&>button]:text-white [&>button]:hover:bg-white/10 [&>button]:hover:text-white">
           <SheetTitle className="sr-only">Navigation</SheetTitle>
           <AppSidebar onNavigate={() => setMobileNavOpen(false)} />
         </SheetContent>
       </Sheet>
+      <UpdatesPopup />
     </div>
+    </SiteSearchProvider>
   );
 };
 

@@ -2,7 +2,13 @@ import { Flashcard } from "./content";
 import { precalcAuthoredUnit1 } from "./precalc-authored-unit1";
 import { precalcAuthoredUnit2 } from "./precalc-authored-unit2";
 import { precalcAuthoredUnit3 } from "./precalc-authored-unit3";
-import { precalcFormulasUnit1, precalcFormulasUnit2, precalcFormulasUnit3 } from "./precalc-formulas";
+import { precalcAuthoredUnit4 } from "./precalc-authored-unit4";
+import {
+  precalcFormulasUnit1,
+  precalcFormulasUnit2,
+  precalcFormulasUnit3,
+  precalcFormulasUnit4,
+} from "./precalc-formulas";
 
 export type PrecalcQuestionKind = "mcq" | "numeric";
 
@@ -53,14 +59,16 @@ export const precalcUnits: PrecalcUnit[] = [
     flashcards: precalcFormulasUnit3,
     authored: precalcAuthoredUnit3,
   },
+  {
+    id: 4,
+    title: "Functions Involving Parameters, Vectors, and Matrices",
+    period: "Not on AP exam",
+    description:
+      "Parametric equations, conics, vectors, and matrices. Optional CED unit — not assessed on the AP Precalculus exam.",
+    flashcards: precalcFormulasUnit4,
+    authored: precalcAuthoredUnit4,
+  },
 ];
-
-export const precalcUnit4Meta = {
-  id: 4,
-  title: "Functions Involving Parameters, Vectors, and Matrices",
-  period: "Not on AP exam",
-  description: "Parametric, vector, and matrix models. Optional CED unit — not assessed on the AP Precalculus exam.",
-};
 
 export const getPrecalcUnit = (unitId: string | number | undefined) =>
   precalcUnits.find((unit) => unit.id === Number(unitId));
